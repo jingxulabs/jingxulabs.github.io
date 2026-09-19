@@ -157,6 +157,56 @@ html { scroll-behavior: smooth; }
 .nav--onsky a[aria-current="true"] { color: var(--star); }
 .nav--onsky a::before { background: var(--ochre-sky); }
 
+/* ═══════════════ FOLDS ═══════════════
+   Native <details>, so the page works with JavaScript off and the
+   keyboard gets disclosure behaviour for free. The marker is the ochre
+   tick used everywhere else, with a second stroke that makes it a plus
+   when the section is shut. */
+.fold { border-top: 1px solid color-mix(in srgb, var(--ink) 16%, transparent); }
+.fold:first-of-type { border-top: 0; }
+
+.fold__sum {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-width: calc(var(--rail-w) + var(--gap) + 64ch + 4rem);
+  margin-inline: auto;
+  padding: clamp(1.6rem, 3.4vh, 2.4rem) 2rem;
+  cursor: pointer;
+  list-style: none;
+}
+.fold__sum::-webkit-details-marker { display: none; }
+.fold__name { font-size: var(--t-l); font-weight: 500; letter-spacing: -0.008em; }
+.fold__sum:hover .fold__name { color: var(--indigo); }
+.fold__d[open] .fold__sum { padding-bottom: 0.6rem; }
+
+.fold__mark { position: relative; width: 15px; height: 15px; flex: none; }
+.fold__mark::before,
+.fold__mark::after { content: ""; position: absolute; background: var(--ochre); }
+.fold__mark::before { left: 0; top: 6.5px; width: 15px; height: 2px; }
+.fold__mark::after {
+  left: 6.5px; top: 0; width: 2px; height: 15px;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+details[open] > .fold__sum .fold__mark::after,
+details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0); }
+
+/* Reference blocks inside a project: same mechanism, quieter. */
+.sub { border-top: 1px solid color-mix(in srgb, var(--ink) 11%, transparent); }
+.sub__sum {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.1rem 0;
+  cursor: pointer;
+  list-style: none;
+}
+.sub__sum::-webkit-details-marker { display: none; }
+.sub__name { font-size: var(--t-m); font-weight: 500; }
+.sub__sum:hover .sub__name { color: var(--indigo); }
+
 /* ═══════════════ SKY ═══════════════ */
 .sky {
   position: relative;
@@ -295,7 +345,7 @@ html { scroll-behavior: smooth; }
 }
 
 /* ═══════════════ PAPER ═══════════════ */
-.thesis { padding-top: clamp(5rem, 12vh, 8rem); padding-bottom: clamp(4rem, 10vh, 6.5rem); }
+.thesis { padding-top: 0; padding-bottom: clamp(4rem, 10vh, 6.5rem); }
 .lede-para {
   font-size: var(--t-m);
   font-weight: 300;
@@ -389,7 +439,8 @@ html { scroll-behavior: smooth; }
   width: min(980px, calc(100vw - 20rem));   /* clears the fixed side index */
   overflow-x: auto;
 }
-.signals__head { font-size: var(--t-m); font-weight: 500; margin-bottom: 0.7rem; }
+.signals__intro { margin-top: 0.2rem; }
+.signals__intro + .signals__intro { margin-top: -0.6rem; }
 .signals__intro {
   font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
   font-size: var(--t-s);
@@ -523,8 +574,7 @@ html { scroll-behavior: smooth; }
    A dated index. The date sits in its own narrow column, echoing the
    rail/column asymmetry of the page at a smaller scale. */
 .posts-section {
-  border-top: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
-  padding-top: clamp(3.25rem, 7vh, 4.75rem);
+  padding-top: 0;
   padding-bottom: clamp(3.25rem, 7vh, 4.75rem);
 }
 .section__head { font-size: var(--t-l); margin-bottom: 1.8rem; }
@@ -561,8 +611,7 @@ html { scroll-behavior: smooth; }
    These are dialogues, so they are set as dialogue: speaker in its own
    column, using the same run-in indigo as Problem / Approach / Result. */
 .jokes-section {
-  border-top: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
-  padding-top: clamp(3.25rem, 7vh, 4.75rem);
+  padding-top: 0;
   padding-bottom: clamp(3.25rem, 7vh, 4.75rem);
 }
 .joke { margin-bottom: 2.8rem; }
@@ -601,8 +650,7 @@ html { scroll-behavior: smooth; }
 
 /* ─── contact ─── */
 .contact {
-  border-top: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
-  padding-top: clamp(3.25rem, 7vh, 4.75rem);
+  padding-top: 0;
   padding-bottom: clamp(5rem, 11vh, 8rem);
 }
 .contact__head { font-size: var(--t-l); margin-bottom: 1rem; }
@@ -659,6 +707,9 @@ html { scroll-behavior: smooth; }
   .gates li { grid-template-columns: minmax(0, 1fr); row-gap: 0.15rem; }
   .score { gap: 1.4rem; }
   .score__n { font-size: 2.2rem; }
+
+  .fold__sum { padding-inline: 1.5rem; max-width: 40rem; }
+  .fold__name { font-size: var(--t-m); }
 
   .post { grid-template-columns: minmax(0, 1fr); }
   .joke__line { grid-template-columns: minmax(0, 1fr); }

@@ -11,13 +11,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=19">
+<link rel="stylesheet" href="styles.css?v=22">
 </head>
 <body>
 
 <nav class="nav" aria-label="Sections">
   <a href="#overview">Overview</a>
-  <a href="#projects">Projects</a>
+  <a href="#projects">Innovative projects</a>
   <a href="#posts">Posts</a>
   <a href="#techjokes">Tech jokes</a>
   <a href="#contact">Contact</a>
@@ -75,7 +75,13 @@
 <main>
 
   <!-- ───────────────────────── THESIS ───────────────────────── -->
-  <section class="spread thesis" id="overview">
+    <section class="fold" id="overview">
+    <details class="fold__d" open>
+      <summary class="fold__sum">
+        <span class="fold__name">Overview</span>
+        <span class="fold__mark" aria-hidden="true"></span>
+      </summary>
+      <div class="spread thesis">
     <aside class="rail">
       <p class="rail__note"><span class="tick"></span>Gauss, <span class="num">1805</span>. Legendre published the
         method first, in <span class="num">1805</span>; Gauss claimed he had been using it since
@@ -95,10 +101,18 @@
       <p>I build systems on that premise. The interesting question about a model has never been what it predicts. It is
         what the prediction is worth, and how anyone downstream would know when it stops being worth that.</p>
     </div>
+  </div>
+    </details>
   </section>
 
   <!-- ───────────────────────── PROJECTS ───────────────────────── -->
-  <section class="projects" id="projects" aria-label="Projects">
+    <section class="fold" id="projects">
+    <details class="fold__d" open>
+      <summary class="fold__sum">
+        <span class="fold__name">Innovative projects</span>
+        <span class="fold__mark" aria-hidden="true"></span>
+      </summary>
+      <div class="projects">
 
     <!-- ══ PROJECT 1 : real ══ -->
     <article class="spread project project--major">
@@ -185,8 +199,16 @@
       </div>
 
       <div class="signals">
-        <h3 class="signals__head">The twenty steering signals</h3>
-        <p class="signals__intro">Of the <span class="num">31</span> human-writing features that are calibrated,
+        <details class="sub">
+          <summary class="sub__sum"><span class="sub__name">The twenty steering signals</span><span class="fold__mark" aria-hidden="true"></span></summary>
+<p class="signals__intro">Calibration runs over <span class="num">248</span> human-written documents
+          and <span class="num">220</span> AI-written ones, computing all <span class="num">31</span> features
+          across both. The two corpora do different jobs. The human corpus defines the target range: for each
+          feature the calibration stores human percentiles (<span class="num">p10</span>,
+          <span class="num">p25</span>, <span class="num">p50</span>, <span class="num">p75</span>,
+          <span class="num">p90</span>). The AI corpus never defines that range. It establishes only how sharply a
+          feature discriminates between the two populations.</p>
+        <p class="signals__intro">Of those <span class="num">31</span> features,
           <span class="num">20</span> separate human from machine writing well enough to steer a rewrite. Separation
           is an AUC-like measure: <span class="num">0.50</span> means no useful discrimination,
           <span class="num">1.00</span> means perfect separation. The system follows the calibrated direction rather
@@ -318,10 +340,12 @@
           </tr>
           </tbody>
         </table>
+        </details>
       </div>
       <div class="worked">
-        <h3 class="signals__head">A worked example</h3>
-        <p class="signals__intro">One document through the tool. The human writing score measures distance from the
+        <details class="sub">
+          <summary class="sub__sum"><span class="sub__name">A worked example</span><span class="fold__mark" aria-hidden="true"></span></summary>
+<p class="signals__intro">One document through the tool. The human writing score measures distance from the
           human range across the <span class="num">20</span> calibrated signals, each weighted by how well it
           separates human from machine writing. It is not the probability that a detector will be fooled, and a
           higher score does not mean a detector will score the text any differently.</p>
@@ -490,6 +514,7 @@
           <li><span class="gate__name">style</span><span class="gate__val">no marketing language; one advisory miss, 10.2 semicolons per 1000 words against a target of at most 3</span></li>
           <li><span class="gate__name">critic and meaning audit</span><span class="gate__val">passed; four additions flagged to the reader as additions</span></li>
         </ul>
+        </details>
       </div>
 
     </article>
@@ -525,10 +550,18 @@
       </div>
     </article>
 
+  </div>
+    </details>
   </section>
 
   <!-- ───────────────────────── POSTS ───────────────────────── -->
-  <section class="spread posts-section" id="posts">
+    <section class="fold" id="posts">
+    <details class="fold__d" open>
+      <summary class="fold__sum">
+        <span class="fold__name">Posts</span>
+        <span class="fold__mark" aria-hidden="true"></span>
+      </summary>
+      <div class="spread posts-section">
     <aside class="rail">
       <p class="rail__note"><span class="tick"></span>Written on LinkedIn, newest first.</p>
       <p class="rail__note"><span class="tick"></span>The older entries are about building products. The newer ones
@@ -536,7 +569,6 @@
     </aside>
 
     <div class="col">
-      <h2 class="section__head">Posts</h2>
       <ol class="posts">
         <li class="post">
           <span class="post__date num">2026-09-15</span>
@@ -603,17 +635,24 @@
         </li>
       </ol>
     </div>
+  </div>
+    </details>
   </section>
 
   <!-- ───────────────────────── TECHJOKES ───────────────────────── -->
-  <section class="spread jokes-section" id="techjokes">
+    <section class="fold" id="techjokes">
+    <details class="fold__d" open>
+      <summary class="fold__sum">
+        <span class="fold__name">Tech jokes</span>
+        <span class="fold__mark" aria-hidden="true"></span>
+      </summary>
+      <div class="spread jokes-section">
     <aside class="rail">
       <p class="rail__note"><span class="tick"></span>Original, all of them. Written by Jing Xu, not collected.</p>
       <p class="rail__note"><span class="tick"></span>Each date links to where it was first posted.</p>
     </aside>
 
     <div class="col">
-      <h2 class="section__head">Tech jokes</h2>
       <article class="joke">
         <a class="joke__date num" href="https://www.linkedin.com/posts/activity-7506472081878929411-EBQL">2026-09-17</a>
         <div class="joke__line"><span class="joke__who">Human</span><p>I need you to understand my intent. If you do exactly what I ask, you may end up building something I don&#x27;t actually want. Reserve some context window for higher-level thinking. Own the solution.</p></div>
@@ -648,15 +687,22 @@
         <p class="joke__aside">(P.S. I&#x27;ve started writing tech jokes now. Hope they bring a smile to your face, or at least produce a slightly positive facial expression metric.)</p>
       </article>
     </div>
+  </div>
+    </details>
   </section>
 
   <!-- ───────────────────────── CONTACT ───────────────────────── -->
-  <section class="spread contact" id="contact">
+    <section class="fold" id="contact">
+    <details class="fold__d" open>
+      <summary class="fold__sum">
+        <span class="fold__name">Contact</span>
+        <span class="fold__mark" aria-hidden="true"></span>
+      </summary>
+      <div class="spread contact">
     <aside class="rail">
       <p class="rail__note"><span class="tick"></span>Slow to reply, but I do reply.</p>
     </aside>
     <div class="col">
-      <h2 class="contact__head">Get in touch</h2>
       <p class="contact__lines">
         <a href="mailto:jing.xugenai@gmail.com">jing.xugenai@gmail.com</a><br>
         <a href="https://github.com/jingxulabs">GitHub</a><br>
@@ -665,11 +711,13 @@
       </p>
       <p class="colophon">Set in Spectral and Archivo Narrow. The horizon is a convergence curve; it does not reach zero.</p>
     </div>
+  </div>
+    </details>
   </section>
 
 </main>
 
 <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
-<script src="main.js?v=19"></script>
+<script src="main.js?v=22"></script>
 </body>
 </html>

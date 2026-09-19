@@ -209,6 +209,23 @@
       { threshold: [0, 0.45, 1] }
     ).observe(hero);
   }
+
+  // A link to a section the reader has collapsed should open it, otherwise
+  // the jump lands on a closed header with nothing under it.
+  const reveal = (id) => {
+    const target = document.getElementById(id);
+    if (!target) return null;
+    const d = target.querySelector('details');
+    if (d) d.open = true;
+    return target;
+  };
+
+  links.forEach((a) => a.addEventListener('click', () => reveal(a.getAttribute('href').slice(1))));
+
+  if (location.hash.length > 1) {
+    const t = reveal(decodeURIComponent(location.hash.slice(1)));
+    if (t) requestAnimationFrame(() => t.scrollIntoView());
+  }
 })();
 
 
