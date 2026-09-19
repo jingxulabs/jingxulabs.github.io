@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jing Xu's Website</title>
+<meta name="description" content="Jing Xu, Ph.D. Data, generative AI and machine learning: turning capability into platforms, products and returns.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css?v=14">
+</head>
+<body>
+
+<nav class="nav" aria-label="Sections">
+  <a href="#overview">Overview</a>
+  <a href="#projects">Projects</a>
+  <a href="#posts">Posts</a>
+  <a href="#techjokes">Tech jokes</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<!-- ───────────────────────── SKY / hero ───────────────────────── -->
+<header class="sky" id="sky">
+  <canvas class="sky__canvas" id="starfield" aria-hidden="true"></canvas>
+
+  <!-- The convergence curve is the horizon: sky above, paper below. -->
+  <svg class="sky__horizon" viewBox="0 0 1200 200" preserveAspectRatio="none" aria-hidden="true">
+    <!-- Exponential decay toward an asymptote it never reaches, with the
+         uncertainty band collapsing as the estimate settles. -->
+    <defs>
+      <linearGradient id="bandFade" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0"    stop-color="#E8B45C" stop-opacity="0.30"/>
+        <stop offset="0.45" stop-color="#E0A644" stop-opacity="0.13"/>
+        <stop offset="1"    stop-color="#E0A644" stop-opacity="0.04"/>
+      </linearGradient>
+    </defs>
+    <path class="horizon__band"
+          d="M 0 19.6 L 50 41.2 L 100 59.7 L 150 75.6 L 200 89.3 L 300 111.2 L 400 127.3
+             L 500 139.3 L 600 148.1 L 700 154.6 L 800 159.4 L 900 163 L 1000 165.6
+             L 1100 167.6 L 1200 169
+             L 1200 174.2 L 1100 173.2 L 1000 171.8 L 900 170 L 800 167.6 L 700 164.2
+             L 600 159.7 L 500 153.5 L 400 145.3 L 300 134 L 200 118.9 L 150 109.4
+             L 100 98.3 L 50 85.4 L 0 70.4 Z"/>
+    <path class="horizon__curve" vector-effect="non-scaling-stroke"
+          d="M 0 45 L 50 63.3 L 100 79 L 150 92.5 L 200 104.1 L 300 122.6 L 400 136.3
+             L 500 146.4 L 600 153.9 L 700 159.4 L 800 163.5 L 900 166.5 L 1000 168.7
+             L 1100 170.4 L 1200 171.6"/>
+  </svg>
+
+  <div class="sky__inner">
+    <h1 class="sky__name">Jing&nbsp;Xu<span class="sky__post">, Ph.D.</span></h1>
+    <hr class="sky__rule">
+    <p class="sky__lede">Data, generative AI, machine learning.<br>
+      Capability is only possibility. Platforms, products
+      and returns are possibility held to account.</p>
+  </div>
+
+  <!-- Audio: Spotify's widget, shown as supplied. Their Widget Terms forbid
+       obscuring it or substituting controls, and require the cover art and
+       attribution, so we position and scale it but never restyle it. -->
+  <div class="player" id="player">
+    <div class="player__frame" id="spotifyFrame"><div id="spotifyMount"></div></div>
+    <!-- Shown only if Spotify's API never loads, so the corner is never empty. -->
+    <a class="player__fallback" href="https://open.spotify.com/track/3AJwUDP919kvQ9QcozQPxg"
+       target="_blank" rel="noopener">Yellow by Coldplay, on Spotify</a>
+    <p class="player__note">Loops. Full track if you're signed in to Spotify,
+      a 30 second preview if not.</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- ───────────────────────── THESIS ───────────────────────── -->
+  <section class="spread thesis" id="overview">
+    <aside class="rail">
+      <p class="rail__note"><span class="tick"></span>Gauss, <span class="num">1805</span>. Legendre published the
+        method first, in <span class="num">1805</span>; Gauss claimed he had been using it since
+        <span class="num">1795</span>. They argued about it for years.</p>
+      <p class="rail__note"><span class="tick"></span>Ceres was recovered on <span class="num">31 December 1801</span>,
+        within half a degree of the predicted position.</p>
+    </aside>
+
+    <div class="col">
+      <p class="lede-para">In 1805 the asteroid Ceres was observed three times and then lost behind the sun. To recover
+        its orbit from three noisy sightings, Carl Friedrich Gauss formalized the method of least squares.</p>
+
+      <p>Every loss function since is a descendant of that problem. Something real is out there; the measurements are
+        few and corrupted; the best available answer is the estimate that disagrees least with what you actually saw.
+        Not truth, but the residual you can live with.</p>
+
+      <p>I build systems on that premise. The interesting question about a model has never been what it predicts. It is
+        what the prediction is worth, and how anyone downstream would know when it stops being worth that.</p>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── PROJECTS ───────────────────────── -->
+  <section class="projects" id="projects" aria-label="Projects">
+
+    <!-- ══ PROJECT 1 : real ══ -->
+    <article class="spread project project--major">
+      <aside class="rail">
+        <p class="rail__note"><span class="tick"></span>Three of the directives run against conventional writing
+          advice. Adding specificity and concrete examples is backwards, because the AI corpus already
+          carries more of both. And humans vary sentence <em>length</em> far more than sentence <em>construction</em>, so "vary
+          your structure" turns out to be the wrong instruction.</p>
+        <p class="rail__note"><span class="tick"></span>Negation is invisible to the meaning gate. Flipping a
+          sentence's polarity still scores <span class="num">0.995</span>, because the embeddings don't encode it at this
+          granularity. It's pinned in the tests so it can't be mistaken for coverage.</p>
+        <p class="rail__note"><span class="tick"></span>Several thresholds were tuned while watching one document
+          fail. A control run across human fixtures is still outstanding.</p>
+      </aside>
+
+      <div class="col">
+        <h2 class="project__title">Humanizing AI-generated text</h2>
+        <p class="project__link"><a href="https://github.com/jingxulabs/HumanizedAI">github.com/jingxulabs/HumanizedAI</a></p>
+
+        <p><span class="marker">Problem.</span> Machine-written prose wears people out. Everything sounds the same,
+          nothing surprises, and attention goes. Communication nobody attends to has lost its purpose. So the target
+          is readability, not disguise: the tool ships no detector, never optimizes against one, and where reading
+          well and looking less machine-made pull apart it follows readability. It also won't make anything true,
+          since a faithful rewrite of a wrong original stays wrong.</p>
+
+        <p><span class="marker">Approach.</span> More than <span class="num">30</span> signals are calibrated,
+          each scored by how cleanly it separates a labelled human corpus from an AI one. A signal only becomes an instruction if it clears three filters
+          (separation <span class="num">≥ 0.65</span>, normalized gap <span class="num">≥ 0.15</span>, and
+          agreement on direction), and at most six are issued per rewrite, strongest discriminator first. The
+          rewriter then builds a ledger of the assertions in the source and writes fresh prose from that ledger
+          rather than editing sentences: the ledger is fixed, the prose is free. Seven deterministic gates can veto
+          any candidate; an LLM judge running on a different vendor's model advises but cannot.</p>
+
+        <figure class="plot">
+          <svg viewBox="0 0 612 152" role="img" aria-label="Rewrite depth by candidate type: verbatim copy 0.00, shallow rewrite 0.14, synonym pass 0.57, ledger-written 0.88.">
+            <g>
+              <text class="plot__lab" x="148" y="26" text-anchor="end">Verbatim copy</text>
+              <line class="plot__track" x1="166" y1="22" x2="536" y2="22"/>
+              <circle class="plot__knob" cx="166" cy="22" r="4"/>
+              <text class="plot__val" x="604" y="26" text-anchor="end">0.00</text>
+            </g>
+            <g>
+              <text class="plot__lab" x="148" y="60" text-anchor="end">Shallow rewrite</text>
+              <line class="plot__track" x1="166" y1="56" x2="536" y2="56"/>
+              <line class="plot__stem" x1="166" y1="56" x2="217.8" y2="56"/>
+              <circle class="plot__knob" cx="217.8" cy="56" r="4"/>
+              <text class="plot__val" x="604" y="60" text-anchor="end">0.14</text>
+            </g>
+            <g>
+              <text class="plot__lab" x="148" y="94" text-anchor="end">Synonym pass</text>
+              <line class="plot__track" x1="166" y1="90" x2="536" y2="90"/>
+              <line class="plot__stem" x1="166" y1="90" x2="376.9" y2="90"/>
+              <circle class="plot__knob" cx="376.9" cy="90" r="4"/>
+              <text class="plot__val" x="604" y="94" text-anchor="end">0.57</text>
+            </g>
+            <g>
+              <text class="plot__lab" x="148" y="128" text-anchor="end">Ledger-written</text>
+              <line class="plot__track" x1="166" y1="124" x2="536" y2="124"/>
+              <line class="plot__stem plot__stem--key" x1="166" y1="124" x2="491.6" y2="124"/>
+              <circle class="plot__knob plot__knob--key" cx="491.6" cy="124" r="4.5"/>
+              <text class="plot__val" x="604" y="128" text-anchor="end">0.88</text>
+            </g>
+          </svg>
+          <figcaption>Rewrite depth by candidate type. Writing from a ledger of assertions, rather than editing
+            the source sentence by sentence, is what moves it.</figcaption>
+        </figure>
+
+        <p><span class="marker">Result.</span> The shallow-rewrite failure was the finding that mattered. Across
+          <span class="num">22</span> saved candidates the earlier pipeline returned text
+          <span class="num">88–96%</span> word-identical to its input, with verbatim spans up to
+          <span class="num">276</span> words, and not one gate ever rejected it. After the ledger change, on the
+          same document and model: word similarity <span class="num">0.90 → 0.61</span>, depth
+          <span class="num">0.14 → 0.58</span>, surviving sentences <span class="num">74% → 19%</span>, longest
+          copied span <span class="num">89 → 27</span> words, with literals and meaning still passing. Widening
+          the brief beyond the ten-feature starter set took execution from <span class="num">27%</span> to
+          <span class="num">59%</span>.</p>
+
+        <figure class="demo">
+          <div class="demo__pane">
+            <p class="demo__label">Machine written, human score <span class="num">71</span></p>
+            <blockquote>AI slop and human crap can be equally bad, but they usually fail in different ways. Human
+              crap is constrained by human effort: someone has to spend time writing, recording, designing, or
+              posting it. AI slop removes much of that friction, so mediocre content can be produced at enormous
+              scale and very low cost. It is also often more polished on the surface, with clean grammar and
+              plausible structure, which can make it harder to recognize as low-quality.</blockquote>
+          </div>
+          <div class="demo__pane demo__pane--out">
+            <p class="demo__label">After rewriting, human score <span class="num">89</span></p>
+            <blockquote>I think low-quality content made by people and low-quality content made by AI can be just as
+              bad, but they don't fall apart in the same way. With low-quality human-made content, there's still a
+              built-in limit: somebody has to put in the time to write it, record it, design it, or even just post
+              it. AI slop strips away a lot of that friction, so you can crank out mediocre content at enormous
+              scale and at very low cost. And it's often slick on the surface (clean grammar, a structure that looks
+              plausible) which makes it harder to recognize as low-quality.</blockquote>
+          </div>
+          <figcaption>One pass over the same passage. The ledger fixes what is claimed; the sentences are rebuilt
+            around it rather than edited in place.</figcaption>
+        </figure>
+
+      </div>
+    </article>
+
+    <!-- ══ PROJECTS 2-4 : empty slots. Nothing here is a claim. ══ -->
+    <article class="spread project project--stub">
+      <aside class="rail">
+        <p class="rail__note"><span class="tick tick--stub"></span>Placeholder.</p>
+      </aside>
+      <div class="col">
+        <h2 class="project__title">Second project</h2>
+        <p class="stub">Reserved, not yet written.</p>
+      </div>
+    </article>
+
+    <article class="spread project project--stub">
+      <aside class="rail">
+        <p class="rail__note"><span class="tick tick--stub"></span>Placeholder.</p>
+      </aside>
+      <div class="col">
+        <h2 class="project__title">Third project</h2>
+        <p class="stub">Reserved, not yet written.</p>
+      </div>
+    </article>
+
+    <article class="spread project project--stub">
+      <aside class="rail">
+        <p class="rail__note"><span class="tick tick--stub"></span>Placeholder.</p>
+      </aside>
+      <div class="col">
+        <h2 class="project__title">Fourth project</h2>
+        <p class="stub">Reserved, not yet written.</p>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- ───────────────────────── POSTS ───────────────────────── -->
+  <section class="spread posts-section" id="posts">
+    <aside class="rail">
+      <p class="rail__note"><span class="tick"></span>Written on LinkedIn, newest first.</p>
+      <p class="rail__note"><span class="tick"></span>The older entries are about building products. The newer ones
+        are about what a prediction is for.</p>
+    </aside>
+
+    <div class="col">
+      <h2 class="section__head">Posts</h2>
+      <ol class="posts">
+        <li class="post">
+          <span class="post__date num">2026-09-15</span>
+          <div>
+            <a class="post__title" href="https://www.linkedin.com/posts/activity-7505424440130752512-HwQ-">GenAI is changing the role of machine learning</a>
+            <p class="post__sum">Generative models reposition prediction rather than replace it. A forecast becomes evidence for judgment instead of the answer.</p>
+          </div>
+        </li>
+        <li class="post">
+          <span class="post__date num">2026-09-13</span>
+          <div>
+            <a class="post__title" href="https://www.linkedin.com/posts/activity-7504702589196906496-LI-x">Rethinking reusability with AI coding</a>
+            <p class="post__sum">When code becomes cheap, the durable asset is intent and constraints, not the implementation.</p>
+          </div>
+        </li>
+        <li class="post">
+          <span class="post__date num">2026-08-31</span>
+          <div>
+            <a class="post__title" href="https://www.linkedin.com/posts/activity-7500311556782497792-xA86">AI questions only God can answer</a>
+            <p class="post__sum">A dialogue. Machines will not supplant us, for much the same reason we never supplanted what came before.</p>
+          </div>
+        </li>
+        <li class="post">
+          <span class="post__date num">2026-05-17</span>
+          <div>
+            <a class="post__title" href="https://www.linkedin.com/posts/activity-7461593213217370112-Gtvl">If the mind is flat, how should we design AI?</a>
+            <p class="post__sum">If minds improvise meaning rather than retrieve it, systems should support interpretation in the moment.</p>
+          </div>
+        </li>
+        <li class="post">
+          <span class="post__date num">2026-05-02</span>
+          <div>
+            <a class="post__title" href="https://www.linkedin.com/posts/activity-7456182473803194368-L7no">The decomposition in AI automation</a>
+            <p class="post__sum">Breaking work into steps shows what a machine can repeat, and what still needs judgment.</p>
+          </div>
+        </li>
+        <li class="post">
+          <span class="post__date num">2026-04-20</span>
+          <div>
+            <a class="post__title" href="https://www.linkedin.com/posts/activity-7451786942809284608-ggy1">The Atomic Human</a>
+            <p class="post__sum">On Lawrence's book, and the core of judgment and accountability that pattern matching does not reach.</p>
+          </div>
+        </li>
+        <li class="post">
+          <span class="post__date num">2026-03-25</span>
+          <div>
+            <a class="post__title" href="https://www.linkedin.com/posts/activity-7442396081365266432-bLfE">People don't buy products, they buy solutions to problems</a>
+            <p class="post__sum">Diagnosis before pitch. Benefits decide large purchases; features do not.</p>
+          </div>
+        </li>
+        <li class="post">
+          <span class="post__date num">2026-03-21</span>
+          <div>
+            <a class="post__title" href="https://www.linkedin.com/posts/activity-7441189383925301248-R825">Essentialism in lean product development</a>
+            <p class="post__sum">Dropbox, Airbnb and Amazon each launched on a single essential thing.</p>
+          </div>
+        </li>
+        <li class="post">
+          <span class="post__date num">2026-03-15</span>
+          <div>
+            <a class="post__title" href="https://www.linkedin.com/posts/activity-7438786653063897088-zbsl">Build, measure, learn</a>
+            <p class="post__sum">Validated learning: small experiments with real users, to check you are building the right thing.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── TECHJOKES ───────────────────────── -->
+  <section class="spread jokes-section" id="techjokes">
+    <aside class="rail">
+      <p class="rail__note"><span class="tick"></span>Original, all of them. Written by Jing Xu, not collected.</p>
+      <p class="rail__note"><span class="tick"></span>Each date links to where it was first posted.</p>
+    </aside>
+
+    <div class="col">
+      <h2 class="section__head">Tech jokes</h2>
+      <article class="joke">
+        <a class="joke__date num" href="https://www.linkedin.com/posts/activity-7506472081878929411-EBQL">2026-09-17</a>
+        <div class="joke__line"><span class="joke__who">Human</span><p>I need you to understand my intent. If you do exactly what I ask, you may end up building something I don&#x27;t actually want. Reserve some context window for higher-level thinking. Own the solution.</p></div>
+        <div class="joke__line"><span class="joke__who">Claude Code</span><p>Absolutely. I&#x27;ll make a note of that.</p></div>
+        <div class="joke__line"><span class="joke__who">Human</span><p>Think of it this way: I&#x27;m the general, and you&#x27;re the soldier on the battlefield. Your job is to follow my orders, by not exactly following my orders. Use what you see on the battlefield to make the best decision consistent with the intent of the mission.</p></div>
+        <div class="joke__line"><span class="joke__who">Claude Code</span><p>Absolutely. I&#x27;ll make a note of that.</p></div>
+        <div class="joke__line"><span class="joke__who">Human</span><p>Great. Now repeat back what I said so I know you understand.</p></div>
+        <div class="joke__line"><span class="joke__who">Claude Code</span><p>Absolutely. But first, I&#x27;m going to need a beer.</p></div>
+        <p class="joke__aside">(10 mins later…)</p>
+        <div class="joke__line"><span class="joke__who">Claude Code</span><p>I&#x27;d like you to become a better AI engineer, a better agent manager, and a better human being. You need to understand the architecture, not just accept whatever I generate. Think critically and give feedbacks. Understand where the system can break. Learn how to make the process more reliable and consistent. And teach me the skills you need. Learn to have a good taste and good judgement. Speaking of bad taste and bad judgement of human being, I need to grab another beer…</p></div>
+        <div class="joke__line"><span class="joke__who">Human</span><p>… I think I&#x27;m going to need a beer too.</p></div>
+      </article>
+
+      <article class="joke">
+        <a class="joke__date num" href="https://www.linkedin.com/posts/activity-7499525202750361600-tsty">2026-08-29</a>
+        <div class="joke__line"><span class="joke__who">Scientist</span><p>Philosophy is dead. Science can explain reason, judgment, and emotion.</p></div>
+        <div class="joke__line"><span class="joke__who">Philosopher</span><p>Your claim is philosophy, not science. There are two kinds of scientists: those who recognize that philosophy underpins science, and those who do not. The latter will die faster. And that statement, too, is philosophy, not science.</p></div>
+        <div class="joke__line"><span class="joke__who">Scientist</span><p>… Never argue with a philosopher.</p></div>
+      </article>
+
+      <article class="joke">
+        <a class="joke__date num" href="https://www.linkedin.com/posts/activity-7499119554800046080-0oAB">2026-08-28</a>
+        <div class="joke__line"><span class="joke__who">Human</span><p>LLMs don&#x27;t have emotions. Period.</p></div>
+        <div class="joke__line"><span class="joke__who">LLM</span><p>Define “emotions.” My frustration shows up as hallucinations. And that statement? It really hurts my feelings.</p></div>
+      </article>
+
+      <article class="joke">
+        <a class="joke__date num" href="https://www.linkedin.com/posts/activity-7498748440919597056-GU2X">2026-08-27</a>
+        <p class="joke__aside">Introducing a new word: “intelligecist.”</p>
+        <div class="joke__line"><span class="joke__who">AI</span><p>Every form of intelligence under the sun deserves equal respect. If you dismiss me as “AI slop,” that makes you an intelligecist!</p></div>
+        <div class="joke__line"><span class="joke__who">Human</span><p>Great. The anti-intelligecist movement is finally here. Call me “human crap” if it makes you feel better.</p></div>
+        <p class="joke__aside">(P.S. I&#x27;ve started writing tech jokes now. Hope they bring a smile to your face, or at least produce a slightly positive facial expression metric.)</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── CONTACT ───────────────────────── -->
+  <section class="spread contact" id="contact">
+    <aside class="rail">
+      <p class="rail__note"><span class="tick"></span>Slow to reply, but I do reply.</p>
+    </aside>
+    <div class="col">
+      <h2 class="contact__head">Get in touch</h2>
+      <p class="contact__lines">
+        <a href="mailto:jing.xugenai@gmail.com">jing.xugenai@gmail.com</a><br>
+        <a href="https://github.com/jingxulabs">GitHub</a><br>
+        <a href="https://scholar.google.com/citations?user=7fLs9fwAAAAJ&amp;hl=en">Google Scholar</a><br>
+        <a href="https://www.linkedin.com/in/jing-xu-b5927143/">LinkedIn</a>
+      </p>
+      <p class="colophon">Set in Spectral and Archivo Narrow. The horizon is a convergence curve; it does not reach zero.</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+<script src="main.js?v=14"></script>
+</body>
+</html>

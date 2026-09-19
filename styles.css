@@ -1,0 +1,567 @@
+/* ═══════════════════════════════════════════════════════════
+   Jing Xu's Website
+   Two registers: the sky (observation) and the paper (inference).
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* One ink hue at two values, plus two accents with separate jobs. */
+  --night:        #0D1526;   /* hero ground — astronomical twilight   */
+  --bond:         #EDF0EF;   /* page ground — cool preprint paper     */
+  --ink:          #18222E;   /* body text, the single rule            */
+  --graphite:     #59666F;   /* margin rail only                      */
+  --indigo:       #414B8C;   /* THE INFERRED MARK — links, plot lines */
+  --ochre:        #9C6B2F;   /* THE UNCERTAIN MARK — bands, ticks     */
+
+  /* Same two accents, retuned for the dark ground. */
+  --indigo-sky:   #7C87C9;
+  --ochre-sky:    #E0A644;
+  --star:         #F2EFE6;
+  --graphite-sky: #8895A3;
+
+  --band:         rgba(156, 107, 47, 0.19);
+  --band-sky:     rgba(224, 166, 68, 0.22);
+
+  /* 1.25 major third. Broken in exactly one place: the name. */
+  --t-xs:   0.78rem;
+  --t-s:    0.9375rem;
+  --t-base: 1.0625rem;
+  --t-m:    1.328rem;
+  --t-l:    1.66rem;
+  --t-xl:   2.074rem;
+
+  --rail-w: 168px;
+  --gap:    3.25rem;
+  --measure: 64ch;
+}
+
+/* ─── reset ─── */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bond);
+  color: var(--ink);
+  font-family: Spectral, Georgia, serif;
+  font-size: var(--t-base);
+  font-weight: 400;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1, h2 { font-weight: 500; margin: 0; }
+p { margin: 0 0 1.15em; }
+p:last-child { margin-bottom: 0; }
+hr { border: 0; margin: 0; }
+
+a {
+  color: var(--indigo);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: color-mix(in srgb, var(--indigo) 40%, transparent);
+  transition: text-decoration-color 140ms ease;
+}
+a:hover { text-decoration-color: var(--indigo); }
+
+:focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+/* Monospace appears ONLY on real numerals and code. Never on a label. */
+.num {
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: 0.92em;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══════════════ layout primitive ═══════════════
+   Asymmetric: a narrow gloss rail, a generous claim column.
+   Left-aligned throughout, hung off one left edge. */
+.spread {
+  display: grid;
+  grid-template-columns: var(--rail-w) minmax(0, var(--measure));
+  column-gap: var(--gap);
+  max-width: calc(var(--rail-w) + var(--gap) + 64ch + 4rem);
+  margin-inline: auto;
+  padding-inline: 2rem;
+}
+.col { grid-column: 2; min-width: 0; }
+.rail { grid-column: 1; }
+
+.rail__note {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.45;
+  color: var(--graphite);
+  margin-bottom: 1.4em;
+  text-wrap: pretty;
+}
+.tick {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--ochre);
+  margin-bottom: 0.6em;
+}
+
+/* ═══════════════ NAV ═══════════════
+   An index, not a nav bar: a quiet vertical list on the right edge, using
+   the same ochre tick the margin rail uses to mark a note. The left edge
+   stays clear for the gloss rail. */
+html { scroll-behavior: smooth; }
+#overview, #projects, #posts, #techjokes, #contact { scroll-margin-top: 2rem; }
+
+.nav {
+  position: fixed;
+  right: 1.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+}
+.nav a {
+  position: relative;
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.2;
+  color: var(--graphite);
+  text-decoration: none;
+  padding: 0.5rem 0 0.5rem 1.9rem;     /* generous hit area */
+  transition: color 160ms ease;
+}
+.nav a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 15px;
+  height: 2px;
+  margin-top: -1px;
+  background: var(--ochre);
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+.nav a:hover { color: var(--ink); }
+.nav a:hover::before { opacity: 0.45; }
+.nav a[aria-current="true"] { color: var(--ink); }
+.nav a[aria-current="true"]::before { opacity: 1; }
+
+/* Over the night hero the same list flips to the sky palette. */
+.nav--onsky a { color: var(--graphite-sky); }
+.nav--onsky a:hover,
+.nav--onsky a[aria-current="true"] { color: var(--star); }
+.nav--onsky a::before { background: var(--ochre-sky); }
+
+/* ═══════════════ SKY ═══════════════ */
+.sky {
+  position: relative;
+  min-height: 100svh;
+  background: var(--night);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;   /* the name sits on the horizon, sky above */
+}
+.sky__canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.sky__horizon {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: clamp(155px, 27vh, 235px);
+}
+.horizon__band { fill: url(#bandFade); opacity: 0; animation: bandIn 1400ms 900ms ease-out forwards; }
+.horizon__curve {
+  fill: none;
+  stroke: var(--indigo-sky);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-dasharray: 1500;
+  stroke-dashoffset: 1500;
+  animation: draw 2100ms 250ms cubic-bezier(.22,.61,.36,1) forwards;
+}
+@keyframes draw   { to { stroke-dashoffset: 0; } }
+@keyframes bandIn { to { opacity: 1; } }
+
+.sky__inner {
+  position: relative;
+  width: 100%;
+  max-width: calc(var(--rail-w) + var(--gap) + 64ch + 4rem);
+  margin-inline: auto;
+  padding: 0 2rem clamp(12rem, 28vh, 16rem);  /* clears the widget */
+}
+.sky__name {
+  font-size: clamp(3.75rem, 12vw, 8.5rem);
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  color: var(--star);
+  margin-left: -0.05em;
+}
+/* Post-nominal: set small and quiet on the same baseline, the way a
+   degree is set after a name, not at display size. */
+.sky__post {
+  font-size: 0.215em;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, var(--star) 60%, var(--night));
+  white-space: nowrap;
+}
+
+.sky__rule {
+  width: 84px;
+  height: 1px;
+  background: var(--ochre-sky);
+  margin: clamp(1.4rem, 3vh, 2.1rem) 0;
+  opacity: 0.85;
+}
+.sky__lede {
+  font-size: clamp(1.16rem, 2vw, 1.46rem);
+  font-weight: 300;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--star) 74%, var(--night));
+  max-width: 38ch;
+}
+
+/* ─── player ───
+   Spotify's widget is shown as supplied: positioned and uniformly scaled,
+   never restyled, cropped or covered. Only the hairline and the note
+   beneath it are ours. */
+.player {
+  position: absolute;
+  left: 2rem;
+  bottom: 1.75rem;
+  z-index: 2;
+  width: min(300px, calc(100% - 3rem));
+}
+/* Our own accent, tying the widget into the sky's language. */
+.player::before {
+  content: "";
+  display: block;
+  width: 34px;
+  height: 1px;
+  background: var(--ochre-sky);
+  opacity: 0.8;
+  margin-bottom: 0.8rem;
+}
+/* Scaled whole rather than narrowed: below ~300px the embed stops
+   reflowing and clips its own controls. */
+.player__frame {
+  height: 54px;                  /* 80px x 0.675, box matches the scale */
+  transform: scale(0.675);
+  transform-origin: top left;
+}
+.player__frame iframe { display: block; border: 0; }
+
+.player__fallback {
+  display: none;
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  color: var(--ochre-sky);
+}
+.player--fallback .player__frame { display: none; }
+.player--fallback .player__fallback { display: inline-block; }
+
+.player__note {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-xs);
+  line-height: 1.4;
+  color: var(--graphite-sky);
+  margin: 0.85rem 0 0;
+  max-width: 32ch;
+}
+
+/* Diagnostic readout, only when ?audiodebug is in the URL. */
+.audio-debug {
+  position: fixed;
+  right: 1rem; bottom: 1rem;
+  z-index: 99;
+  margin: 0;
+  padding: 0.7rem 0.9rem;
+  background: rgba(13, 21, 38, 0.92);
+  color: var(--ochre-sky);
+  border: 1px solid rgba(224, 166, 68, 0.35);
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+/* ═══════════════ PAPER ═══════════════ */
+.thesis { padding-top: clamp(5rem, 12vh, 8rem); padding-bottom: clamp(4rem, 10vh, 6.5rem); }
+.lede-para {
+  font-size: var(--t-m);
+  font-weight: 300;
+  line-height: 1.5;
+  margin-bottom: 1.3em;
+}
+
+/* The single structural device: one rule, one job — separating entries. */
+.project { border-top: 1px solid color-mix(in srgb, var(--ink) 16%, transparent); }
+.project { padding-top: clamp(3.25rem, 7vh, 4.75rem); padding-bottom: clamp(3.25rem, 7vh, 4.75rem); }
+.project--major { padding-top: clamp(4rem, 9vh, 6rem); padding-bottom: clamp(4rem, 9vh, 6rem); }
+.project--minor { padding-top: clamp(2.5rem, 5vh, 3.5rem); padding-bottom: clamp(2.5rem, 5vh, 3.5rem); }
+
+/* Empty slots. Deliberately quiet, and never ochre: that accent is
+   reserved for content that is actually making a claim. */
+.project--stub { padding-top: clamp(2rem, 4vh, 2.75rem); padding-bottom: clamp(2rem, 4vh, 2.75rem); }
+.project--stub .project__title {
+  font-size: var(--t-m);
+  font-weight: 400;
+  color: color-mix(in srgb, var(--ink) 42%, var(--bond));
+}
+.tick--stub { background: color-mix(in srgb, var(--ink) 22%, var(--bond)); }
+.stub {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  color: color-mix(in srgb, var(--graphite) 78%, var(--bond));
+}
+
+.project__title {
+  font-size: var(--t-l);
+  font-weight: 500;
+  line-height: 1.22;
+  letter-spacing: -0.012em;
+  margin-bottom: 1.1rem;
+  text-wrap: balance;
+}
+.project--major .project__title { font-size: var(--t-xl); }
+.project--minor .project__title { font-size: var(--t-m); }
+
+/* Run-in heads: structure without an all-caps eyebrow. */
+.marker {
+  font-weight: 600;
+  color: var(--indigo);
+}
+
+/* ─── plots ─── */
+.plot { margin: 2rem 0 1.6rem; }
+.plot svg { display: block; width: 100%; height: auto; }
+.plot__band { fill: var(--band); }
+.plot__line { fill: none; stroke: var(--indigo); stroke-width: 1.75; stroke-linecap: round; }
+.plot__ref  { fill: none; stroke: color-mix(in srgb, var(--ink) 30%, transparent); stroke-width: 1; stroke-dasharray: 3 4; }
+.plot__dot  { fill: var(--ochre); }
+.plot__grid { stroke: color-mix(in srgb, var(--ink) 15%, transparent); stroke-width: 1; }
+.plot__val  {
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: 13px; font-weight: 500; fill: var(--graphite);
+}
+.plot__lab  {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: 13px; fill: var(--graphite);
+}
+/* Categorical comparison: dots on a track, not a line — the data isn't a series. */
+.plot__track { stroke: color-mix(in srgb, var(--ink) 11%, transparent); stroke-width: 1; }
+.plot__stem  { stroke: var(--indigo); stroke-width: 2; }
+.plot__knob  { fill: var(--indigo); }
+.plot__stem--key { stroke: var(--ochre); }
+.plot__knob--key { fill: var(--ochre); }
+
+.project__link {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  margin: -0.5rem 0 1.2rem;
+}
+.plot figcaption {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.45;
+  color: var(--graphite);
+  margin-top: 0.7rem;
+  max-width: 48ch;
+}
+
+/* ─── before / after demo ───
+   Two panes, same type, differentiated only by label and edge rule so the
+   prose is judged on its own. Indigo marks the produced text. */
+.demo { margin: 2.2rem 0 0; }
+.demo__pane {
+  border-left: 2px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  padding-left: 1.3rem;
+  margin-bottom: 1.5rem;
+}
+.demo__pane--out { border-left-color: var(--indigo); }
+.demo__label {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  color: var(--graphite);
+  margin: 0 0 0.5rem;
+}
+.demo blockquote {
+  margin: 0;
+  font-size: 0.97em;
+  line-height: 1.58;
+  text-wrap: pretty;
+}
+.demo figcaption {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.45;
+  color: var(--graphite);
+  margin-top: 0.4rem;
+  max-width: 52ch;
+}
+
+/* ─── posts ───
+   A dated index. The date sits in its own narrow column, echoing the
+   rail/column asymmetry of the page at a smaller scale. */
+.posts-section {
+  border-top: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  padding-top: clamp(3.25rem, 7vh, 4.75rem);
+  padding-bottom: clamp(3.25rem, 7vh, 4.75rem);
+}
+.section__head { font-size: var(--t-l); margin-bottom: 1.8rem; }
+
+.posts { list-style: none; margin: 0; padding: 0; }
+.post {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  column-gap: 1.6rem;
+  margin-bottom: 1.85rem;
+}
+.post:last-child { margin-bottom: 0; }
+.post__date {
+  font-size: var(--t-xs);
+  color: var(--graphite);
+  padding-top: 0.42em;
+  white-space: nowrap;
+}
+.post__title {
+  font-size: var(--t-base);
+  line-height: 1.35;
+  text-wrap: pretty;
+}
+.post__sum {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.45;
+  color: var(--graphite);
+  margin: 0.3rem 0 0;
+  max-width: 54ch;
+}
+
+/* ─── techjokes ───
+   These are dialogues, so they are set as dialogue: speaker in its own
+   column, using the same run-in indigo as Problem / Approach / Result. */
+.jokes-section {
+  border-top: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  padding-top: clamp(3.25rem, 7vh, 4.75rem);
+  padding-bottom: clamp(3.25rem, 7vh, 4.75rem);
+}
+.joke { margin-bottom: 2.8rem; }
+.joke:last-child { margin-bottom: 0; }
+
+.joke__date {
+  display: inline-block;
+  font-size: var(--t-xs);
+  color: var(--graphite);
+  text-decoration-color: color-mix(in srgb, var(--graphite) 35%, transparent);
+  margin-bottom: 0.9rem;
+}
+.joke__date:hover { color: var(--ink); }
+
+.joke__line {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  column-gap: 1.2rem;
+  margin-bottom: 0.6rem;
+}
+.joke__line p { margin: 0; text-wrap: pretty; }
+.joke__who {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  font-weight: 600;
+  color: var(--indigo);
+  padding-top: 0.2em;
+}
+.joke__aside {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  color: var(--graphite);
+  margin: 0.9rem 0;
+  max-width: 54ch;
+}
+
+/* ─── contact ─── */
+.contact {
+  border-top: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  padding-top: clamp(3.25rem, 7vh, 4.75rem);
+  padding-bottom: clamp(5rem, 11vh, 8rem);
+}
+.contact__head { font-size: var(--t-l); margin-bottom: 1rem; }
+.contact__lines { line-height: 1.95; }
+.colophon {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  color: var(--graphite);
+  margin-top: 3rem;
+  max-width: 46ch;
+}
+
+/* ═══════════════ responsive ═══════════════
+   The rail collapses beneath its column, still glossed with an ochre tick. */
+@media (max-width: 860px) {
+  :root { --measure: 100%; }
+
+  /* Too narrow for a side index: becomes a slim bar across the top. */
+  .nav {
+    top: 0; right: 0; left: 0;
+    transform: none;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1.9rem;
+    padding: 0.55rem 1rem;
+    background: color-mix(in srgb, var(--bond) 90%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 11%, transparent);
+  }
+  .nav a { padding: 0.4rem 0; }
+  .nav a::before { display: none; }
+  .nav a[aria-current="true"] { text-decoration: underline; text-underline-offset: 0.3em; }
+  .nav--onsky {
+    background: color-mix(in srgb, var(--night) 84%, transparent);
+    border-bottom-color: rgba(224, 166, 68, 0.2);
+  }
+  #overview, #projects, #posts, #techjokes, #contact { scroll-margin-top: 3.6rem; }
+  .spread {
+    grid-template-columns: minmax(0, 1fr);
+    padding-inline: 1.5rem;
+    max-width: 40rem;
+  }
+  .col, .rail { grid-column: 1; }
+  .post { grid-template-columns: minmax(0, 1fr); }
+  .joke__line { grid-template-columns: minmax(0, 1fr); }
+  .joke__who { padding-top: 0; margin-bottom: 0.1rem; }
+  .post__date { padding-top: 0; margin-bottom: 0.2rem; display: block; }
+
+  .rail { order: 2; margin-top: 2rem; padding-left: 1rem; border-left: 1px solid var(--band); }
+  .col  { order: 1; }
+  .sky__inner { padding-inline: 1.5rem; max-width: 40rem; }
+  .player { left: 1.5rem; }
+  .sky__lede br { display: none; }
+}
+
+@media (max-width: 420px) {
+  body { font-size: 1rem; }
+  .sky__name { letter-spacing: -0.028em; }
+}
+
+/* ═══════════════ reduced motion ═══════════════
+   The sky freezes; the curve is drawn already arrived. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .horizon__curve { stroke-dashoffset: 0; }
+  .horizon__band  { opacity: 1; }
+}
