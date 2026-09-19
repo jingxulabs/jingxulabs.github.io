@@ -446,37 +446,6 @@ html { scroll-behavior: smooth; }
   color: var(--graphite);
 }
 
-/* ─── before / after demo ───
-   Two panes, same type, differentiated only by label and edge rule so the
-   prose is judged on its own. Indigo marks the produced text. */
-.demo { margin: 2.2rem 0 0; }
-.demo__pane {
-  border-left: 2px solid color-mix(in srgb, var(--ink) 16%, transparent);
-  padding-left: 1.3rem;
-  margin-bottom: 1.5rem;
-}
-.demo__pane--out { border-left-color: var(--indigo); }
-.demo__label {
-  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
-  font-size: var(--t-s);
-  color: var(--graphite);
-  margin: 0 0 0.5rem;
-}
-.demo blockquote {
-  margin: 0;
-  font-size: 0.97em;
-  line-height: 1.58;
-  text-wrap: pretty;
-}
-.demo figcaption {
-  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
-  font-size: var(--t-s);
-  line-height: 1.45;
-  color: var(--graphite);
-  margin-top: 0.4rem;
-  max-width: 52ch;
-}
-
 /* ─── posts ───
    A dated index. The date sits in its own narrow column, echoing the
    rail/column asymmetry of the page at a smaller scale. */
