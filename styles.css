@@ -22,12 +22,12 @@
   --band-sky:     rgba(224, 166, 68, 0.22);
 
   /* 1.25 major third. Broken in exactly one place: the name. */
-  --t-xs:   0.78rem;
-  --t-s:    0.9375rem;
-  --t-base: 1.0625rem;
-  --t-m:    1.328rem;
-  --t-l:    1.66rem;
-  --t-xl:   2.074rem;
+  --t-xs:   0.875rem;
+  --t-s:    1rem;
+  --t-base: 1.1875rem;
+  --t-m:    1.484rem;
+  --t-l:    1.855rem;
+  --t-xl:   2.318rem;
 
   --rail-w: 168px;
   --gap:    3.25rem;
@@ -386,7 +386,7 @@ html { scroll-behavior: smooth; }
 .signals {
   grid-column: 1 / -1;
   margin-top: clamp(2.5rem, 5vh, 3.5rem);
-  width: min(920px, calc(100vw - 21rem));   /* clears the fixed side index */
+  width: min(980px, calc(100vw - 20rem));   /* clears the fixed side index */
   overflow-x: auto;
 }
 .signals__head { font-size: var(--t-m); font-weight: 500; margin-bottom: 0.7rem; }
@@ -413,9 +413,9 @@ html { scroll-behavior: smooth; }
 
 .sig__name {
   font-family: "Spline Sans Mono", ui-monospace, monospace;
-  font-size: 0.76rem;
+  font-size: 0.83rem;
   font-weight: 500;
-  width: 12rem;
+  width: 12.5rem;
   color: var(--ink);
   word-break: break-word;
 }
@@ -430,7 +430,7 @@ html { scroll-behavior: smooth; }
 .sig__bar i { display: block; height: 100%; background: var(--indigo); }
 
 .sig__dir {
-  width: 14rem;
+  width: 15rem;
   font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
   font-size: var(--t-s);
   line-height: 1.42;
@@ -443,6 +443,79 @@ html { scroll-behavior: smooth; }
   font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
   font-size: var(--t-s);
   line-height: 1.42;
+  color: var(--graphite);
+}
+
+/* ─── worked example ───
+   Lives inside the full-width signals block, so it can run two panes of
+   prose side by side and carry its own small tables. */
+.worked {
+  grid-column: 1 / -1;
+  width: min(980px, calc(100vw - 20rem));
+  margin-top: clamp(2.75rem, 6vh, 4rem);
+}
+.worked__head {
+  font-size: var(--t-base);
+  font-weight: 600;
+  margin: 2.4rem 0 0.7rem;
+}
+
+.score { display: flex; align-items: flex-end; gap: 2rem; margin: 0 0 1.8rem; }
+.score__cell { display: flex; flex-direction: column; gap: 0.15rem; }
+.score__cap {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-xs);
+  color: var(--graphite);
+}
+.score__n { font-size: 2.9rem; line-height: 1; font-weight: 500; color: var(--ink); }
+.score__n--before { color: color-mix(in srgb, var(--ink) 42%, var(--bond)); }
+.score__delta { font-size: var(--t-m); color: var(--indigo); font-weight: 500; padding-bottom: 0.4rem; }
+
+.ba { display: grid; grid-template-columns: 1fr 1fr; gap: 1.8rem; }
+.ba__pane {
+  border-left: 2px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  padding-left: 1.2rem;
+}
+.ba__pane--out { border-left-color: var(--indigo); }
+.ba__pane p { font-size: 0.95em; line-height: 1.55; text-wrap: pretty; }
+.ba__label {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  color: var(--graphite);
+  margin-bottom: 0.5rem;
+}
+.ba__foot, .diag {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.5;
+  color: var(--graphite);
+  max-width: 82ch;
+  margin-top: 1rem;
+}
+.diag--tight { margin-top: 0; margin-bottom: 1rem; }
+
+.sig--moves .sig__name, .sig--meas .sig__name { width: 16rem; font-family: inherit; font-size: var(--t-s); font-weight: 400; }
+.sig--moves .sig__dir, .sig--meas .sig__dir { width: 8rem; }
+.sig--moves .sig__sep, .sig--meas .sig__sep { width: 8rem; }
+.sig--meas .sig__def { font-family: inherit; }
+
+.gates { list-style: none; margin: 0; padding: 0; }
+.gates li {
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  column-gap: 1.2rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
+}
+.gate__name {
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: 0.83rem;
+  color: var(--indigo);
+}
+.gate__val {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.45;
   color: var(--graphite);
 }
 
@@ -581,6 +654,12 @@ html { scroll-behavior: smooth; }
   .sig td, .sig tbody th { padding: 0 0 0.35rem 0; }
   .sig__bar { display: inline-block; vertical-align: middle; margin: 0 0 0 0.6rem; }
 
+  .worked { width: auto; }
+  .ba { grid-template-columns: minmax(0, 1fr); }
+  .gates li { grid-template-columns: minmax(0, 1fr); row-gap: 0.15rem; }
+  .score { gap: 1.4rem; }
+  .score__n { font-size: 2.2rem; }
+
   .post { grid-template-columns: minmax(0, 1fr); }
   .joke__line { grid-template-columns: minmax(0, 1fr); }
   .joke__who { padding-top: 0; margin-bottom: 0.1rem; }
@@ -594,7 +673,7 @@ html { scroll-behavior: smooth; }
 }
 
 @media (max-width: 420px) {
-  body { font-size: 1rem; }
+  body { font-size: 1.0938rem; }
   .sky__name { letter-spacing: -0.028em; }
 }
 

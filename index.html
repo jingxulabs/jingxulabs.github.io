@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=18">
+<link rel="stylesheet" href="styles.css?v=19">
 </head>
 <body>
 
@@ -319,6 +319,179 @@
           </tbody>
         </table>
       </div>
+      <div class="worked">
+        <h3 class="signals__head">A worked example</h3>
+        <p class="signals__intro">One document through the tool. The human writing score measures distance from the
+          human range across the <span class="num">20</span> calibrated signals, each weighted by how well it
+          separates human from machine writing. It is not the probability that a detector will be fooled, and a
+          higher score does not mean a detector will score the text any differently.</p>
+
+        <div class="score">
+          <span class="score__cell"><span class="score__cap">before</span><span class="score__n score__n--before num">56</span></span>
+          <span class="score__cell"><span class="score__cap">after</span><span class="score__n num">82</span></span>
+          <span class="score__delta num">+26</span>
+        </div>
+
+        <div class="ba">
+          <div class="ba__pane">
+            <p class="ba__label">Original, <span class="num">94</span> words</p>
+            <p>AI slop is a slang term for low-quality, mass-produced content created with generative AI, such as
+              generic articles, repetitive images, fake-looking videos, spammy social posts, or text that sounds
+              fluent but says very little. The key difference between AI slop and ordinary &#8220;human crap&#8221;
+              is not that humans always make better content&#8212;people have always produced spam, clickbait, lazy
+              writing, misinformation, and bad art. The difference is scale and cost. A person might spend an hour
+              producing one bad article, while AI can generate hundreds or thousands of similarly bad pieces very
+              quickly and cheaply.</p>
+          </div>
+          <div class="ba__pane ba__pane--out">
+            <p class="ba__label">Rewrite, <span class="num">94</span> words, <span class="num">100%</span> of the original length</p>
+            <p>You&#8217;ve probably seen people call something &#8220;AI slop.&#8221; It&#8217;s slang for bad
+              content made in bulk with generative AI, generic articles, repetitive images, fake-looking videos,
+              spammy social posts, or writing that reads smoothly while saying almost nothing.</p>
+            <p>I think the point isn&#8217;t that humans are always better. People have always made &#8220;human
+              crap&#8221;: spam, clickbait, lazy writing, misinformation, and bad art.</p>
+            <p>What changes with AI is scale and cost. A person might burn an hour on one bad article; AI can spit
+              out hundreds or thousands of similarly bad pieces very quickly and cheaply.</p>
+          </div>
+        </div>
+        <p class="ba__foot">Accepted on iteration <span class="num">3</span>.
+          <span class="num">58%</span> of the brief carried out, <span class="num">60%</span> of the document
+          rewritten, <span class="num">4</span> additions marked as additions, <span class="num">19</span> gateway
+          calls.</p>
+
+        <h4 class="worked__head">What the rewriter was asked for</h4>
+        <p class="diag">It reads machine-written because it packs many categories into one long, evenly weighted
+          list without any concrete instance, source, or situational context that would anchor a human explanation.
+          The prose repeatedly uses abstract framing (&#8220;key difference,&#8221; &#8220;scale and cost&#8221;)
+          and balanced contrast structures that sound like a template for definition-writing rather than someone
+          speaking from experience. It also avoids first-person stance or reader-address, and relies on generic
+          quantifiers (&#8220;hundreds or thousands&#8221;) that feel padded rather than observed.</p>
+        <table class="sig sig--moves">
+          <thead><tr><th scope="col">Move</th><th scope="col">Signal</th><th scope="col">From</th><th scope="col">To</th><th scope="col">Separation</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+              <th scope="row" class="sig__name">word reuse</th>
+              <td class="sig__sep"><span class="num">0.276</span></td>
+              <td class="sig__sep"><span class="num">0.303</span></td>
+              <td class="sig__sep"><span class="num">0.98</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+              <th scope="row" class="sig__name">content-word density</th>
+              <td class="sig__sep"><span class="num">0.714</span></td>
+              <td class="sig__sep"><span class="num">0.518</span></td>
+              <td class="sig__sep"><span class="num">0.97</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+              <th scope="row" class="sig__name">long words</th>
+              <td class="sig__sep"><span class="num">15.306</span></td>
+              <td class="sig__sep"><span class="num">12.059</span></td>
+              <td class="sig__sep"><span class="num">0.97</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+              <th scope="row" class="sig__name">pronouns and back-reference</th>
+              <td class="sig__sep"><span class="num">1.02</span></td>
+              <td class="sig__sep"><span class="num">9.584</span></td>
+              <td class="sig__sep"><span class="num">0.95</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+              <th scope="row" class="sig__name">abstract nouns</th>
+              <td class="sig__sep"><span class="num">4.082</span></td>
+              <td class="sig__sep"><span class="num">1.612</span></td>
+              <td class="sig__sep"><span class="num">0.94</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+              <th scope="row" class="sig__name">first-person voice</th>
+              <td class="sig__sep"><span class="num">0</span></td>
+              <td class="sig__sep"><span class="num">1.836</span></td>
+              <td class="sig__sep"><span class="num">0.92</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 class="worked__head">Signals outside the human range</h4>
+        <p class="diag diag--tight"><span class="num">8</span> of the <span class="num">20</span> fell outside the
+          human band on this document. The other <span class="num">12</span> measured in range and were left alone.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Signal</th><th scope="col">Yours</th><th scope="col">Human range</th><th scope="col">Separation</th><th scope="col">Reading</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">content-word density</th>
+              <td class="sig__sep"><span class="num">0.673</span></td>
+              <td class="sig__def"><span class="num">0.458 to 0.518</span></td>
+              <td class="sig__sep"><span class="num">0.97</span></td>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">sentence-shape variety</th>
+              <td class="sig__sep"><span class="num">1.792</span></td>
+              <td class="sig__def"><span class="num">2.448 to 3.42</span></td>
+              <td class="sig__sep"><span class="num">0.92</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">word reuse</th>
+              <td class="sig__sep"><span class="num">0.274</span></td>
+              <td class="sig__def"><span class="num">0.303 to 0.359</span></td>
+              <td class="sig__sep"><span class="num">0.98</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">pronouns and back-reference</th>
+              <td class="sig__sep"><span class="num">7.143</span></td>
+              <td class="sig__def"><span class="num">9.584 to 15.422</span></td>
+              <td class="sig__sep"><span class="num">0.95</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">formality</th>
+              <td class="sig__sep"><span class="num">0</span></td>
+              <td class="sig__def"><span class="num">0.069 to 0.409</span></td>
+              <td class="sig__sep"><span class="num">0.87</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">density of named specifics</th>
+              <td class="sig__sep"><span class="num">6.122</span></td>
+              <td class="sig__def"><span class="num">1.488 to 4.574</span></td>
+              <td class="sig__sep"><span class="num">0.68</span></td>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">first-person voice</th>
+              <td class="sig__sep"><span class="num">1.02</span></td>
+              <td class="sig__def"><span class="num">1.836 to 5.851</span></td>
+              <td class="sig__sep"><span class="num">0.92</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">contractions</th>
+              <td class="sig__sep"><span class="num">3.061</span></td>
+              <td class="sig__def"><span class="num">0.686 to 2.759</span></td>
+              <td class="sig__sep"><span class="num">0.83</span></td>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 class="worked__head">Gates</h4>
+        <ul class="gates">
+          <li><span class="gate__name">length</span><span class="gate__val">94 vs 94 words, ratio 1.00, allowed 0.70 to 1.20</span></li>
+          <li><span class="gate__name">meaning</span><span class="gate__val">forward min 0.86, mean 0.90; reverse p10 0.85, mean 0.88; document 0.86</span></li>
+          <li><span class="gate__name">literals</span><span class="gate__val">all literals preserved</span></li>
+          <li><span class="gate__name">readability</span><span class="gate__val">grade 13.8 to 9.3 (allowed -6.0 to +2.0), ease 38.1 to 55.9</span></li>
+          <li><span class="gate__name">structure</span><span class="gate__val">1 to 3 paragraphs, allowed 1 to 3</span></li>
+          <li><span class="gate__name">divergence</span><span class="gate__val">depth 0.59; 58% of the wording and 25% of the sentences are the original&#x27;s; longest copied run 11 words</span></li>
+          <li><span class="gate__name">style</span><span class="gate__val">no marketing language; one advisory miss, 10.2 semicolons per 1000 words against a target of at most 3</span></li>
+          <li><span class="gate__name">critic and meaning audit</span><span class="gate__val">passed; four additions flagged to the reader as additions</span></li>
+        </ul>
+      </div>
+
     </article>
 
     <!-- ══ PROJECTS 2-4 : empty slots. Nothing here is a claim. ══ -->
@@ -497,6 +670,6 @@
 </main>
 
 <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
-<script src="main.js?v=18"></script>
+<script src="main.js?v=19"></script>
 </body>
 </html>
