@@ -111,7 +111,7 @@ a:hover { text-decoration-color: var(--indigo); }
    the same ochre tick the margin rail uses to mark a note. The left edge
    stays clear for the gloss rail. */
 html { scroll-behavior: smooth; }
-#overview, #projects, #posts, #techjokes, #contact { scroll-margin-top: 2rem; }
+#overview, #projects, #humanizedai, #posts, #techjokes, #contact { scroll-margin-top: 2rem; }
 
 .nav {
   position: fixed;
@@ -150,6 +150,18 @@ html { scroll-behavior: smooth; }
 .nav a:hover::before { opacity: 0.45; }
 .nav a[aria-current="true"] { color: var(--ink); }
 .nav a[aria-current="true"]::before { opacity: 1; }
+
+/* A project hangs under its section, set smaller and pulled in. */
+.nav a.nav__sub {
+  font-size: var(--t-xs);
+  padding-top: 0.15rem;
+  padding-bottom: 0.45rem;
+  margin-top: -0.35rem;
+  padding-right: 0.9rem;
+  color: color-mix(in srgb, var(--graphite) 82%, var(--bond));
+}
+.nav a.nav__sub::before { width: 9px; }
+.nav--onsky a.nav__sub { color: color-mix(in srgb, var(--graphite-sky) 82%, var(--night)); }
 
 /* Over the night hero the same list flips to the sky palette. */
 .nav--onsky a { color: var(--graphite-sky); }
@@ -706,13 +718,14 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
     border-bottom: 1px solid color-mix(in srgb, var(--ink) 11%, transparent);
   }
   .nav a { padding: 0.4rem 0; }
+  .nav a.nav__sub { display: none; }   /* no room in the top bar */
   .nav a::before { display: none; }
   .nav a[aria-current="true"] { text-decoration: underline; text-underline-offset: 0.3em; }
   .nav--onsky {
     background: color-mix(in srgb, var(--night) 84%, transparent);
     border-bottom-color: rgba(224, 166, 68, 0.2);
   }
-  #overview, #projects, #posts, #techjokes, #contact { scroll-margin-top: 3.6rem; }
+  #overview, #projects, #humanizedai, #posts, #techjokes, #contact { scroll-margin-top: 3.6rem; }
   .spread {
     grid-template-columns: minmax(0, 1fr);
     padding-inline: 1.5rem;

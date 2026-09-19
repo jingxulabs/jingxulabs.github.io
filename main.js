@@ -197,8 +197,10 @@
     }
   }, { rootMargin: '-45% 0px -50% 0px' });
 
-  byId.forEach((_, id) => {
-    const el = document.getElementById(id);
+  // Only top-level entries drive the active marker; a nested project link
+  // would fight its own section for it.
+  links.filter((a) => !a.classList.contains('nav__sub')).forEach((a) => {
+    const el = document.getElementById(a.getAttribute('href').slice(1));
     if (el) spy.observe(el);
   });
 
@@ -215,8 +217,15 @@
   const reveal = (id) => {
     const target = document.getElementById(id);
     if (!target) return null;
-    const d = target.querySelector('details');
-    if (d) d.open = true;
+    // Open the target's own disclosure and every one it sits inside, so a
+    // link to a nested project does not land on a closed section.
+    const own = target.querySelector('details');
+    if (own) own.open = true;
+    let up = target.closest('details');
+    while (up) {
+      up.open = true;
+      up = up.parentElement && up.parentElement.closest('details');
+    }
     return target;
   };
 
