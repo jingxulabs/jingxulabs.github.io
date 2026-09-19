@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=27">
+<link rel="stylesheet" href="styles.css?v=28">
 </head>
 <body>
 
@@ -150,7 +150,9 @@
           since a faithful rewrite of a wrong original stays wrong.</p>
 
             <p><span class="marker">Approach.</span> <span class="num">31</span> features are calibrated,
-          each scored by how cleanly it separates a labelled human corpus from an AI one. A signal only becomes an instruction if it clears three filters
+          each scored by how cleanly it separates a labelled human corpus from an AI one.
+          <span class="num">20</span> of them separate the two well enough to be picked as steering signals. On a
+          given document a steering signal only becomes an instruction if it clears three filters
           (separation <span class="num">≥ 0.65</span>, normalized gap <span class="num">≥ 0.15</span>, and
           agreement on direction), and at most six are issued per rewrite, strongest discriminator first. The
           rewriter then builds a ledger of the assertions in the source and writes fresh prose from that ledger
@@ -768,6 +770,6 @@
 </main>
 
 <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
-<script src="main.js?v=27"></script>
+<script src="main.js?v=28"></script>
 </body>
 </html>
