@@ -378,6 +378,74 @@ html { scroll-behavior: smooth; }
   max-width: 48ch;
 }
 
+/* ─── steering-signal table ───
+   Breaks the 64ch measure and spans the whole spread: 20 rows x 4 fields
+   cannot be read at body width. Separation gets a bar as well as a number
+   so the ranking is scannable; direction is colour-coded by the two
+   existing accents. */
+.signals {
+  grid-column: 1 / -1;
+  margin-top: clamp(2.5rem, 5vh, 3.5rem);
+  width: min(920px, calc(100vw - 21rem));   /* clears the fixed side index */
+  overflow-x: auto;
+}
+.signals__head { font-size: var(--t-m); font-weight: 500; margin-bottom: 0.7rem; }
+.signals__intro {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.5;
+  color: var(--graphite);
+  max-width: 78ch;
+  margin-bottom: 1.5rem;
+}
+
+.sig { width: 100%; border-collapse: collapse; text-align: left; }
+.sig thead th {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 600;
+  color: var(--graphite);
+  padding: 0 0.9rem 0.5rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
+}
+.sig tbody tr { border-bottom: 1px solid color-mix(in srgb, var(--ink) 9%, transparent); }
+.sig td, .sig tbody th { padding: 0.78rem 0.9rem 0.78rem 0; vertical-align: top; }
+
+.sig__name {
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: 0.76rem;
+  font-weight: 500;
+  width: 12rem;
+  color: var(--ink);
+  word-break: break-word;
+}
+.sig__sep { width: 6.4rem; white-space: nowrap; }
+.sig__bar {
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin-top: 0.42rem;
+  background: color-mix(in srgb, var(--ink) 11%, transparent);
+}
+.sig__bar i { display: block; height: 100%; background: var(--indigo); }
+
+.sig__dir {
+  width: 14rem;
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.42;
+}
+.sig__arrow { font-weight: 700; margin-right: 0.4em; }
+.sig__dir--up   .sig__arrow { color: var(--indigo); }
+.sig__dir--down .sig__arrow { color: var(--ochre); }
+
+.sig__def {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.42;
+  color: var(--graphite);
+}
+
 /* ─── before / after demo ───
    Two panes, same type, differentiated only by label and edge rule so the
    prose is judged on its own. Indigo marks the produced text. */
@@ -536,6 +604,14 @@ html { scroll-behavior: smooth; }
     max-width: 40rem;
   }
   .col, .rail { grid-column: 1; }
+  /* A four-column table is unreadable on a phone: stack each signal. */
+  .signals { width: auto; overflow-x: visible; }
+  .sig, .sig tbody, .sig tr, .sig td, .sig tbody th { display: block; width: auto; }
+  .sig thead { display: none; }
+  .sig tbody tr { padding: 1rem 0; }
+  .sig td, .sig tbody th { padding: 0 0 0.35rem 0; }
+  .sig__bar { display: inline-block; vertical-align: middle; margin: 0 0 0 0.6rem; }
+
   .post { grid-template-columns: minmax(0, 1fr); }
   .joke__line { grid-template-columns: minmax(0, 1fr); }
   .joke__who { padding-top: 0; margin-bottom: 0.1rem; }

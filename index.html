@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=16">
+<link rel="stylesheet" href="styles.css?v=17">
 </head>
 <body>
 
@@ -128,7 +128,7 @@
           well and looking less machine-made pull apart it follows readability. It also won't make anything true,
           since a faithful rewrite of a wrong original stays wrong.</p>
 
-        <p><span class="marker">Approach.</span> More than <span class="num">30</span> signals are calibrated,
+        <p><span class="marker">Approach.</span> <span class="num">31</span> features are calibrated,
           each scored by how cleanly it separates a labelled human corpus from an AI one. A signal only becomes an instruction if it clears three filters
           (separation <span class="num">≥ 0.65</span>, normalized gap <span class="num">≥ 0.15</span>, and
           agreement on direction), and at most six are issued per rewrite, strongest discriminator first. The
@@ -203,6 +203,142 @@
             around it rather than edited in place.</figcaption>
         </figure>
 
+      </div>
+
+      <div class="signals">
+        <h3 class="signals__head">The twenty steering signals</h3>
+        <p class="signals__intro">Of the <span class="num">31</span> human-writing features that are calibrated,
+          <span class="num">20</span> separate human from machine writing well enough to steer a rewrite. Separation
+          is an AUC-like measure: <span class="num">0.50</span> means no useful discrimination,
+          <span class="num">1.00</span> means perfect separation. The system follows the calibrated direction rather
+          than intuition.</p>
+        <table class="sig">
+          <thead>
+            <tr><th scope="col">Signal</th><th scope="col">Separation</th><th scope="col">Humanize direction</th><th scope="col">Definition</th></tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th scope="row" class="sig__name">repetition</th>
+            <td class="sig__sep"><span class="num">0.98</span><span class="sig__bar" aria-hidden="true"><i style="width:96%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Reuse the same natural term instead of rotating synonyms.</td>
+            <td class="sig__def">Degree to which the same important words or lemmas are reused instead of repeatedly substituting synonyms. Human writing in this corpus reuses vocabulary more consistently.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">information_density</th>
+            <td class="sig__sep"><span class="num">0.97</span><span class="sig__bar" aria-hidden="true"><i style="width:94%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Loosen the prose with natural connective and function words.</td>
+            <td class="sig__def">Share of text made up of content-heavy words such as nouns, verbs, adjectives and adverbs. Very densely packed clauses are more machine-like in this corpus.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">vocabulary_complexity</th>
+            <td class="sig__sep"><span class="num">0.97</span><span class="sig__bar" aria-hidden="true"><i style="width:94%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Prefer everyday wording such as “use” over “utilize”, while preserving necessary technical terms.</td>
+            <td class="sig__def">Frequency of long or unusually complex words, implemented largely as the proportion of long words.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">pronoun_rate</th>
+            <td class="sig__sep"><span class="num">0.95</span><span class="sig__bar" aria-hidden="true"><i style="width:90%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Use it, they, this and so on rather than repeatedly restating full noun phrases.</td>
+            <td class="sig__def">Frequency of pronouns used to refer back to already-mentioned people, objects or concepts.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">abstraction_rate</th>
+            <td class="sig__sep"><span class="num">0.94</span><span class="sig__bar" aria-hidden="true"><i style="width:88%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Convert abstract nouns into direct verbs where possible.</td>
+            <td class="sig__def">Frequency of nominalized or abstract constructions such as -tion, -ment, -ness and similar noun-heavy phrasing.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">sentence_structure_diversity</th>
+            <td class="sig__sep"><span class="num">0.92</span><span class="sig__bar" aria-hidden="true"><i style="width:84%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Use a smaller number of natural sentence constructions more consistently.</td>
+            <td class="sig__def">Variety or entropy of syntactic sentence shapes, based on factors such as opening part of speech, clauses, verbs and subordination.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">first_person_rate</th>
+            <td class="sig__sep"><span class="num">0.92</span><span class="sig__bar" aria-hidden="true"><i style="width:84%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise where supported. Identify the observer or speaker when the source actually supports it. Never invent experiences.</td>
+            <td class="sig__def">Frequency of first-person forms such as I, me, my, we and our.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">formality</th>
+            <td class="sig__sep"><span class="num">0.87</span><span class="sig__bar" aria-hidden="true"><i style="width:74%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Use a more natural conversational register, except when the requested register is formal.</td>
+            <td class="sig__def">Composite measure of formal register, especially low contraction use plus formal or Latinate vocabulary.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">contraction_rate</th>
+            <td class="sig__sep"><span class="num">0.83</span><span class="sig__bar" aria-hidden="true"><i style="width:66%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Use contractions where natural.</td>
+            <td class="sig__def">Frequency of contractions such as it&#x27;s, doesn&#x27;t, I&#x27;ve and wasn&#x27;t.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">example_density</th>
+            <td class="sig__sep"><span class="num">0.81</span><span class="sig__bar" aria-hidden="true"><i style="width:62%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Keep useful examples but remove unnecessary labels announcing them.</td>
+            <td class="sig__def">Frequency of explicitly signposted examples using phrases such as “for example”, “for instance” and “such as”.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">sentence_length_variance</th>
+            <td class="sig__sep"><span class="num">0.80</span><span class="sig__bar" aria-hidden="true"><i style="width:60%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Mix short and longer sentences by splitting or merging existing content naturally.</td>
+            <td class="sig__def">Amount of variation in sentence lengths, typically normalized so it is not just a function of average length.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">cliche_rate</th>
+            <td class="sig__sep"><span class="num">0.78</span><span class="sig__bar" aria-hidden="true"><i style="width:56%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Replace stock phrases with the actual plain statement, or remove them when content-free.</td>
+            <td class="sig__def">Frequency of phrases from the repo&#x27;s curated machine-writing and AI-cliché inventory.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">transition_frequency</th>
+            <td class="sig__sep"><span class="num">0.72</span><span class="sig__bar" aria-hidden="true"><i style="width:44%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Rely more on natural idea flow. Use simple connectors such as “But” or “So” when needed.</td>
+            <td class="sig__def">Frequency of explicit discourse transitions such as “Moreover”, “Furthermore”, “Additionally” and “In conclusion”.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">specificity</th>
+            <td class="sig__sep"><span class="num">0.68</span><span class="sig__bar" aria-hidden="true"><i style="width:36%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower density, not facts. Retain every fact, but mention a specific once and refer back to it rather than restating it.</td>
+            <td class="sig__def">Density of named entities, dates, numbers, figures, products, organizations, places and other concrete specifics.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">fragment_frequency</th>
+            <td class="sig__sep"><span class="num">0.67</span><span class="sig__bar" aria-hidden="true"><i style="width:34%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise slightly. Allow occasional meaningful fragments based on existing content. Do not manufacture punchy filler.</td>
+            <td class="sig__def">Percentage or frequency of deliberate sentence fragments rather than fully finite clauses.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">em_dash_per_1k</th>
+            <td class="sig__sep"><span class="num">0.64</span><span class="sig__bar" aria-hidden="true"><i style="width:28%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Replace em dashes with commas, periods or parentheses as appropriate.</td>
+            <td class="sig__def">Number of em dashes per 1,000 words.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">paragraph_length_variance</th>
+            <td class="sig__sep"><span class="num">0.62</span><span class="sig__bar" aria-hidden="true"><i style="width:24%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower in the calibration. Move toward the human reference band rather than simply maximizing variation.</td>
+            <td class="sig__def">Degree to which paragraph sizes differ from one another.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">modal_usage</th>
+            <td class="sig__sep"><span class="num">0.57</span><span class="sig__bar" aria-hidden="true"><i style="width:14%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise according to calibration, while preserving the source&#x27;s actual degree of certainty.</td>
+            <td class="sig__def">Frequency of modal verbs such as may, might, could, would and should.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">symmetry</th>
+            <td class="sig__sep"><span class="num">0.56</span><span class="sig__bar" aria-hidden="true"><i style="width:12%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Break mechanically balanced organization and allow ideas to receive unequal space.</td>
+            <td class="sig__def">Degree of artificial structural balance, such as First/Second/Third, equal-sized points, or adjacent sentences with strongly parallel structure.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">directness</th>
+            <td class="sig__sep"><span class="num">0.50</span><span class="sig__bar" aria-hidden="true"><i style="width:0%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Prefer clear actor and verb constructions and remove unsupported hedging, while retaining genuine qualifications.</td>
+            <td class="sig__def">Composite of active-voice usage and reduced unnecessary hedging or modality.</td>
+          </tr>
+          </tbody>
+        </table>
       </div>
     </article>
 
@@ -382,6 +518,6 @@
 </main>
 
 <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
-<script src="main.js?v=16"></script>
+<script src="main.js?v=17"></script>
 </body>
 </html>
