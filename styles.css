@@ -554,7 +554,7 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
 .sig--moves .sig__sep, .sig--meas .sig__sep { width: 8rem; }
 .sig--meas .sig__def { font-family: inherit; }
 
-.gates { list-style: none; margin: 0; padding: 0; }
+.gates { list-style: none; margin: 1.3rem 0 0; padding: 0; }
 .gates li {
   display: grid;
   grid-template-columns: 12rem minmax(0, 1fr);
@@ -575,6 +575,16 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
 }
 
 .repo__link { font-family: "Archivo Narrow", "Arial Narrow", sans-serif; font-size: var(--t-base); margin-bottom: 0.6rem; }
+
+.id {
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: 0.86em;
+  color: var(--ink);
+}
+
+.gatedef { margin: 0 0 1rem; padding-left: 1.6rem; }
+.gatedef li { padding: 0.45rem 0; text-wrap: pretty; }
+.gatedef li::marker { color: var(--graphite); font-family: "Spline Sans Mono", ui-monospace, monospace; font-size: 0.85em; }
 
 .next { list-style: none; margin: 0; padding: 0; }
 .next li {

@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=30">
+<link rel="stylesheet" href="styles.css?v=31">
 </head>
 <body>
 
@@ -395,61 +395,6 @@
           rewritten, <span class="num">4</span> additions marked as additions, <span class="num">19</span> gateway
           calls.</p>
 
-        <h4 class="worked__head">What the rewriter was asked for</h4>
-        <p class="diag">It reads machine-written because it packs many categories into one long, evenly weighted
-          list without any concrete instance, source, or situational context that would anchor a human explanation.
-          The prose repeatedly uses abstract framing (&#8220;key difference,&#8221; &#8220;scale and cost&#8221;)
-          and balanced contrast structures that sound like a template for definition-writing rather than someone
-          speaking from experience. It also avoids first-person stance or reader-address, and relies on generic
-          quantifiers (&#8220;hundreds or thousands&#8221;) that feel padded rather than observed.</p>
-        <table class="sig sig--moves">
-          <thead><tr><th scope="col">Move</th><th scope="col">Signal</th><th scope="col">From</th><th scope="col">To</th><th scope="col">Separation</th></tr></thead>
-          <tbody>
-            <tr>
-              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
-              <th scope="row" class="sig__name">word reuse</th>
-              <td class="sig__sep"><span class="num">0.276</span></td>
-              <td class="sig__sep"><span class="num">0.303</span></td>
-              <td class="sig__sep"><span class="num">0.98</span></td>
-            </tr>
-            <tr>
-              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
-              <th scope="row" class="sig__name">content-word density</th>
-              <td class="sig__sep"><span class="num">0.714</span></td>
-              <td class="sig__sep"><span class="num">0.518</span></td>
-              <td class="sig__sep"><span class="num">0.97</span></td>
-            </tr>
-            <tr>
-              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
-              <th scope="row" class="sig__name">long words</th>
-              <td class="sig__sep"><span class="num">15.306</span></td>
-              <td class="sig__sep"><span class="num">12.059</span></td>
-              <td class="sig__sep"><span class="num">0.97</span></td>
-            </tr>
-            <tr>
-              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
-              <th scope="row" class="sig__name">pronouns and back-reference</th>
-              <td class="sig__sep"><span class="num">1.02</span></td>
-              <td class="sig__sep"><span class="num">9.584</span></td>
-              <td class="sig__sep"><span class="num">0.95</span></td>
-            </tr>
-            <tr>
-              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
-              <th scope="row" class="sig__name">abstract nouns</th>
-              <td class="sig__sep"><span class="num">4.082</span></td>
-              <td class="sig__sep"><span class="num">1.612</span></td>
-              <td class="sig__sep"><span class="num">0.94</span></td>
-            </tr>
-            <tr>
-              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
-              <th scope="row" class="sig__name">first-person voice</th>
-              <td class="sig__sep"><span class="num">0</span></td>
-              <td class="sig__sep"><span class="num">1.836</span></td>
-              <td class="sig__sep"><span class="num">0.92</span></td>
-            </tr>
-          </tbody>
-        </table>
-
         <h4 class="worked__head">Signals outside the human range</h4>
         <p class="diag diag--tight"><span class="num">8</span> of the <span class="num">20</span> fell outside the
           human band on this document. The other <span class="num">12</span> measured in range and were left alone.</p>
@@ -515,7 +460,82 @@
           </tbody>
         </table>
 
+        <h4 class="worked__head">What the rewriter was asked for</h4>
+        <p class="diag">It reads machine-written because it packs many categories into one long, evenly weighted
+          list without any concrete instance, source, or situational context that would anchor a human explanation.
+          The prose repeatedly uses abstract framing (&#8220;key difference,&#8221; &#8220;scale and cost&#8221;)
+          and balanced contrast structures that sound like a template for definition-writing rather than someone
+          speaking from experience. It also avoids first-person stance or reader-address, and relies on generic
+          quantifiers (&#8220;hundreds or thousands&#8221;) that feel padded rather than observed.</p>
+        <table class="sig sig--moves">
+          <thead><tr><th scope="col">Move</th><th scope="col">Signal</th><th scope="col">From</th><th scope="col">To</th><th scope="col">Separation</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+              <th scope="row" class="sig__name">word reuse</th>
+              <td class="sig__sep"><span class="num">0.276</span></td>
+              <td class="sig__sep"><span class="num">0.303</span></td>
+              <td class="sig__sep"><span class="num">0.98</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+              <th scope="row" class="sig__name">content-word density</th>
+              <td class="sig__sep"><span class="num">0.714</span></td>
+              <td class="sig__sep"><span class="num">0.518</span></td>
+              <td class="sig__sep"><span class="num">0.97</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+              <th scope="row" class="sig__name">long words</th>
+              <td class="sig__sep"><span class="num">15.306</span></td>
+              <td class="sig__sep"><span class="num">12.059</span></td>
+              <td class="sig__sep"><span class="num">0.97</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+              <th scope="row" class="sig__name">pronouns and back-reference</th>
+              <td class="sig__sep"><span class="num">1.02</span></td>
+              <td class="sig__sep"><span class="num">9.584</span></td>
+              <td class="sig__sep"><span class="num">0.95</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+              <th scope="row" class="sig__name">abstract nouns</th>
+              <td class="sig__sep"><span class="num">4.082</span></td>
+              <td class="sig__sep"><span class="num">1.612</span></td>
+              <td class="sig__sep"><span class="num">0.94</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+              <th scope="row" class="sig__name">first-person voice</th>
+              <td class="sig__sep"><span class="num">0</span></td>
+              <td class="sig__sep"><span class="num">1.836</span></td>
+              <td class="sig__sep"><span class="num">0.92</span></td>
+            </tr>
+          </tbody>
+        </table>
+
         <h4 class="worked__head">Gates</h4>
+        <div class="sub__body">
+          <p class="diag">A gate is a pass or fail check that can reject a candidate rewrite outright. Gates veto;
+            the score only ranks whatever survived them. Four properties define one in this codebase.</p>
+          <ol class="gatedef">
+            <li><span class="next__t">It vetoes, it does not rank.</span> Gates run before ranking. A candidate that
+              fails one is discarded, no matter how well it scores.</li>
+            <li><span class="next__t">It tests an invariant, not a target.</span> Violating it means the rewrite is
+              wrong, a dropped figure or a third of the length gone, not merely less good. A missed style target
+              ranks a candidate instead of discarding it.</li>
+            <li><span class="next__t">It is deterministic and cheap.</span> No LLM calls, so every candidate gets
+              every gate.</li>
+            <li><span class="next__t">It has a tier.</span> <span class="id">literals</span> and
+              <span class="id">meaning</span> are integrity gates: they protect content a reader cannot check by
+              eye. The rest protect shape. When the pipeline has to ship the least-bad candidate, integrity
+              wins.</li>
+          </ol>
+          <p class="diag">The seven: <span class="id">length</span>, <span class="id">meaning</span>,
+            <span class="id">literals</span>, <span class="id">readability</span>, <span class="id">structure</span>,
+            <span class="id">divergence</span>, <span class="id">style</span>.</p>
+        </div>
         <ul class="gates">
           <li><span class="gate__name">length</span><span class="gate__val">94 vs 94 words, ratio 1.00, allowed 0.70 to 1.20</span></li>
           <li><span class="gate__name">meaning</span><span class="gate__val">forward min 0.86, mean 0.90; reverse p10 0.85, mean 0.88; document 0.86</span></li>
@@ -770,6 +790,6 @@
 </main>
 
 <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
-<script src="main.js?v=30"></script>
+<script src="main.js?v=31"></script>
 </body>
 </html>
