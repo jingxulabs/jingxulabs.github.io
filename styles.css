@@ -527,6 +527,13 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   margin: 2.4rem 0 0.7rem;
 }
 
+.score__title {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 0.55rem;
+}
 .score { display: flex; align-items: flex-end; gap: 2rem; margin: 0 0 1.8rem; }
 .score__cell { display: flex; flex-direction: column; gap: 0.15rem; }
 .score__cap {
