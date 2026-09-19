@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=23">
+<link rel="stylesheet" href="styles.css?v=27">
 </head>
 <body>
 
@@ -116,41 +116,48 @@
 
     <!-- ══ PROJECT 1 : real ══ -->
     <article class="spread project project--major">
-      <aside class="rail">
-        <p class="rail__note"><span class="tick"></span>Three of the directives run against conventional writing
-          advice. Adding specificity and concrete examples is backwards, because the AI corpus already
-          carries more of both. And humans vary sentence <em>length</em> far more than sentence <em>construction</em>, so "vary
-          your structure" turns out to be the wrong instruction.</p>
-        <p class="rail__note"><span class="tick"></span>Negation is invisible to the meaning gate. Flipping a
-          sentence's polarity still scores <span class="num">0.995</span>, because the embeddings don't encode it at this
-          granularity. It's pinned in the tests so it can't be mistaken for coverage.</p>
-        <p class="rail__note"><span class="tick"></span>Several thresholds were tuned while watching one document
-          fail. A control run across human fixtures is still outstanding.</p>
-      </aside>
-
       <div class="col">
-        <h2 class="project__title">Humanizing AI-generated text</h2>
-        <p class="project__link"><a href="https://github.com/jingxulabs/HumanizedAI">github.com/jingxulabs/HumanizedAI</a></p>
-
+        <h2 class="project__title">Improve human communication by humanizing AI-generated text</h2>
         <p class="lede-para">Most AI humanizers try to change how text looks. HumanizedAI tries to measure why it is
           tiring to read, rewrite those measured properties, and prove that the rewrite did not alter what the
           document says.</p>
+      </div>
 
-        <p><span class="marker">Problem.</span> Machine-written prose wears people out. Everything sounds the same,
+      <div class="projfolds">
+        <details class="sub" open>
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">1</span><span class="sub__name">Repository</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p class="repo__link"><a href="https://github.com/jingxulabs/HumanizedAI">github.com/jingxulabs/HumanizedAI</a></p>
+            <p class="diag">Python, MIT licensed. The calibration ships prebuilt, so there is nothing to train
+              before a first run. A FastAPI web interface and a command line covering score, signals, features,
+              run, serve and calibrate. The rewriter and the judge run on different vendors' models by design.</p>
+          </div>
+        </details>
+
+        <details class="sub" open>
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">2</span><span class="sub__name">Project overview and summary</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">Problem.</span> Machine-written prose wears people out. Everything sounds the same,
           nothing surprises, and attention goes. Communication nobody attends to has lost its purpose. So the target
           is readability, not disguise: the tool ships no detector, never optimizes against one, and where reading
           well and looking less machine-made pull apart it follows readability. It also won't make anything true,
           since a faithful rewrite of a wrong original stays wrong.</p>
 
-        <p><span class="marker">Approach.</span> <span class="num">31</span> features are calibrated,
+            <p><span class="marker">Approach.</span> <span class="num">31</span> features are calibrated,
           each scored by how cleanly it separates a labelled human corpus from an AI one. A signal only becomes an instruction if it clears three filters
           (separation <span class="num">≥ 0.65</span>, normalized gap <span class="num">≥ 0.15</span>, and
           agreement on direction), and at most six are issued per rewrite, strongest discriminator first. The
           rewriter then builds a ledger of the assertions in the source and writes fresh prose from that ledger
           rather than editing sentences: the ledger is fixed, the prose is free. Seven deterministic gates can veto
           any candidate; an LLM judge running on a different vendor's model advises but cannot.</p>
-
-        <figure class="plot">
+          </div>
+          <figure class="plot">
           <svg viewBox="0 0 612 152" role="img" aria-label="Rewrite depth by candidate type: verbatim copy 0.00, shallow rewrite 0.14, synonym pass 0.57, ledger-written 0.88.">
             <g>
               <text class="plot__lab" x="148" y="26" text-anchor="end">Verbatim copy</text>
@@ -183,8 +190,8 @@
           <figcaption>Rewrite depth by candidate type. Writing from a ledger of assertions, rather than editing
             the source sentence by sentence, is what moves it.</figcaption>
         </figure>
-
-        <p><span class="marker">Result.</span> The human score of AI-generated text improves significantly after a
+          <div class="sub__body">
+            <p><span class="marker">Result.</span> The human score of AI-generated text improves significantly after a
           pass through the tool. The shallow-rewrite failure was the finding that mattered. Across
           <span class="num">22</span> saved candidates the earlier pipeline returned text
           <span class="num">88–96%</span> word-identical to its input, with verbatim spans up to
@@ -194,17 +201,14 @@
           copied span <span class="num">89 → 27</span> words, with literals and meaning still passing. Widening
           the brief beyond the ten-feature starter set took execution from <span class="num">27%</span> to
           <span class="num">59%</span>.</p>
+          </div>
+        </details>
 
-        <p><span class="marker">Application.</span> Elevate your social media, email, and digital communications
-          with messaging that feels more natural, engaging, and human. The tool helps you align your content with
-          proven human communication patterns, so your message connects more effectively with your audience.</p>
-
-
-      </div>
-
-      <div class="signals">
         <details class="sub">
-          <summary class="sub__sum"><span class="sub__name">The twenty steering signals</span><span class="fold__mark" aria-hidden="true"></span></summary>
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">The twenty steering signals</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
 <p class="signals__intro">Calibration runs over <span class="num">248</span> human-written documents
           and <span class="num">220</span> AI-written ones, computing all <span class="num">31</span> features
           across both. The two corpora do different jobs. The human corpus defines the target range: for each
@@ -345,10 +349,12 @@
           </tbody>
         </table>
         </details>
-      </div>
-      <div class="worked">
+
         <details class="sub">
-          <summary class="sub__sum"><span class="sub__name">A worked example</span><span class="fold__mark" aria-hidden="true"></span></summary>
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">Demo example</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
 <p class="signals__intro">One document through the tool. The human writing score measures distance from the
           human range across the <span class="num">20</span> calibrated signals, each weighted by how well it
           separates human from machine writing. It is not the probability that a detector will be fooled, and a
@@ -519,8 +525,48 @@
           <li><span class="gate__name">critic and meaning audit</span><span class="gate__val">passed; four additions flagged to the reader as additions</span></li>
         </ul>
         </details>
-      </div>
 
+        <details class="sub" open>
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">Applications of the tool</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>Elevate your social media, email, and digital communications
+          with messaging that feels more natural, engaging, and human. The tool helps you align your content with
+          proven human communication patterns, so your message connects more effectively with your audience.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Next step</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>Measured against the humanizer tools already on the market, HumanizedAI is one of the more
+              technically ambitious designs in its GitHub category, particularly around verification and semantic
+              integrity. I do not see many that match its combination of corpus-derived steering, enforced rewrite
+              depth, deterministic integrity gates and a semantic audit.</p>
+            <p>The large existing projects still beat it today on adoption and convenience. The gap is not the
+              method. It is everything around the method, and that is the work:</p>
+            <ul class="next">
+              <li><span class="next__t">Maturity.</span> Several thresholds were tuned while watching a single
+                document fail, the control run over human fixtures is still outstanding, and negation remains
+                invisible to the meaning gate at <span class="num">0.995</span>.</li>
+              <li><span class="next__t">Installation.</span> Too much setup stands between a curious reader and a
+                first run.</li>
+              <li><span class="next__t">English only.</span> The feature set and the calibration both assume
+                English.</li>
+              <li><span class="next__t">Comparative evaluation.</span> No broad head-to-head against the tools it
+                claims to differ from, which is exactly the claim that most needs evidence.</li>
+              <li><span class="next__t">Distribution and interface.</span> The incumbents win on both, and adoption
+                turns on those rather than on method.</li>
+            </ul>
+          </div>
+        </details>
+
+      </div>
     </article>
 
     <!-- ══ PROJECTS 2-4 : empty slots. Nothing here is a claim. ══ -->
@@ -722,6 +768,6 @@
 </main>
 
 <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
-<script src="main.js?v=23"></script>
+<script src="main.js?v=27"></script>
 </body>
 </html>

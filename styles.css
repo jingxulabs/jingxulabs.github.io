@@ -204,7 +204,10 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   list-style: none;
 }
 .sub__sum::-webkit-details-marker { display: none; }
+.sub__label { display: flex; align-items: baseline; gap: 0.9rem; min-width: 0; }
+.sub__num { font-size: var(--t-s); color: var(--graphite); flex: none; }
 .sub__name { font-size: var(--t-m); font-weight: 500; }
+.sub__sum:hover .sub__num { color: var(--ochre); }
 .sub__sum:hover .sub__name { color: var(--indigo); }
 
 /* ═══════════════ SKY ═══════════════ */
@@ -433,12 +436,17 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
    cannot be read at body width. Separation gets a bar as well as a number
    so the ranking is scannable; direction is colour-coded by the two
    existing accents. */
-.signals {
+.projfolds {
   grid-column: 1 / -1;
-  margin-top: clamp(2.5rem, 5vh, 3.5rem);
   width: min(980px, calc(100vw - 20rem));   /* clears the fixed side index */
-  overflow-x: auto;
+  margin-top: clamp(1.6rem, 3.5vh, 2.4rem);
 }
+.sub__body { max-width: 68ch; }
+
+/* This project carries no margin rail, so its heading block spans the
+   full width and aligns with the disclosures beneath it. */
+.project--major > .col { grid-column: 1 / -1; max-width: min(980px, calc(100vw - 20rem)); }
+.project--major > .col > * { max-width: 62ch; }
 .signals__intro { margin-top: 0.2rem; }
 .signals__intro + .signals__intro { margin-top: -0.6rem; }
 .signals__intro {
@@ -500,11 +508,7 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
 /* ─── worked example ───
    Lives inside the full-width signals block, so it can run two panes of
    prose side by side and carry its own small tables. */
-.worked {
-  grid-column: 1 / -1;
-  width: min(980px, calc(100vw - 20rem));
-  margin-top: clamp(2.75rem, 6vh, 4rem);
-}
+.worked__wrap { margin-top: 0; }
 .worked__head {
   font-size: var(--t-base);
   font-weight: 600;
@@ -569,6 +573,17 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   line-height: 1.45;
   color: var(--graphite);
 }
+
+.repo__link { font-family: "Archivo Narrow", "Arial Narrow", sans-serif; font-size: var(--t-base); margin-bottom: 0.6rem; }
+
+.next { list-style: none; margin: 0; padding: 0; }
+.next li {
+  padding: 0.7rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
+  text-wrap: pretty;
+}
+.next li:last-child { border-bottom: 0; }
+.next__t { font-weight: 600; color: var(--indigo); margin-right: 0.35em; }
 
 /* ─── posts ───
    A dated index. The date sits in its own narrow column, echoing the
@@ -702,7 +717,7 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   .sig td, .sig tbody th { padding: 0 0 0.35rem 0; }
   .sig__bar { display: inline-block; vertical-align: middle; margin: 0 0 0 0.6rem; }
 
-  .worked { width: auto; }
+  .projfolds, .project--major > .col { width: auto; max-width: none; }
   .ba { grid-template-columns: minmax(0, 1fr); }
   .gates li { grid-template-columns: minmax(0, 1fr); row-gap: 0.15rem; }
   .score { gap: 1.4rem; }
