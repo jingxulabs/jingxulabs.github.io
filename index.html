@@ -31,7 +31,11 @@
   <!-- The convergence curve is the horizon: sky above, paper below. -->
   <svg class="sky__horizon" viewBox="0 0 1200 200" preserveAspectRatio="none" aria-hidden="true">
     <!-- Exponential decay toward an asymptote it never reaches, with the
-         uncertainty band collapsing as the estimate settles. -->
+         uncertainty band collapsing as the estimate settles. The band is
+         hung below the curve rather than across it, clearing the stroke by
+         4 units, so the line itself always reads clean. Its top edge is the
+         curve offset down; its thickness is the full spread it used to have
+         either side, so it still closes as the estimate does. -->
     <defs>
       <linearGradient id="bandFade" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0"    stop-color="#E8B45C" stop-opacity="0.30"/>
@@ -40,12 +44,12 @@
       </linearGradient>
     </defs>
     <path class="horizon__band"
-          d="M 0 19.6 L 50 41.2 L 100 59.7 L 150 75.6 L 200 89.3 L 300 111.2 L 400 127.3
-             L 500 139.3 L 600 148.1 L 700 154.6 L 800 159.4 L 900 163 L 1000 165.6
-             L 1100 167.6 L 1200 169
-             L 1200 174.2 L 1100 173.2 L 1000 171.8 L 900 170 L 800 167.6 L 700 164.2
-             L 600 159.7 L 500 153.5 L 400 145.3 L 300 134 L 200 118.9 L 150 109.4
-             L 100 98.3 L 50 85.4 L 0 70.4 Z"/>
+          d="M 0 49 L 50 67.3 L 100 83 L 150 96.5 L 200 108.1 L 300 126.6 L 400 140.3
+             L 500 150.4 L 600 157.9 L 700 163.4 L 800 167.5 L 900 170.5 L 1000 172.7
+             L 1100 174.4 L 1200 175.6
+             L 1200 180.8 L 1100 180 L 1000 178.9 L 900 177.5 L 800 175.7 L 700 173
+             L 600 169.5 L 500 164.6 L 400 158.3 L 300 149.4 L 200 137.7 L 150 130.3
+             L 100 121.6 L 50 111.5 L 0 99.8 Z"/>
     <path class="horizon__curve" vector-effect="non-scaling-stroke"
           d="M 0 45 L 50 63.3 L 100 79 L 150 92.5 L 200 104.1 L 300 122.6 L 400 136.3
              L 500 146.4 L 600 153.9 L 700 159.4 L 800 163.5 L 900 166.5 L 1000 168.7
