@@ -117,6 +117,8 @@ html { scroll-behavior: smooth; }
   position: fixed;
   right: 1.9rem;
   top: 50%;
+  /* see the wide-viewport rule below: the index moves into the gutter once
+     there is a gutter to move into. */
   transform: translateY(-50%);
   z-index: 10;
   display: flex;
@@ -146,6 +148,15 @@ html { scroll-behavior: smooth; }
   opacity: 0;
   transition: opacity 160ms ease;
 }
+/* Pressed against the right edge the index reads as cut off, and the last
+   letter of a word sits in the bleed. Once the viewport is wider than the
+   page, the margin either side is dead space, so the index sits well into
+   it. Below that the page fills the window and there is nowhere to go, so
+   the offset stays as it was rather than climbing onto the column. */
+@media (min-width: 1320px) {
+  .nav { right: 5.5rem; }
+}
+
 .nav a:hover { color: var(--ink); }
 .nav a:hover::before { opacity: 0.45; }
 .nav a[aria-current="true"] { color: var(--ink); }
