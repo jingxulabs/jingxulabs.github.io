@@ -14,31 +14,16 @@
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   const NIGHT = '#0D1526';
-  // Stars run warm, from a cream at the faint end to an amber near the
-  // ochre accent at the bright end. The warmth tracks size, so the stars
-  // that carry are the ones that show the colour.
-  const STAR_COOL = [255, 246, 222];
-  const STAR_WARM = [252, 200, 118];
+  const STAR  = '242, 239, 230';
   const TRAIL = '235, 180, 84';
   const HEAD  = '255, 246, 224';
-  // One shell, one colour: a burst draws its three tones from a single
-  // family, so it reads as a firework rather than as confetti, and the
-  // family changes from hit to hit. Gold is the sky's own accent and comes
-  // up most often; indigo is the page's other one. Ice and rose are the
-  // two that are not in the palette, and are what make the set read as
-  // colour rather than as one warm note.
-  const SHELLS = [
-    { hot: '255, 238, 178', mid: '255, 201,  94', low: '226, 150,  58', w: 0.34 },  // gold
-    { hot: '223, 229, 255', mid: '154, 168, 250', low: '108, 121, 206', w: 0.24 },  // indigo
-    { hot: '255, 255, 255', mid: '198, 228, 252', low: '128, 176, 222', w: 0.21 },  // ice
-    { hot: '255, 228, 236', mid: '255, 149, 178', low: '221,  94, 136', w: 0.21 }   // rose
-  ];
+  const SPARK = '255, 212, 106';   // the ochre accent, pushed toward yellow
 
   // A burst is the most expensive thing on the page, so it is rationed:
   // one full one at a time, a token one for hits that land during the hold.
   const BURST_HOLD = 620;    // ms before another full burst is allowed
-  const SPARK_CAP  = 620;    // live particles, a hard ceiling for slow devices
-  const GRAVITY    = 0.0001;
+  const SPARK_CAP  = 340;    // live particles, a hard ceiling for slow devices
+  const GRAVITY    = 0.00012;
 
   let W = 0, H = 0, stars = [], meteors = [], sparks = [], flashes = [];
   let raf = null, last = 0, nextSpawn = 700, onScreen = true, burstHold = 0;
@@ -105,26 +90,16 @@
   }
 
   function seedStars() {
-    const target = Math.min(Math.round((W * H) / 2400), 520);
-    stars = Array.from({ length: target }, () => {
-      // Skewed toward the small: a field needs many faint ones to read as
-      // depth, and a few that carry, rather than a uniform spatter.
-      const m = Math.pow(Math.random(), 1.7);
-      // Warmth follows size, with enough jitter that the field is not a
-      // gradient: a small star can still be amber, a large one still cream.
-      const w = Math.min(1, Math.max(0, m * 0.7 + rand(0, 0.4)));
-      return {
-        x: Math.random() * W,
-        y: Math.random() * H * 0.94,
-        r: 0.55 + m * 1.5,
-        a: 0.46 + m * 0.54,
-        halo: m > 0.62,
-        tone: STAR_COOL.map((c, i) => Math.round(c + (STAR_WARM[i] - c) * w)).join(', '),
-        // Twinkle is barely perceptible by design — a field, not a light show.
-        p: Math.random() * Math.PI * 2,
-        s: rand(0.0004, 0.0013)
-      };
-    });
+    const target = Math.min(Math.round((W * H) / 3000), 380);
+    stars = Array.from({ length: target }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H * 0.94,
+      r: rand(0.3, 1.35),
+      a: rand(0.28, 0.88),
+      // Twinkle is barely perceptible by design — a field, not a light show.
+      p: Math.random() * Math.PI * 2,
+      s: rand(0.0004, 0.0013)
+    }));
   }
 
   // Real showers radiate: every trail points away from one spot on the sky.
@@ -161,16 +136,7 @@
   function drawStars(t) {
     for (const s of stars) {
       const a = reduced.matches ? s.a : s.a * (0.72 + 0.28 * Math.sin(s.p + t * s.s));
-      // The ones that carry get a soft halo, which is most of what makes a
-      // star read as a light rather than as a dot of paint. Two fills, no
-      // gradient per star: the field is redrawn every frame.
-      if (s.halo) {
-        ctx.fillStyle = `rgba(${s.tone}, ${(a * 0.12).toFixed(3)})`;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r * 2.8, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.fillStyle = `rgba(${s.tone}, ${a.toFixed(3)})`;
+      ctx.fillStyle = `rgba(${STAR}, ${a.toFixed(3)})`;
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
       ctx.fill();
@@ -216,37 +182,28 @@
      bias and gravity brings them back down, so the shape is a fountain
      over the horizon and not a symmetrical ball. */
 
-  function pickShell() {
-    let r = Math.random();
-    for (const s of SHELLS) { r -= s.w; if (r <= 0) return s; }
-    return SHELLS[0];
-  }
-
   function burst(x, y, scale) {
     // Full bursts are rate limited. A hit arriving inside the hold still
     // registers, as a handful of sparks, so the cause stays visible.
     const full = burstHold <= 0 && sparks.length < SPARK_CAP;
-    const n = full ? Math.round(rand(46, 64) * (0.7 + scale * 0.3)) : Math.round(rand(7, 11));
-    const shell = pickShell();
+    const n = full ? Math.round(rand(26, 38) * (0.7 + scale * 0.3)) : Math.round(rand(5, 9));
     if (full) {
       burstHold = BURST_HOLD;
-      flashes.push({ x, y, age: 0, life: 380, scale, shell });
+      flashes.push({ x, y, age: 0, life: 300, scale });
     }
 
     for (let i = 0; i < n; i++) {
       const a  = rand(0, Math.PI * 2);
-      // Speeds spread wide on purpose: the slow ones hold the centre bright
-      // while the fast ones carry the burst out to its full width.
-      const sp = rand(0.10, 0.42) * (0.75 + scale * 0.35) * (full ? 1 : 0.6);
+      const sp = rand(0.08, 0.23) * (0.75 + scale * 0.35) * (full ? 1 : 0.65);
       const t  = Math.random();
       sparks.push({
         x, y,
         vx: Math.cos(a) * sp,
-        vy: Math.sin(a) * sp * 0.74 - 0.06,   // flattened, and thrown upward
+        vy: Math.sin(a) * sp * 0.72 - 0.05,   // flattened, and thrown upward
         age: 0,
-        life: rand(1050, 1750) * (full ? 1 : 0.65),
-        r: rand(1, 2.4) * (0.8 + scale * 0.2),
-        tone: t < 0.22 ? shell.hot : t < 0.74 ? shell.mid : shell.low
+        life: rand(780, 1250) * (full ? 1 : 0.7),
+        r: rand(0.7, 1.7) * (0.8 + scale * 0.2),
+        tone: t < 0.18 ? HEAD : t < 0.8 ? SPARK : TRAIL
       });
     }
   }
@@ -257,25 +214,16 @@
       f.age += dt;
       if (f.age > f.life) { flashes.splice(i, 1); continue; }
       const k = f.age / f.life;
-      const s = f.shell;
-      const r = (16 + 86 * k) * f.scale;
-      const a = (1 - k) * 0.8;
+      const r = (10 + 46 * k) * f.scale;
+      const a = (1 - k) * 0.62;
       const g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, r);
-      g.addColorStop(0,    `rgba(${s.hot}, ${a.toFixed(3)})`);
-      g.addColorStop(0.35, `rgba(${s.mid}, ${(a * 0.6).toFixed(3)})`);
-      g.addColorStop(1,    `rgba(${s.low}, 0)`);
+      g.addColorStop(0,    `rgba(${HEAD},  ${a.toFixed(3)})`);
+      g.addColorStop(0.45, `rgba(${SPARK}, ${(a * 0.55).toFixed(3)})`);
+      g.addColorStop(1,    `rgba(${SPARK}, 0)`);
       ctx.fillStyle = g;
       ctx.beginPath();
       ctx.arc(f.x, f.y, r, 0, Math.PI * 2);
       ctx.fill();
-
-      // The shell edge, opening ahead of the sparks. It is what makes the
-      // hit legible as one event rather than as particles appearing.
-      ctx.strokeStyle = `rgba(${s.mid}, ${(a * 0.5).toFixed(3)})`;
-      ctx.lineWidth = 1.6 * (1 - k) + 0.3;
-      ctx.beginPath();
-      ctx.arc(f.x, f.y, r * 0.86, 0, Math.PI * 2);
-      ctx.stroke();
     }
   }
 
@@ -291,24 +239,13 @@
 
       // Holds its brightness, then drops away: sparks, not a slow dissolve.
       const k = s.age / s.life;
-      const a = Math.pow(1 - k, 1.4);
+      const a = Math.pow(1 - k, 1.5);
       // Streaked along its own velocity, so fast sparks are longest and the
       // burst has the grain of the meteor that made it.
-      const hx = s.x - s.vx * 56, hy2 = s.y - s.vy * 56;
-
-      // Two passes: a wide dim one that carries against the night sky, and
-      // the bright core inside it. Cheaper and steadier than a shadow blur.
-      ctx.strokeStyle = `rgba(${s.tone}, ${(a * 0.22).toFixed(3)})`;
-      ctx.lineWidth = s.r * 3.4;
-      ctx.beginPath();
-      ctx.moveTo(hx, hy2);
-      ctx.lineTo(s.x, s.y);
-      ctx.stroke();
-
       ctx.strokeStyle = `rgba(${s.tone}, ${a.toFixed(3)})`;
       ctx.lineWidth = s.r;
       ctx.beginPath();
-      ctx.moveTo(hx, hy2);
+      ctx.moveTo(s.x - s.vx * 44, s.y - s.vy * 44);
       ctx.lineTo(s.x, s.y);
       ctx.stroke();
     }
