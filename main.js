@@ -101,16 +101,22 @@
   }
 
   function seedStars() {
-    const target = Math.min(Math.round((W * H) / 3000), 380);
-    stars = Array.from({ length: target }, () => ({
-      x: Math.random() * W,
-      y: Math.random() * H * 0.94,
-      r: rand(0.3, 1.35),
-      a: rand(0.28, 0.88),
-      // Twinkle is barely perceptible by design — a field, not a light show.
-      p: Math.random() * Math.PI * 2,
-      s: rand(0.0004, 0.0013)
-    }));
+    const target = Math.min(Math.round((W * H) / 2400), 520);
+    stars = Array.from({ length: target }, () => {
+      // Skewed toward the small: a field needs many faint ones to read as
+      // depth, and a few that carry, rather than a uniform spatter.
+      const m = Math.pow(Math.random(), 1.7);
+      return {
+        x: Math.random() * W,
+        y: Math.random() * H * 0.94,
+        r: 0.55 + m * 1.5,
+        a: 0.46 + m * 0.54,
+        halo: m > 0.62,
+        // Twinkle is barely perceptible by design — a field, not a light show.
+        p: Math.random() * Math.PI * 2,
+        s: rand(0.0004, 0.0013)
+      };
+    });
   }
 
   // Real showers radiate: every trail points away from one spot on the sky.
@@ -147,6 +153,15 @@
   function drawStars(t) {
     for (const s of stars) {
       const a = reduced.matches ? s.a : s.a * (0.72 + 0.28 * Math.sin(s.p + t * s.s));
+      // The ones that carry get a soft halo, which is most of what makes a
+      // star read as a light rather than as a dot of paint. Two fills, no
+      // gradient per star: the field is redrawn every frame.
+      if (s.halo) {
+        ctx.fillStyle = `rgba(${STAR}, ${(a * 0.12).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r * 2.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
       ctx.fillStyle = `rgba(${STAR}, ${a.toFixed(3)})`;
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
