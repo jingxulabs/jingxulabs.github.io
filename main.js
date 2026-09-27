@@ -1,5 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
-   Sky: a static star field with meteors arriving as observations.
+   Sky: a static star field with meteors arriving as observations,
+   each one spending itself as a burst where it meets the horizon.
    Motion budget for the whole site is spent here and in the horizon
    curve. Nothing below the fold animates on scroll.
    ═══════════════════════════════════════════════════════════ */
@@ -16,9 +17,16 @@
   const STAR  = '242, 239, 230';
   const TRAIL = '235, 180, 84';
   const HEAD  = '255, 246, 224';
+  const SPARK = '255, 212, 106';   // the ochre accent, pushed toward yellow
 
-  let W = 0, H = 0, stars = [], meteors = [];
-  let raf = null, last = 0, nextSpawn = 700, onScreen = true;
+  // A burst is the most expensive thing on the page, so it is rationed:
+  // one full one at a time, a token one for hits that land during the hold.
+  const BURST_HOLD = 620;    // ms before another full burst is allowed
+  const SPARK_CAP  = 340;    // live particles, a hard ceiling for slow devices
+  const GRAVITY    = 0.00012;
+
+  let W = 0, H = 0, stars = [], meteors = [], sparks = [], flashes = [];
+  let raf = null, last = 0, nextSpawn = 700, onScreen = true, burstHold = 0;
 
   const rand = (a, b) => a + Math.random() * (b - a);
 
@@ -32,7 +40,53 @@
     canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     seedStars();
+    measureHorizon();
     if (reduced.matches) drawStatic();
+  }
+
+  /* ─── The horizon as an obstacle ───
+     The curve is an SVG polyline in its own coordinates, stretched to the
+     hero's width by preserveAspectRatio="none". Its points are read from
+     the path in the document rather than restated here, so editing the
+     curve's shape moves where meteors land without touching this file. */
+
+  const horizonSvg  = hero.querySelector('.sky__horizon');
+  const horizonPath = hero.querySelector('.horizon__curve');
+  const VB_W = 1200, VB_H = 200;   // the path's viewBox
+
+  const CURVE = (() => {
+    const n = ((horizonPath && horizonPath.getAttribute('d')) || '').match(/-?\d*\.?\d+/g);
+    if (!n || n.length < 4) return [];
+    const pts = [];
+    for (let i = 0; i + 1 < n.length; i += 2) pts.push({ x: +n[i], y: +n[i + 1] });
+    return pts;
+  })();
+
+  let hzTop = 0, hzH = 0;
+
+  function measureHorizon() {
+    if (!horizonSvg) { hzH = 0; return; }
+    const r = horizonSvg.getBoundingClientRect();
+    hzTop = r.top - hero.getBoundingClientRect().top;
+    hzH   = r.height;
+  }
+
+  const toCanvasY = (vy) => hzTop + (vy / VB_H) * hzH;
+
+  // Canvas y of the curve at canvas x, or Infinity where there is no line
+  // to hit — nothing then collides, and the sky behaves as it always did.
+  function horizonY(x) {
+    if (!CURVE.length || !hzH || !W) return Infinity;
+    const vx = (x / W) * VB_W;
+    if (vx <= CURVE[0].x) return toCanvasY(CURVE[0].y);
+    for (let i = 1; i < CURVE.length; i++) {
+      if (vx <= CURVE[i].x) {
+        const a = CURVE[i - 1], b = CURVE[i];
+        const t = (vx - a.x) / ((b.x - a.x) || 1);
+        return toCanvasY(a.y + (b.y - a.y) * t);
+      }
+    }
+    return toCanvasY(CURVE[CURVE.length - 1].y);
   }
 
   function seedStars() {
@@ -122,9 +176,85 @@
     ctx.fill();
   }
 
+  /* ─── Impact ───
+     A meteor that reaches the curve is spent there: it becomes a burst
+     rather than crossing onto the paper. Sparks radiate with an upward
+     bias and gravity brings them back down, so the shape is a fountain
+     over the horizon and not a symmetrical ball. */
+
+  function burst(x, y, scale) {
+    // Full bursts are rate limited. A hit arriving inside the hold still
+    // registers, as a handful of sparks, so the cause stays visible.
+    const full = burstHold <= 0 && sparks.length < SPARK_CAP;
+    const n = full ? Math.round(rand(26, 38) * (0.7 + scale * 0.3)) : Math.round(rand(5, 9));
+    if (full) {
+      burstHold = BURST_HOLD;
+      flashes.push({ x, y, age: 0, life: 300, scale });
+    }
+
+    for (let i = 0; i < n; i++) {
+      const a  = rand(0, Math.PI * 2);
+      const sp = rand(0.08, 0.23) * (0.75 + scale * 0.35) * (full ? 1 : 0.65);
+      const t  = Math.random();
+      sparks.push({
+        x, y,
+        vx: Math.cos(a) * sp,
+        vy: Math.sin(a) * sp * 0.72 - 0.05,   // flattened, and thrown upward
+        age: 0,
+        life: rand(780, 1250) * (full ? 1 : 0.7),
+        r: rand(0.7, 1.7) * (0.8 + scale * 0.2),
+        tone: t < 0.18 ? HEAD : t < 0.8 ? SPARK : TRAIL
+      });
+    }
+  }
+
+  function drawFlashes(dt) {
+    for (let i = flashes.length - 1; i >= 0; i--) {
+      const f = flashes[i];
+      f.age += dt;
+      if (f.age > f.life) { flashes.splice(i, 1); continue; }
+      const k = f.age / f.life;
+      const r = (10 + 46 * k) * f.scale;
+      const a = (1 - k) * 0.62;
+      const g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, r);
+      g.addColorStop(0,    `rgba(${HEAD},  ${a.toFixed(3)})`);
+      g.addColorStop(0.45, `rgba(${SPARK}, ${(a * 0.55).toFixed(3)})`);
+      g.addColorStop(1,    `rgba(${SPARK}, 0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function drawSparks(dt) {
+    ctx.lineCap = 'round';
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const s = sparks[i];
+      s.age += dt;
+      if (s.age > s.life) { sparks.splice(i, 1); continue; }
+      s.vy += GRAVITY * dt;
+      s.x  += s.vx * dt;
+      s.y  += s.vy * dt;
+
+      // Holds its brightness, then drops away: sparks, not a slow dissolve.
+      const k = s.age / s.life;
+      const a = Math.pow(1 - k, 1.5);
+      // Streaked along its own velocity, so fast sparks are longest and the
+      // burst has the grain of the meteor that made it.
+      ctx.strokeStyle = `rgba(${s.tone}, ${a.toFixed(3)})`;
+      ctx.lineWidth = s.r;
+      ctx.beginPath();
+      ctx.moveTo(s.x - s.vx * 44, s.y - s.vy * 44);
+      ctx.lineTo(s.x, s.y);
+      ctx.stroke();
+    }
+  }
+
   function frame(now) {
     const dt = Math.min(now - last, 50);
     last = now;
+    if (burstHold > 0) burstHold -= dt;
 
     ctx.fillStyle = NIGHT;
     ctx.fillRect(0, 0, W, H);
@@ -139,11 +269,27 @@
     for (let i = meteors.length - 1; i >= 0; i--) {
       const m = meteors[i];
       m.age += dt;
+      const prevY = m.y;
       m.x += m.vx * dt;
       m.y += m.vy * dt;
+
+      // Descending across the curve, from above it, within the frame: a hit.
+      // Meteors that spawn below the curve never satisfy the first test.
+      if (m.vy > 0 && m.x >= 0 && m.x <= W) {
+        const hy = horizonY(m.x);
+        if (prevY < hy && m.y >= hy) {
+          burst(m.x, hy, m.scale || 1);
+          meteors.splice(i, 1);
+          continue;
+        }
+      }
+
       if (m.age > m.life || m.x < -m.len || m.y > H + m.len) meteors.splice(i, 1);
       else drawMeteor(m);
     }
+
+    drawSparks(dt);
+    drawFlashes(dt);
 
     raf = requestAnimationFrame(frame);
   }
@@ -160,7 +306,9 @@
   }
 
   function start() { if (!raf && onScreen && !reduced.matches) { last = performance.now(); raf = requestAnimationFrame(frame); } }
-  function stop()  { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+  // Bursts are discarded rather than frozen: coming back to the hero should
+  // not resume a shower of half-finished sparks from minutes ago.
+  function stop()  { if (raf) { cancelAnimationFrame(raf); raf = null; } sparks = []; flashes = []; burstHold = 0; }
 
   // Costs nothing once the hero has scrolled away.
   new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; onScreen ? start() : stop(); },
@@ -250,11 +398,17 @@
    is still live, and the ended state never occurs. A watchdog covers the
    case where updates simply stop without the pre-empt catching them.
 
+   The rewind then holds LOOP_GAP of silence before playing again, so the
+   track lands rather than seams straight back into itself. The pause is
+   what buys the silence; the seek is what makes the resume legal, since
+   the widget is paused mid-track and not at an ended one.
+
    Append ?audiodebug to the URL for a live readout of what the player
    actually reports.
    ═══════════════════════════════════════════════════════════ */
 
 const TRACK_URI = 'spotify:track:3AJwUDP919kvQ9QcozQPxg';   // Coldplay, Yellow
+const LOOP_GAP  = 2000;   // ms of silence between the last note and the first
 
 window.onSpotifyIframeApiReady = (IFrameAPI) => {
   const mount = document.getElementById('spotifyMount');
@@ -278,15 +432,25 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
           : `pos    ${(pos / 1000).toFixed(1)}s / ${(dur / 1000).toFixed(1)}s\n` +
             `events ${events}\n` +
             `loops  ${loops}\n` +
-            `last   ${last || '-'}`;
+            `last   ${last || '-'}\n` +
+            `gap    ${restarting ? `holding ${LOOP_GAP}ms` : '-'}`;
       };
 
       const rewind = (why) => {
         restarting = true;
         loops++; last = why;
+        // Pause first so the silence starts at once, then park at zero: the
+        // widget reads 0:00 through the gap instead of showing a stalled tail.
+        try { controller.pause(); } catch (_) {}
         controller.seek(0);
-        setTimeout(() => { try { controller.play(); } catch (_) {} }, 120);
-        setTimeout(() => { restarting = false; }, 2500);
+        setTimeout(() => { try { controller.play(); } catch (_) {} }, LOOP_GAP);
+        // Pausing deliberately means the resume is a start, not a continue, so
+        // it is the one call that could be refused. If it was, the position is
+        // still at zero a second later: try once more rather than sit silent.
+        setTimeout(() => { if (pos < 600) { try { controller.play(); } catch (_) {} } }, LOOP_GAP + 1200);
+        // Held past the resume so neither the pre-empt nor the watchdog can
+        // fire into the gap, when no updates are arriving by design.
+        setTimeout(() => { restarting = false; }, LOOP_GAP + 1500);
         show();
       };
 
