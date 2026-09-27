@@ -254,7 +254,7 @@
    actually reports.
    ═══════════════════════════════════════════════════════════ */
 
-const TRACK_URI = 'spotify:track:6zlY4xmlgqvn4LxjzoS2mz';   // Céline Dion & Andrea Bocelli, The Prayer
+const TRACK_URI = 'spotify:track:3AJwUDP919kvQ9QcozQPxg';   // Coldplay, Yellow
 
 window.onSpotifyIframeApiReady = (IFrameAPI) => {
   const mount = document.getElementById('spotifyMount');
