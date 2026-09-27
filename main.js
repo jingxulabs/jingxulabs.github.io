@@ -14,7 +14,11 @@
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   const NIGHT = '#0D1526';
-  const STAR  = '242, 239, 230';
+  // Stars run warm, from a cream at the faint end to an amber near the
+  // ochre accent at the bright end. The warmth tracks size, so the stars
+  // that carry are the ones that show the colour.
+  const STAR_COOL = [255, 246, 222];
+  const STAR_WARM = [252, 200, 118];
   const TRAIL = '235, 180, 84';
   const HEAD  = '255, 246, 224';
   // One shell, one colour: a burst draws its three tones from a single
@@ -106,12 +110,16 @@
       // Skewed toward the small: a field needs many faint ones to read as
       // depth, and a few that carry, rather than a uniform spatter.
       const m = Math.pow(Math.random(), 1.7);
+      // Warmth follows size, with enough jitter that the field is not a
+      // gradient: a small star can still be amber, a large one still cream.
+      const w = Math.min(1, Math.max(0, m * 0.7 + rand(0, 0.4)));
       return {
         x: Math.random() * W,
         y: Math.random() * H * 0.94,
         r: 0.55 + m * 1.5,
         a: 0.46 + m * 0.54,
         halo: m > 0.62,
+        tone: STAR_COOL.map((c, i) => Math.round(c + (STAR_WARM[i] - c) * w)).join(', '),
         // Twinkle is barely perceptible by design — a field, not a light show.
         p: Math.random() * Math.PI * 2,
         s: rand(0.0004, 0.0013)
@@ -157,12 +165,12 @@
       // star read as a light rather than as a dot of paint. Two fills, no
       // gradient per star: the field is redrawn every frame.
       if (s.halo) {
-        ctx.fillStyle = `rgba(${STAR}, ${(a * 0.12).toFixed(3)})`;
+        ctx.fillStyle = `rgba(${s.tone}, ${(a * 0.12).toFixed(3)})`;
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r * 2.8, 0, Math.PI * 2);
         ctx.fill();
       }
-      ctx.fillStyle = `rgba(${STAR}, ${a.toFixed(3)})`;
+      ctx.fillStyle = `rgba(${s.tone}, ${a.toFixed(3)})`;
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
       ctx.fill();
