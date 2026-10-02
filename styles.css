@@ -606,6 +606,13 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
 
 .repo__link { font-family: "Archivo Narrow", "Arial Narrow", sans-serif; font-size: var(--t-base); margin-bottom: 0.6rem; }
 
+/* Verdicts on an intervention table. The lead word is marked, not the row:
+   indigo for a result that held, ochre for one that is genuinely uncertain,
+   and nothing at all for one that died — a null result needs no colour. */
+.vd--held   { color: var(--indigo); }
+.vd--mixed  { color: var(--ochre); }
+.vd--dropped { color: color-mix(in srgb, var(--graphite) 86%, var(--bond)); }
+
 .id {
   font-family: "Spline Sans Mono", ui-monospace, monospace;
   font-size: 0.86em;

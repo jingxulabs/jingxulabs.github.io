@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=34">
+<link rel="stylesheet" href="styles.css?v=35">
 </head>
 <body>
 
@@ -19,6 +19,7 @@
   <a href="#overview">Overview</a>
   <a href="#projects">Experimentations</a>
   <a href="#humanizedai" class="nav__sub">HumanizedAI</a>
+  <a href="#toolselection" class="nav__sub">ToolSelection</a>
   <a href="#posts">Posts</a>
   <a href="#techjokes">Tech jokes</a>
   <a href="#contact">Contact</a>
@@ -597,17 +598,301 @@
       </div>
     </article>
 
-    <!-- ══ PROJECTS 2-4 : empty slots. Nothing here is a claim. ══ -->
-    <article class="spread project project--stub">
-      <aside class="rail">
-        <p class="rail__note"><span class="tick tick--stub"></span>Placeholder.</p>
-      </aside>
+    <!-- ══ PROJECT 2 : real ══ -->
+    <article class="spread project project--major" id="toolselection">
       <div class="col">
-        <h2 class="project__title">Second project</h2>
-        <p class="stub">Reserved, not yet written.</p>
+        <h2 class="project__title">Tool selection from user intent: which stage actually fails</h2>
+        <p class="lede-para">Public benchmarks hand an agent ten candidate tools, so they can only measure
+          choosing. Production agents face thousands, where the hard part is finding. ToolSelection builds the
+          missing condition — <span class="num">3,551</span> tools instead of ten — and measures which stage the
+          errors actually live in.</p>
+      </div>
+
+      <div class="projfolds">
+        <details class="sub" open>
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">1</span><span class="sub__name">Repository</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p class="repo__link"><a href="https://github.com/jingxulabs/ToolSelection">github.com/jingxulabs/ToolSelection</a></p>
+            <p class="diag">Total cost <span class="num">$40.39</span>, of which
+              <span class="num">$33.94</span> was intent generation. Everything after the data build ran free on
+              local models. Paired significance tests run off cached scores, so every claim below can be rechecked
+              in seconds without re-running a model.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">2</span><span class="sub__name">The question, and why benchmarks cannot ask it</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">Problem.</span> An agent turning a user's request into a tool call does it in two
+              stages. Published benchmarks present between one and ten candidates, which means retrieval is
+              trivially solved before the measurement starts and only selection gets scored. A production agent
+              carries thousands of tools. Nobody had measured that condition, so nobody knew which stage to fix.</p>
+            <ul class="gates">
+              <li><span class="gate__name">retriever</span><span class="gate__val">User intent against the whole
+                catalog: <span class="num">3,551</span> tools narrowed to roughly <span class="num">25</span>.
+                Dense embedding search.</span></li>
+              <li><span class="gate__name">selector</span><span class="gate__val">Shortlist to a single call:
+                <span class="num">25</span> candidates to <span class="num">1</span>. An LLM reading the
+                candidates.</span></li>
+            </ul>
+            <p class="diag">The two stages fail for unrelated reasons and are usually optimized as one thing.
+              Separating them was the whole point.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">Data</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro">Three sources pooled into one catalog of <span class="num">3,551</span> tools:
+          <span class="num">199</span> carrying labels and <span class="num">3,352</span> acting as distractors, a
+          ratio of <span class="num">17.8</span> to <span class="num">1</span>. The labels come from a GPT-4-built
+          set, so they are independent of the model under test.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Source</th><th scope="col">Size</th><th scope="col">Role</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">APIs.guru</th>
+              <td class="sig__def"><span class="num">3,352</span> real API operations</td>
+              <td class="sig__def">A realistic catalog, carrying no labels. The distractors.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">MetaTool</th>
+              <td class="sig__def"><span class="num">199</span> tools, <span class="num">20,532</span> labeled pairs</td>
+              <td class="sig__def">The labels. GPT-4-made, therefore independent of the evaluated model.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">generated</th>
+              <td class="sig__def"><span class="num">4,585</span> intents, <span class="num">$33.94</span></td>
+              <td class="sig__def">Labels for the APIs.guru tools. Direct, indirect and
+                distractor-context requests, near-identical confusion pairs, and unanswerable queries where
+                refusing is the correct answer.</td>
+            </tr>
+          </tbody>
+        </table>
+          <div class="sub__body">
+            <p class="score__title">Recall@100, by catalog size</p>
+            <div class="score">
+              <span class="score__cell"><span class="score__cap">199 tools</span><span class="score__n score__n--before num">0.973</span></span>
+              <span class="score__cell"><span class="score__cap">3,551 tools</span><span class="score__n num">0.861</span></span>
+              <span class="score__delta num">−0.112</span>
+            </div>
+            <p>One number justifies the whole construction. At <span class="num">199</span> candidates retrieval is
+              solved and therefore unmeasurable. At <span class="num">3,551</span>,
+              <span class="num">14%</span> of correct tools never reach the shortlist at all, so no selector —
+              however good — can recover them.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">Design</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>Three choices earned their keep:</p>
+            <ul class="next">
+              <li><span class="next__t">Tools held out before intents.</span> <span class="num">39</span> of the
+                <span class="num">199</span> labeled tools are withheld entirely. Splitting intents at random
+                instead would leak tool identity across the split.</li>
+              <li><span class="next__t">A pre-registered stop rule.</span> If retrieval misses exceeded
+                <span class="num">40%</span> of errors, the model-training track was to be abandoned unbuilt. The
+                most consequential sentence in the design, and it tripped.</li>
+              <li><span class="next__t">Self-reported ambiguity.</span> The intent generator could mark a pair
+                inseparable — identical function and parameters, differing only in HTTP verb.
+                <span class="num">10.1%</span> did. The selector independently flagged
+                <span class="num">32.7%</span> of those as tied, against <span class="num">0.0%</span> of the
+                separable ones. Two mechanisms agreeing removed the need for human annotation.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">Results</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro">Seven interventions, one of which worked. Effects are reported with paired tests
+          rather than point estimates, because in this regime the point estimates are noise.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Intervention</th><th scope="col">Effect</th><th scope="col">Verdict</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">better encoder + richer document text</th>
+              <td class="sig__def">R@1 <span class="num">0.139 → 0.259</span></td>
+              <td class="sig__def vd vd--held">Held. The only large win.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">fine-tune the selector (SFT/RL)</th>
+              <td class="sig__def">Not run — the stop rule tripped</td>
+              <td class="sig__def vd vd--dropped">Dropped before building.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">rerank by replacement</th>
+              <td class="sig__def">R@1 <span class="num">0.253 → 0.214</span>, p = <span class="num">0.005</span></td>
+              <td class="sig__def vd vd--dropped">Dropped. Significantly harmful.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">same scores, fused at 20% weight</th>
+              <td class="sig__def">MRR <span class="num">+0.023</span>
+                [<span class="num">+0.007, +0.041</span>]; R@1 p = <span class="num">0.124</span></td>
+              <td class="sig__def vd vd--mixed">Mixed. MRR real, R@1 not — and <span class="num">5</span> s/query.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">add keyword (BM25) search</th>
+              <td class="sig__def">R@1 <span class="num">+0.003</span>, p = <span class="num">0.85</span></td>
+              <td class="sig__def vd vd--dropped">Dropped. Null.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">rewrite tool descriptions</th>
+              <td class="sig__def">Ceiling <span class="num">+0.037</span> R@10</td>
+              <td class="sig__def vd vd--dropped">Screened out, unspent.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">fine-tune the retriever</th>
+              <td class="sig__def">—</td>
+              <td class="sig__def vd vd--mixed">No result. An fp16 NaN bug and thermal throttling.</td>
+            </tr>
+          </tbody>
+        </table>
+          <figure class="plot">
+          <svg viewBox="0 0 612 118" role="img" aria-label="Where the errors live: retrieval failures 83 percent, unattributed 10 percent, selection failures 7 percent.">
+            <g>
+              <text class="plot__lab" x="148" y="26" text-anchor="end">Retrieval failures</text>
+              <line class="plot__track" x1="166" y1="22" x2="536" y2="22"/>
+              <line class="plot__stem plot__stem--key" x1="166" y1="22" x2="473.1" y2="22"/>
+              <circle class="plot__knob plot__knob--key" cx="473.1" cy="22" r="4.5"/>
+              <text class="plot__val" x="604" y="26" text-anchor="end">83%</text>
+            </g>
+            <g>
+              <text class="plot__lab" x="148" y="60" text-anchor="end">Unattributed</text>
+              <line class="plot__track" x1="166" y1="56" x2="536" y2="56"/>
+              <line class="plot__stem" x1="166" y1="56" x2="203.0" y2="56"/>
+              <circle class="plot__knob" cx="203.0" cy="56" r="4"/>
+              <text class="plot__val" x="604" y="60" text-anchor="end">10%</text>
+            </g>
+            <g>
+              <text class="plot__lab" x="148" y="94" text-anchor="end">Selection failures</text>
+              <line class="plot__track" x1="166" y1="90" x2="536" y2="90"/>
+              <line class="plot__stem" x1="166" y1="90" x2="191.9" y2="90"/>
+              <circle class="plot__knob" cx="191.9" cy="90" r="4"/>
+              <text class="plot__val" x="604" y="94" text-anchor="end">7%</text>
+            </g>
+          </svg>
+          <figcaption>The decomposition that redirected everything. Given a good shortlist the selector is about
+            <span class="num">0.93</span> accurate; the retriever's R@1 was about <span class="num">0.15</span>.</figcaption>
+        </figure>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Five insights</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <ul class="next">
+              <li><span class="next__t">The field is optimizing the stage that isn't broken.</span> Because
+                benchmarks hand over ten candidates, published work tunes selection. In a pooled catalog the
+                failure is overwhelmingly retrieval. Any agent with a large tool catalog should check which stage
+                is failing before optimizing either: force the right answer into the shortlist and see whether
+                accuracy jumps.</li>
+              <li><span class="next__t">How you combine signals matters more than which signals you have.</span>
+                Identical cross-encoder scores, fused, gave <span class="num">+9%</span> R@1; substituted, they
+                gave <span class="num">−15%</span>. The tell is the depth curve — fusion improves as you go
+                deeper, replacement degrades. A signal measured at <span class="num">0.8×</span> your main
+                signal's quality is still worth keeping, just not worth trusting alone.</li>
+              <li><span class="next__t">But fusion has a floor: it reweights information, it cannot manufacture
+                it.</span> BM25 fused gave nothing, because its top <span class="num">100</span> held fewer correct
+                tools than dense retrieval's and almost none that dense missed. The union added zero correct tools
+                on <span class="num">4</span> of <span class="num">6</span> splits. Hence a cheap screening test:
+                before tuning any new signal, check whether dense ∪ new reaches errors dense alone cannot. Minutes
+                of work, and it would have predicted both negative results.</li>
+              <li><span class="next__t">Plausible mechanism plus catalog statistics is not evidence.</span> Three
+                interventions were justified that way and all three died against where the error mass actually is.
+                Description rewriting is the clean case: <span class="num">441</span> badly-documented tools sounds
+                compelling, but those tools are the correct answer for only <span class="num">3.6%</span> of
+                queries and <span class="num">4.4%</span> of failures, while the
+                <span class="num">73%</span> of queries with a well-documented correct tool carry
+                <span class="num">66%</span> of failures. A subtler trap, which generalizes to any LLM-generated
+                eval set: badly-documented tools appear as correct answers at
+                <span class="num">0.150×</span> their catalog rate, because the generator had to read a description
+                in order to write a request for it. The benchmark structurally under-samples the very tools the fix
+                would help.</li>
+              <li><span class="next__t">Point estimates here are noise, and intervals are nearly free.</span>
+                Paired tests run off cached scores in seconds and changed the status of
+                <span class="num">2</span> of <span class="num">4</span> claims — including the headline. The
+                <span class="num">+9.4%</span> R@1 from fusion does not survive
+                (p = <span class="num">0.124</span>); the MRR gain does.</li>
+            </ul>
+            <p class="diag">Two paradoxes worth recording. Difficulty is not ordered: indirect requests are harder
+              than distractor-context ones (R@10 <span class="num">0.564</span> against
+              <span class="num">0.605</span>). And you cannot threshold for “no tool applies” — unanswerable
+              queries score a <em>higher</em> top-1 similarity (<span class="num">0.479</span>) than real ones
+              (<span class="num">0.445</span>), so refusal needs a different mechanism entirely.</p>
+            <p class="diag">The engineering bind: the only intervention that helped costs
+              <span class="num">5</span> s/query and cannot ship. The only one fast enough to ship
+              (<span class="num">3</span> ms) does not help. The deployable frontier is already at its limit.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">7</span><span class="sub__name">Will System One help with tool selection?</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">Short answer.</span> Yes, it could help — but mostly in the selector and
+              reranker stage, which is not the bottleneck this experiment identifies.</p>
+            <p class="diag diag--tight">intent → retriever (<span class="num">3,551</span> →
+              ~<span class="num">25</span>) → selector (<span class="num">25</span> →
+              <span class="num">1</span>)</p>
+            <p>The measured decomposition is what settles it. About <span class="num">83%</span> of end-to-end
+              errors are retrieval failures, and the selector is already about <span class="num">0.93</span>
+              accurate whenever the correct tool is in the candidate set. Effort aimed at the selector is therefore
+              effort aimed at the stage that is not failing.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">8</span><span class="sub__name">Next steps</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <ul class="next">
+              <li><span class="next__t">Fix the document text before touching the model.</span> Index the HTTP
+                method, and the URL path split into words. One API carries endpoints that differ only in path
+                depth, invisible in prose. Worth <span class="num">+6.0</span> R@10 on average, positive in
+                <span class="num">24</span> of <span class="num">25</span> cases, and largest on thin descriptions
+                (<span class="num">0.348 → 0.568</span>). Model size barely mattered: bge-large ≈ bge-base.</li>
+              <li><span class="next__t">Run the k-sweep</span> to fix the operating point, then spend the single
+                held-out test access on the full composed pipeline.</li>
+              <li><span class="next__t">Retry the retriever fine-tune</span> on cooler or rented hardware. It is
+                the one genuinely untested lever.</li>
+              <li><span class="next__t">Record the description hypothesis as refuted.</span> The expected
+                <span class="num">+10</span> to <span class="num">+25</span> points from better descriptions is
+                refuted by headroom, not merely untested — a distinction worth keeping in the record.</li>
+              <li><span class="next__t">Open question.</span> One split is hostile to the cross-encoder in every
+                configuration (<span class="num">−0.180</span> R@1, p = <span class="num">0.00003</span>) despite
+                being the easiest split for dense retrieval. Unexplained.</li>
+            </ul>
+            <p class="diag">Retrieval went <span class="num">0.139 → 0.259</span> on better embeddings and richer
+              document text. Nothing since has added a defensible point — but the remaining errors are now
+              located, which is the part that was missing.</p>
+          </div>
+        </details>
+
       </div>
     </article>
 
+    <!-- ══ PROJECTS 3-4 : empty slots. Nothing here is a claim. ══ -->
     <article class="spread project project--stub">
       <aside class="rail">
         <p class="rail__note"><span class="tick tick--stub"></span>Placeholder.</p>
