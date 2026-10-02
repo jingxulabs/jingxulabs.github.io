@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=36">
+<link rel="stylesheet" href="styles.css?v=37">
 </head>
 <body>
 
@@ -661,12 +661,14 @@
             <tr>
               <th scope="row" class="sig__name">APIs.guru</th>
               <td class="sig__def"><span class="num">3,352</span> real API operations</td>
-              <td class="sig__def">A realistic catalog, carrying no labels. The distractors.</td>
+              <td class="sig__def">Tool and API definitions only, with no query attached. They enter the
+                retrieval catalog as unlabeled distractors.</td>
             </tr>
             <tr>
               <th scope="row" class="sig__name">MetaTool</th>
               <td class="sig__def"><span class="num">199</span> tools, <span class="num">20,532</span> labeled pairs</td>
-              <td class="sig__def">The labels. GPT-4-made, therefore independent of the evaluated model.</td>
+              <td class="sig__def">Labeled user query → gold tool pairs: the only source carrying ground truth.
+                GPT-4-made, therefore independent of the evaluated model.</td>
             </tr>
             <tr>
               <th scope="row" class="sig__name">generated</th>
@@ -677,6 +679,29 @@
             </tr>
           </tbody>
         </table>
+        <h4 class="worked__head">What a record from each source looks like</h4>
+        <p class="diag diag--tight">The asymmetry is the point. One source carries the answer, the other only ever
+          supplies things that could be mistaken for it.</p>
+        <div class="ba ba--spec">
+          <div class="ba__pane ba__pane--out">
+            <p class="ba__label">MetaTool — labeled</p>
+            <dl class="spec">
+              <dt>User query</dt>
+              <dd>“Can you help me find a restaurant nearby?”</dd>
+              <dt>Gold tool</dt>
+              <dd><span class="id">restaurant-search</span></dd>
+            </dl>
+          </div>
+          <div class="ba__pane">
+            <p class="ba__label">APIs.guru — unlabeled</p>
+            <dl class="spec">
+              <dt>Tool</dt>
+              <dd><span class="id">googleapis.com / drive / v3 / drive.files.list</span></dd>
+              <dt>Description</dt>
+              <dd>“Lists the user's files.”</dd>
+            </dl>
+          </div>
+        </div>
           <div class="sub__body">
             <p class="score__title">Recall@100, by catalog size</p>
             <div class="score">

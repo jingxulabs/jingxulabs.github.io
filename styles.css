@@ -609,6 +609,20 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
 /* Verdicts on an intervention table. The lead word is marked, not the row:
    indigo for a result that held, ochre for one that is genuinely uncertain,
    and nothing at all for one that died — a null result needs no colour. */
+/* One specimen record from a source: label above, value below, so a pair
+   and a bare definition can sit side by side without implying a mapping
+   where there isn't one. */
+.ba--spec { margin-bottom: 2.1rem; }
+.spec { margin: 1rem 0 0; }
+.spec dt {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-xs);
+  color: var(--graphite);
+}
+.spec dd { margin: 0.1rem 0 0.85rem; font-size: 0.95em; line-height: 1.5; }
+.spec dd:last-child { margin-bottom: 0; }
+.spec .id { word-break: break-word; }
+
 /* A display equation. The page carries no math renderer and does not need
    one: a two-factor product sets perfectly well in the body serif, given
    an indent and some air around the operators. */
