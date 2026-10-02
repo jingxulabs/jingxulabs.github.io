@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=35">
+<link rel="stylesheet" href="styles.css?v=36">
 </head>
 <body>
 
@@ -857,6 +857,42 @@
               errors are retrieval failures, and the selector is already about <span class="num">0.93</span>
               accurate whenever the correct tool is in the candidate set. Effort aimed at the selector is therefore
               effort aimed at the stage that is not failing.</p>
+
+            <p><span class="marker">The metric to add.</span> End-to-end accuracy should be reported as the product
+              of the two stages rather than as one number, because only the factored form says which stage moved:</p>
+            <p class="eq">
+              <var>P</var>(correct final)
+              <span class="eq__op">=</span>
+              <var>P</var>(gold in top-<var>K</var>)
+              <span class="eq__op">×</span>
+              <var>P</var>(select gold <span class="eq__mid">&#8739;</span> gold in top-<var>K</var>)
+            </p>
+            <p>The left factor is retrieval, the right is the selector's conditional accuracy. Collapsing them is
+              exactly how a field ends up tuning the stage that isn't broken.</p>
+
+            <p><span class="marker">The test.</span> Sweep <var>K</var> over <span class="num">10</span>,
+              <span class="num">25</span>, <span class="num">50</span> and <span class="num">100</span> against
+              three selectors:</p>
+            <ul class="next">
+              <li><span class="next__t">Embedding score alone.</span> The cheap floor —
+                <span class="num">3</span> ms, no semantic layer at all.</li>
+              <li><span class="next__t">The existing selector.</span> About <span class="num">0.93</span>
+                conditional accuracy at <span class="num">K</span> ≈ <span class="num">25</span>, which is the
+                current operating point.</li>
+              <li><span class="next__t">System One.</span> The arm under test.</li>
+            </ul>
+            <p>The sweep is informative here specifically because recall@<span class="num">100</span>
+              (<span class="num">0.861</span>) sits so far above recall@<span class="num">1</span>
+              (<span class="num">0.259</span>). That gap is unrecovered gold sitting inside a wider shortlist, and
+              the only thing standing between it and the answer is a selector that can survive the extra
+              distractors.</p>
+
+            <p><span class="marker">The real hypothesis.</span> So the interesting question is not whether System
+              One selects better than the current selector. It is whether a cheap semantic decision layer lets us
+              <em>widen</em> retrieval enough to recover more gold tools while holding conditional selection
+              accuracy high — buying back the left factor without paying it back out of the right one.</p>
+            <p class="diag">Stated this way the hypothesis is falsifiable by the sweep: if conditional accuracy
+              decays faster than recall climbs, widening <var>K</var> is a loss whatever the selector costs.</p>
           </div>
         </details>
 
@@ -872,8 +908,9 @@
                 depth, invisible in prose. Worth <span class="num">+6.0</span> R@10 on average, positive in
                 <span class="num">24</span> of <span class="num">25</span> cases, and largest on thin descriptions
                 (<span class="num">0.348 → 0.568</span>). Model size barely mattered: bge-large ≈ bge-base.</li>
-              <li><span class="next__t">Run the k-sweep</span> to fix the operating point, then spend the single
-                held-out test access on the full composed pipeline.</li>
+              <li><span class="next__t">Run the k-sweep</span> in the three-selector form described above, to fix
+                the operating point and test the widening hypothesis in one pass. Then spend the single held-out
+                test access on the full composed pipeline.</li>
               <li><span class="next__t">Retry the retriever fine-tune</span> on cooler or rented hardware. It is
                 the one genuinely untested lever.</li>
               <li><span class="next__t">Record the description hypothesis as refuted.</span> The expected

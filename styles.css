@@ -609,6 +609,23 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
 /* Verdicts on an intervention table. The lead word is marked, not the row:
    indigo for a result that held, ochre for one that is genuinely uncertain,
    and nothing at all for one that died — a null result needs no colour. */
+/* A display equation. The page carries no math renderer and does not need
+   one: a two-factor product sets perfectly well in the body serif, given
+   an indent and some air around the operators. */
+.eq {
+  font-size: var(--t-base);
+  line-height: 1.75;
+  margin: 1.4rem 0 1.3rem;
+  padding-left: 2.2rem;
+  text-indent: 0;
+  text-wrap: balance;
+}
+.eq var { font-style: italic; font-family: inherit; }
+.eq__op { color: var(--graphite); margin: 0 0.42em; }
+/* The conditional bar binds inside one factor, so it must not read as a
+   third binary operator sitting beside = and ×: darker, and much tighter. */
+.eq__mid { color: var(--ink); margin: 0 0.18em; }
+
 .vd--held   { color: var(--indigo); }
 .vd--mixed  { color: var(--ochre); }
 .vd--dropped { color: color-mix(in srgb, var(--graphite) 86%, var(--bond)); }
