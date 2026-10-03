@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=41">
+<link rel="stylesheet" href="styles.css?v=42">
 </head>
 <body>
 
@@ -635,7 +635,8 @@
             <ul class="gates">
               <li><span class="gate__name">retriever</span><span class="gate__val">User intent against the whole
                 catalog: <span class="num">3,551</span> tools narrowed to roughly <span class="num">25</span>.
-                Dense embedding search.</span></li>
+                Dense embedding search. The final retriever is the <span class="id">gte-large</span> embedding
+                model over v3 document text.</span></li>
               <li><span class="gate__name">selector</span><span class="gate__val">Shortlist to a single call:
                 <span class="num">25</span> candidates to <span class="num">1</span>. An LLM reading the
                 candidates.</span></li>
@@ -724,8 +725,9 @@
             <line class="flow__arrow" x1="96" y1="42" x2="116" y2="42"/>
             <polygon class="flow__head" points="116,42 111,39.4 111,44.6"/>
             <!-- stage 2: process -->
-            <rect class="flow__box" x="124" y="22" width="112" height="40" rx="1"/>
-            <text class="flow__lab" x="180" y="46" text-anchor="middle">Tool Retriever</text>
+            <rect class="flow__box" x="124" y="18" width="112" height="48" rx="1"/>
+            <text class="flow__lab" x="180" y="38" text-anchor="middle">Tool Retriever</text>
+            <text class="flow__n" x="180" y="54" text-anchor="middle">gte-large / v3</text>
             <line class="flow__arrow" x1="244" y1="42" x2="264" y2="42"/>
             <polygon class="flow__head" points="264,42 259,39.4 259,44.6"/>
             <!-- stage 3: data -->
@@ -734,8 +736,8 @@
             <line class="flow__arrow" x1="348" y1="42" x2="368" y2="42"/>
             <polygon class="flow__head" points="368,42 363,39.4 363,44.6"/>
             <!-- stage 4: process -->
-            <rect class="flow__box" x="376" y="22" width="112" height="40" rx="1"/>
-            <text class="flow__lab" x="432" y="46" text-anchor="middle">LLM Tool Selector</text>
+            <rect class="flow__box" x="376" y="18" width="112" height="48" rx="1"/>
+            <text class="flow__lab" x="432" y="47" text-anchor="middle">LLM Tool Selector</text>
             <line class="flow__arrow" x1="496" y1="42" x2="516" y2="42"/>
             <polygon class="flow__head" points="516,42 511,39.4 511,44.6"/>
             <!-- stage 5: data -->
@@ -1024,20 +1026,21 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">7</span><span class="sub__name">Will System One help with tool selection?</span></span>
+            <span class="sub__label"><span class="sub__num num">7</span><span class="sub__name">How JEV System One would help</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
           <div class="sub__body">
             <p><span class="marker">Short answer.</span> Yes, it could help — but mostly in the selector and
               reranker stage, which is not the bottleneck this experiment identifies.</p>
         <figure class="flow">
-          <svg viewBox="0 0 612 150" role="img" aria-label="User query to retriever, narrowing 3,551 tools to K, into the tool decision component — currently the Claude selector, with Jev or System One as a new arm — and out to the selected tool.">
+          <svg viewBox="0 0 612 150" role="img" aria-label="User query to retriever, narrowing 3,551 tools to K, into the tool decision component — currently the Claude selector, with JEV System One as a new arm — and out to the selected tool.">
             <text class="flow__lab flow__lab--soft" x="54" y="46" text-anchor="middle">User query</text>
             <line class="flow__arrow" x1="104" y1="42" x2="124" y2="42"/>
             <polygon class="flow__head" points="124,42 119,39.4 119,44.6"/>
-            <rect class="flow__box" x="132" y="20" width="118" height="44" rx="1"/>
-            <text class="flow__lab" x="191" y="38" text-anchor="middle">Retriever</text>
-            <text class="flow__n" x="191" y="54" text-anchor="middle">3,551 → K</text>
+            <rect class="flow__box" x="132" y="14" width="118" height="56" rx="1"/>
+            <text class="flow__lab" x="191" y="32" text-anchor="middle">Retriever</text>
+            <text class="flow__n" x="191" y="47" text-anchor="middle">gte-large / v3</text>
+            <text class="flow__n" x="191" y="62" text-anchor="middle">3,551 → K</text>
             <line class="flow__arrow" x1="258" y1="42" x2="278" y2="42"/>
             <polygon class="flow__head" points="278,42 273,39.4 273,44.6"/>
             <!-- the swappable component -->
@@ -1046,7 +1049,7 @@
             <text class="flow__lab flow__lab--soft" x="302" y="48" text-anchor="start">Current</text>
             <text class="flow__lab" x="389" y="48" text-anchor="start">Claude selector</text>
             <text class="flow__lab flow__lab--soft" x="302" y="66" text-anchor="start">New arm</text>
-            <text class="flow__lab flow__lab--key" x="389" y="66" text-anchor="start">Jev / System One</text>
+            <text class="flow__lab flow__lab--key" x="389" y="66" text-anchor="start">JEV System One</text>
             <!-- drop down and out -->
             <line class="flow__arrow" x1="389" y1="76" x2="389" y2="104"/>
             <polygon class="flow__head" points="389,104 386.4,99 391.6,99"/>
@@ -1058,6 +1061,26 @@
             <p>The decomposition settles it: about <span class="num">83%</span> of end-to-end errors are retrieval
               failures, and the selector is already about <span class="num">0.93</span> accurate whenever the
               correct tool is in the candidate set.</p>
+
+            <p><span class="marker">Why it cannot help retrieval.</span> A semantic decision layer reads the query
+              and a candidate <em>together</em> and judges the pair. That joint reading is what makes it accurate,
+              and it is also exactly what rules it out as a first-stage ranker:</p>
+            <ul class="next">
+              <li><span class="next__t">It is bounded above by recall@<var>K</var>.</span> It only ever sees the
+                shortlist, so its ceiling is whatever retrieval already found. It can convert recall into
+                precision; it cannot create recall. At <var>K</var> = <span class="num">100</span> that ceiling is
+                <span class="num">0.861</span>, and the <span class="num">14%</span> of gold tools outside the
+                shortlist stay unreachable however good the judgment is.</li>
+              <li><span class="next__t">Its cost scales with candidates, not with the index.</span> Retrieval ranks
+                <span class="num">3,551</span> tools by comparing precomputed vectors — microseconds at query
+                time, because the per-tool work happened once at index time. A decision layer has to read each
+                candidate on every query. The cross-encoder measured here costs
+                <span class="num">3.3–5.0</span> s over <span class="num">100</span> candidates; over the full
+                catalog that is minutes per query.</li>
+            </ul>
+            <p class="diag">This was measured, not assumed. The cross-encoder arm is a semantic decision layer in
+              exactly this position, and used by replacement it was significantly harmful
+              (R@1 <span class="num">0.253 → 0.214</span>, p = <span class="num">0.005</span>).</p>
 
             <p><span class="marker">The metric to add.</span> Report end-to-end accuracy as the product of the two
               stages, not as one number — only the factored form says which stage moved:</p>
@@ -1079,7 +1102,7 @@
               <li><span class="next__t">The existing selector.</span> About <span class="num">0.93</span>
                 conditional accuracy at <span class="num">K</span> ≈ <span class="num">25</span>, which is the
                 current operating point.</li>
-              <li><span class="next__t">System One.</span> The arm under test.</li>
+              <li><span class="next__t">JEV System One.</span> The arm under test.</li>
             </ul>
             <p>The sweep is informative here specifically because recall@<span class="num">100</span>
               (<span class="num">0.861</span>) sits so far above recall@<span class="num">1</span>
@@ -1087,8 +1110,8 @@
               the only thing standing between it and the answer is a selector that can survive the extra
               distractors.</p>
 
-            <p><span class="marker">The real hypothesis.</span> So the interesting question is not whether System
-              One selects better than the current selector. It is whether a cheap semantic decision layer lets us
+            <p><span class="marker">The real hypothesis.</span> So the interesting question is not whether JEV
+              System One selects better than the current selector. It is whether a cheap semantic decision layer lets us
               <em>widen</em> retrieval enough to recover more gold tools while holding conditional selection
               accuracy high — buying back the left factor without paying it back out of the right one.</p>
             <p class="diag">Stated this way the hypothesis is falsifiable by the sweep: if conditional accuracy
