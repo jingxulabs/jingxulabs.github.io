@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=43">
+<link rel="stylesheet" href="styles.css?v=44">
 </head>
 <body>
 
@@ -1215,6 +1215,30 @@
               <li><span class="next__t">Run the k-sweep</span> in the three-selector form described above, to fix
                 the operating point and test the widening hypothesis in one pass. Then spend the single held-out
                 test access on the full composed pipeline.</li>
+              <li><span class="next__t">Run the JEV System One arm, in four steps.</span> The design is already
+                constrained by what the other arms measured:
+                <ol class="plan">
+                  <li><span class="plan__t">Screen before spending.</span> On the cases the current selector gets
+                    wrong, check whether System One's decision differs at all. If it agrees everywhere the current
+                    selector already fails, there is nothing to win and the arm stops here — the same cheap union
+                    test that would have predicted both earlier negative results.</li>
+                  <li><span class="plan__t">Hold the retriever and <var>K</var> fixed.</span> Swap only the
+                    decision component, so the contrast is the component and not the pipeline. Report both factors
+                    of the product separately at each <var>K</var>, never the end-to-end number alone.</li>
+                  <li><span class="plan__t">Fuse its probabilities, do not substitute them.</span> The typed
+                    decision comes with probabilities, which makes it exactly the kind of signal that gained
+                    <span class="num">+9%</span> R@1 fused and lost <span class="num">−15%</span> by replacement.
+                    Treat replacement as a known-bad configuration rather than a thing to retest.</li>
+                  <li><span class="plan__t">Gate on latency before accuracy.</span> The cross-encoder was
+                    disqualified at <span class="num">3.3–5.0</span> s/query regardless of its scores. If System
+                    One cannot answer well inside that budget at the chosen <var>K</var>, a win is not
+                    deployable and should not be reported as one.</li>
+                </ol></li>
+              <li><span class="next__t">Test abstention as its own question.</span> Unanswerable queries score a
+                <em>higher</em> top-1 similarity than real ones, so no similarity threshold can detect them — a
+                typed decision with calibrated probabilities is a genuinely different mechanism, and the one place
+                System One might add a capability rather than improve a number. Worth measuring separately from
+                selection accuracy, because a gain here would not show up in R@<var>k</var> at all.</li>
               <li><span class="next__t">Retry the retriever fine-tune</span> on cooler or rented hardware. It is
                 the one genuinely untested lever.</li>
               <li><span class="next__t">Record the description hypothesis as refuted.</span> The expected

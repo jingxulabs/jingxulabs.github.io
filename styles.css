@@ -700,6 +700,18 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   text-wrap: pretty;
 }
 .next li:last-child { border-bottom: 0; }
+/* A numbered plan nested inside a next-steps item. Numerals sit in the
+   margin so the step text aligns with the prose above it. */
+.plan { margin: 0.75rem 0 0; padding-left: 1.6rem; }
+.plan li { margin-bottom: 0.55rem; font-size: 0.95em; line-height: 1.55; }
+.plan li:last-child { margin-bottom: 0; }
+.plan li::marker {
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: 0.8em;
+  color: var(--graphite);
+}
+.plan__t { font-weight: 600; }
+
 .next__t { font-weight: 600; color: var(--indigo); margin-right: 0.35em; }
 
 /* ─── posts ───
