@@ -609,9 +609,46 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
 /* Verdicts on an intervention table. The lead word is marked, not the row:
    indigo for a result that held, ochre for one that is genuinely uncertain,
    and nothing at all for one that died — a null result needs no colour. */
+/* ─── flow diagrams ───
+   Stages of a pipeline, left to right. Processing stages carry a box and
+   ink-weight text; the data flowing between them does not, so the two kinds
+   of node never read as the same thing. */
+.flow { margin: 1.8rem 0 1.5rem; }
+.flow svg { display: block; width: 100%; height: auto; }
+.flow__box {
+  fill: none;
+  stroke: color-mix(in srgb, var(--ink) 28%, transparent);
+  stroke-width: 1;
+}
+.flow__box--key { stroke: var(--indigo); }
+.flow__arrow { stroke: color-mix(in srgb, var(--ink) 34%, transparent); stroke-width: 1; }
+.flow__head  { fill: color-mix(in srgb, var(--ink) 34%, transparent); }
+.flow__lab {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: 13px; fill: var(--ink);
+}
+.flow__lab--soft { fill: var(--graphite); }
+.flow__lab--key  { fill: var(--indigo); }
+.flow__n {
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: 11.5px; fill: var(--graphite);
+}
+.flow figcaption {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.45;
+  color: var(--graphite);
+  margin-top: 0.7rem;
+  max-width: 52ch;
+}
+
 /* One specimen record from a source: label above, value below, so a pair
    and a bare definition can sit side by side without implying a mapping
    where there isn't one. */
+/* A matrix tick. Set in the body serif at one size wherever it appears, so
+   a column of them reads as a column and not as two different marks. */
+.yes { font-family: Spectral, Georgia, serif; font-size: var(--t-base); color: var(--ink); }
+
 .ba--spec { margin-bottom: 2.1rem; }
 .spec { margin: 1rem 0 0; }
 .spec dt {
