@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=42">
+<link rel="stylesheet" href="styles.css?v=43">
 </head>
 <body>
 
@@ -660,8 +660,8 @@
             <tr>
               <th scope="row" class="sig__name">APIs.guru</th>
               <td class="sig__def"><span class="num">3,352</span> real API operations</td>
-              <td class="sig__def">Tool and API definitions only, with no query attached. They enter the
-                retrieval catalog as unlabeled distractors.</td>
+              <td class="sig__def">Tool and API definitions only, no queries attached — distractors as shipped.
+                The generated intents below supply their labels.</td>
             </tr>
             <tr>
               <th scope="row" class="sig__name">MetaTool</th>
@@ -672,16 +672,18 @@
             <tr>
               <th scope="row" class="sig__name">generated</th>
               <td class="sig__def"><span class="num">4,585</span> intents, <span class="num">$33.94</span></td>
-              <td class="sig__def">Labels for the APIs.guru tools. Direct, indirect and
+              <td class="sig__def">LLM-created labels for the APIs.guru tools. Direct, indirect and
                 distractor-context requests, near-identical confusion pairs, and unanswerable queries where
                 refusing is the correct answer.</td>
             </tr>
           </tbody>
         </table>
         <h4 class="worked__head">What a record from each source looks like</h4>
+        <p class="diag diag--tight">Both sources end up with query → tool pairs, but the labels have different
+          provenance: MetaTool ships them, APIs.guru ships only the tool and the pair is synthesized.</p>
         <div class="ba ba--spec">
           <div class="ba__pane ba__pane--out">
-            <p class="ba__label">MetaTool — labeled</p>
+            <p class="ba__label">MetaTool — benchmark label</p>
             <dl class="spec">
               <dt>User query</dt>
               <dd>“Can you help me find a restaurant nearby?”</dd>
@@ -689,13 +691,17 @@
               <dd><span class="id">restaurant-search</span></dd>
             </dl>
           </div>
-          <div class="ba__pane">
-            <p class="ba__label">APIs.guru — unlabeled</p>
+          <div class="ba__pane ba__pane--soft">
+            <p class="ba__label">APIs.guru — synthetic label, LLM-created</p>
             <dl class="spec">
-              <dt>Tool</dt>
+              <dt>Tool, as shipped</dt>
               <dd><span class="id">googleapis.com / drive / v3 / drive.files.list</span></dd>
               <dt>Description</dt>
               <dd>“Lists the user's files.”</dd>
+              <dt>Generated user query</dt>
+              <dd>“Show me all the files in my Google Drive.”</dd>
+              <dt>Gold tool</dt>
+              <dd><span class="id">drive.files.list</span></dd>
             </dl>
           </div>
         </div>

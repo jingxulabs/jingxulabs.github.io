@@ -562,6 +562,8 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   padding-left: 1.2rem;
 }
 .ba__pane--out { border-left-color: var(--indigo); }
+/* Ochre is the uncertain mark: a synthesized label is not a shipped one. */
+.ba__pane--soft { border-left-color: var(--ochre); }
 .ba__pane p { font-size: 0.95em; line-height: 1.55; text-wrap: pretty; }
 .ba__label {
   font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
