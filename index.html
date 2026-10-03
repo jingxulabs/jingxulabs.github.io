@@ -1032,6 +1032,19 @@
           <div class="sub__body">
             <p><span class="marker">Short answer.</span> Yes, it could help — but mostly in the selector and
               reranker stage, which is not the bottleneck this experiment identifies.</p>
+
+            <p><span class="marker">Where the name comes from.</span> “System One” references Daniel Kahneman's
+              <em>Thinking, Fast and Slow</em>, which popularized a distinction between two modes of thought:</p>
+            <ul class="next">
+              <li><span class="next__t">System 1.</span> Fast, intuitive, automatic judgments.</li>
+              <li><span class="next__t">System 2.</span> Slower, deliberate, effortful reasoning.</li>
+            </ul>
+            <p>TypeSafe says the naming emphasizes the fast, focused judgment side of System 1. Their System One
+              models take some state or context and return a <em>typed decision plus probabilities</em>, rather
+              than generating a long natural-language response.</p>
+            <p class="diag">That output shape is what makes the arm worth testing here. A typed decision with
+              calibrated probabilities can be fused, thresholded and audited — which is the form the fusion result
+              above says to keep as a signal rather than trust as a replacement.</p>
         <figure class="flow">
           <svg viewBox="0 0 612 150" role="img" aria-label="User query to retriever, narrowing 3,551 tools to K, into the tool decision component — currently the Claude selector, with JEV System One as a new arm — and out to the selected tool.">
             <text class="flow__lab flow__lab--soft" x="54" y="46" text-anchor="middle">User query</text>
