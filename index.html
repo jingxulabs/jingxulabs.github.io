@@ -636,11 +636,11 @@
               measured that condition, so nobody knew which stage to fix.</p>
             <ul class="gates">
               <li><span class="gate__name">retriever</span><span class="gate__val">User intent against the whole
-                catalog: <span class="num" data-eval="catalog.total">3,551</span> tools narrowed to roughly <span class="num">100</span>.
-                Dense embedding search. The final retriever is the <span class="id">gte-large</span> embedding
-                model over v3 document text.</span></li>
+                catalog: <span class="num" data-eval="catalog.total">3,551</span> tools narrowed to roughly
+                <span class="num">25</span>. Dense embedding search. The final retriever is the
+                <span class="id">gte-large</span> embedding model over v3 document text.</span></li>
               <li><span class="gate__name">selector</span><span class="gate__val">Shortlist to a single call:
-                <span class="num">100</span> candidates to <span class="num">1</span>. An LLM reading the
+                <span class="num">25</span> candidates to <span class="num">1</span>. An LLM reading the
                 candidates.</span></li>
             </ul>
             <p class="diag">The two stages fail for unrelated reasons and are usually optimized as one.</p>
@@ -991,12 +991,15 @@
           <span class="id">α</span> = <span class="num">1</span> reproduces the replacement row
           (<span class="num" data-eval="rr.replace.r1">0.214</span>). The weaker signal is worth keeping at a
           minority weight and not worth trusting alone.</p>
-        <p class="diag"><span class="marker">Depth.</span> Both rows are measured at depth
-          <span class="num">100</span>: the retriever keeps <span class="num">100</span> candidates and the
-          cross-encoder rescores all of them. Every number in them is a mean over the five generated splits at that
-          depth, so they are comparable to each other and to the dense baseline. Replacing is
-          <span class="id">α</span> = <span class="num">1</span>, which is why the two rows are endpoints of one
-          sweep rather than two unrelated ideas. The same scores help at
+        <p class="diag"><span class="marker">Depth, which is not the shortlist.</span> Both rows are measured at
+          depth <span class="num">100</span>: the cross-encoder rescores the retriever's top
+          <span class="num">100</span>. That window is a rescoring budget, not the shortlist handed on to the
+          selector, which stays at roughly <span class="num">25</span>. Reranking deeper than you intend to pass
+          along is the normal arrangement, because reordering can only pull a tool up into the shortlist if it was
+          scored in the first place. Every number in these rows is a mean over the five generated splits at depth
+          <span class="num">100</span>, so they are comparable to each other and to the dense baseline. Replacing
+          is <span class="id">α</span> = <span class="num">1</span>, which is why the two rows are endpoints of one
+          sweep rather than two unrelated ideas: the same scores help at
           <span class="id">α</span> = <span class="num">0.2</span> and hurt at
           <span class="num">1</span>.</p>
 
@@ -1243,9 +1246,13 @@
               <span class="eq__op">×</span>
               <var>P</var>(select gold <span class="eq__mid">&#8739;</span> gold in top-<var>K</var>)
             </p>
-            <p>The left factor is retrieval, the right the selector's conditional accuracy. Retrieval carries about
-              <span class="num">83%</span> of the error mass; the right factor is already about
-              <span class="num">0.93</span>.</p>
+            <p>The left factor is retrieval, the right the selector's conditional accuracy. The headline
+              decomposition composes them at <var>K</var> = <span class="num">25</span>: R@25 ≈
+              <span class="num">0.65</span> against a conditional <span class="num">0.93</span>, giving end-to-end
+              ≈ <span class="num">0.60</span>, of which about <span class="num">83%</span> of the error mass is
+              retrieval. The <span class="num">0.93</span> was measured at <var>K</var> =
+              <span class="num">20</span>, and the sweep that would fix the operating point properly has not been
+              run, so treat <span class="num">25</span> as a provisional choice rather than a tuned one.</p>
 
             <p><span class="marker">The real hypothesis.</span> Not whether JEV System One selects better than the
               current selector, but whether a cheap semantic decision layer lets us <em>widen</em> retrieval enough
