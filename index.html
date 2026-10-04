@@ -859,13 +859,13 @@
               <td class="sig__def vd vd--held">Held. The only large win.</td>
             </tr>
             <tr>
-              <th scope="row" class="sig__name">rerank by replacement</th>
+              <th scope="row" class="sig__name">cross-encoder <em>replacing</em> the dense score</th>
               <td class="sig__arm"><span class="num">3</span> + §<span class="num">7</span></td>
               <td class="sig__def">R@1 <span class="num" data-eval="rr.dense.r1">0.253</span> → <span class="num" data-eval="rr.replace.r1">0.214</span>, p = <span class="num" data-eval="sig.replace.p">0.005</span></td>
               <td class="sig__def vd vd--dropped">Dropped. Significantly harmful.</td>
             </tr>
             <tr>
-              <th scope="row" class="sig__name">same scores, fused at 20% weight</th>
+              <th scope="row" class="sig__name">the same scores <em>blended</em> with it, <span class="num">20%</span> weight</th>
               <td class="sig__arm"><span class="num">3</span> + §<span class="num">8</span></td>
               <td class="sig__def">MRR <span class="num" data-eval="sig.fuse.dmrr">+0.023</span>
                 [<span class="num" data-eval="sig.fuse.mrr_lo">+0.007</span>, <span class="num" data-eval="sig.fuse.mrr_hi">+0.041</span>]; R@1 p = <span class="num" data-eval="sig.fuse.p">0.124</span></td>
@@ -891,10 +891,55 @@
             </tr>
           </tbody>
         </table>
-        <p class="diag"><span class="marker">Depth.</span> The reranking and fusion rows above were measured at
-          depth <span class="num">100</span>: the retriever keeps <span class="num">100</span> candidates and the
-          cross-encoder rescores all of them. Every number in those rows is a mean over the five generated splits
-          at that depth, so they are comparable to each other and to the dense baseline.</p>
+        <h4 class="worked__head">Reading the two metrics</h4>
+        <ul class="gates">
+          <li><span class="gate__name">R@k</span><span class="gate__val">Recall at <var>k</var>: the share of
+            queries whose correct tool appears <em>anywhere</em> in the top <var>k</var>. A hit at rank
+            <span class="num">1</span> and a hit at rank <span class="num">25</span> both count as one for R@25.
+            It is the right measure when a later stage will read the whole shortlist.</span></li>
+          <li><span class="gate__name">MRR</span><span class="gate__val">Mean reciprocal rank: the average of
+            <span class="num">1</span>/rank of the correct tool. Rank <span class="num">1</span> scores
+            <span class="num">1.00</span>, rank <span class="num">2</span> scores <span class="num">0.50</span>,
+            rank <span class="num">10</span> scores <span class="num">0.10</span>, a miss scores
+            <span class="num">0</span>. It rewards moving the right answer <em>up</em> the list, not just getting
+            it in.</span></li>
+        </ul>
+        <p class="diag">The difference is the whole story of the fusion row. Blending moved correct tools upward
+          inside the shortlist, which MRR registers
+          (<span class="num" data-eval="sig.fuse.dmrr">+0.023</span>, interval clear of zero), but it did not move
+          enough of them all the way to rank <span class="num">1</span> for R@1 to show a defensible gain
+          (p = <span class="num" data-eval="sig.fuse.p">0.124</span>). A gain in MRR with none in R@1 means better
+          ordering without a better top pick.</p>
+        <div class="sub__body">
+          <p><span class="marker">What those two middle rows are.</span> They are the same experiment run twice on
+            the <em>identical</em> cross-encoder scores, and they differ only in how those scores are combined with
+            the retriever's. That is the whole point of the pair: the signal is held fixed and only the combination
+            rule changes.</p>
+        </div>
+        <ul class="gates">
+          <li><span class="gate__name">replacing</span><span class="gate__val">Inside the top
+            <span class="num">100</span>, throw the dense ordering away and sort purely by cross-encoder score.
+            This is what “reranking” usually means.</span></li>
+          <li><span class="gate__name">blending</span><span class="gate__val">Keep both. Each score is turned into
+            a per-query z-score over the same window, then mixed at
+            <span class="id">α</span> = <span class="num">0.2</span>, so the reranker gets
+            <span class="num">20%</span> of the say and the retriever keeps <span class="num">80%</span>.</span></li>
+        </ul>
+        <p class="eq">
+          <var>score</var><sub>fused</sub>
+          <span class="eq__op">=</span>
+          (<span class="num">1</span> − <span class="id">α</span>) · <var>z</var>(dense)
+          <span class="eq__op">+</span>
+          <span class="id">α</span> · <var>z</var>(cross-encoder)
+        </p>
+        <p class="diag"><span class="marker">Depth.</span> Both rows are measured at depth
+          <span class="num">100</span>: the retriever keeps <span class="num">100</span> candidates and the
+          cross-encoder rescores all of them. Every number in them is a mean over the five generated splits at that
+          depth, so they are comparable to each other and to the dense baseline. Replacing is
+          <span class="id">α</span> = <span class="num">1</span>, which is why the two rows are endpoints of one
+          sweep rather than two unrelated ideas. The same scores help at
+          <span class="id">α</span> = <span class="num">0.2</span> and hurt at
+          <span class="num">1</span>.</p>
 
         <h4 class="worked__head">What “better encoder + richer document text” means</h4>
         <p class="diag diag--tight">Two independent changes, bundled in the table above because they shipped
@@ -908,30 +953,40 @@
           <p><span class="marker">The document text.</span> What gets embedded per tool. Each step only adds
             fields; nothing is rewritten or generated:</p>
         </div>
-        <ul class="gates">
-          <li><span class="gate__name">v0</span><span class="gate__val">Name, summary, description and parameter
-            names. This is the shipped baseline matrix.</span></li>
-          <li><span class="gate__name">v1</span><span class="gate__val">+ tags.</span></li>
-          <li><span class="gate__name">v2</span><span class="gate__val">+ API title and provider.</span></li>
-          <li><span class="gate__name">v3</span><span class="gate__val">+ HTTP method, and the URL path split into
-            words.</span></li>
-        </ul>
-        <h4 class="worked__head">The four versions on one real tool</h4>
-        <p class="diag diag--tight">An APIs.guru operation as the retriever actually sees it:
-          <span class="id">enterprise-admin/list-global-webhooks</span>, which is
-          <span class="id">GET /admin/hooks</span>. Each version is the one above it plus the marked text. Note that
-          the description is simply the summary repeated, which is typical of the catalog.</p>
-        <ul class="docvar">
-          <li><span class="docvar__v">v0</span><span class="docvar__t">enterprise-admin/list-global-webhooks List
-            global webhooks List global webhooks per_page page</span></li>
-          <li><span class="docvar__v">v1</span><span class="docvar__t"><span class="docvar__dim">…per_page
-            page</span> <ins class="docvar__add">enterprise-admin</ins></span></li>
-          <li><span class="docvar__v">v2</span><span class="docvar__t"><span class="docvar__dim">…enterprise-admin</span>
-            <ins class="docvar__add">GitHub v3 REST API github.com</ins></span></li>
-          <li><span class="docvar__v">v3</span><span class="docvar__t"><span class="docvar__dim">…github.com</span>
-            <ins class="docvar__add">GET admin hooks</ins></span></li>
-        </ul>
-        <p class="diag">Why that last line is the one that pays. The catalog holds five more operations on the same
+        <p class="diag diag--tight">The right-hand column is one real APIs.guru operation as the retriever
+          actually sees it: <span class="id">enterprise-admin/list-global-webhooks</span>, which is
+          <span class="id">GET /admin/hooks</span>. Each row is the one above it plus the marked text. Note that its
+          description is simply the summary repeated, which is typical of the catalog.</p>
+        <table class="sig sig--doc">
+          <thead><tr><th scope="col">Version</th><th scope="col">What it adds</th><th scope="col">The document, as embedded</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="docvar__v">v0</th>
+              <td class="sig__def">Name, summary, description and parameter names. The shipped baseline matrix.</td>
+              <td class="docvar__t">enterprise-admin/list-global-webhooks List global webhooks List global webhooks
+                per_page page</td>
+            </tr>
+            <tr>
+              <th scope="row" class="docvar__v">v1</th>
+              <td class="sig__def">+ tags.</td>
+              <td class="docvar__t"><span class="docvar__dim">…per_page page</span>
+                <ins class="docvar__add">enterprise-admin</ins></td>
+            </tr>
+            <tr>
+              <th scope="row" class="docvar__v">v2</th>
+              <td class="sig__def">+ API title and provider.</td>
+              <td class="docvar__t"><span class="docvar__dim">…enterprise-admin</span>
+                <ins class="docvar__add">GitHub v3 REST API github.com</ins></td>
+            </tr>
+            <tr>
+              <th scope="row" class="docvar__v">v3</th>
+              <td class="sig__def">+ HTTP method, and the URL path split into words.</td>
+              <td class="docvar__t"><span class="docvar__dim">…github.com</span>
+                <ins class="docvar__add">GET admin hooks</ins></td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="diag">Why that last row is the one that pays. The catalog holds five more operations on the same
           <span class="id">/admin/hooks</span> path, and
           <span class="id">enterprise-admin/create-global-webhook</span> is
           <span class="id">POST /admin/hooks</span>: the same path, the same tag, the same provider, and a description

@@ -931,32 +931,23 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   white-space: nowrap;
 }
 
-/* ═══════════════ document-text versions, on one real tool ═══════════════
-   The embedded string is data, not prose, so it is set in the mono face and
-   allowed to wrap. Each row shows only what its version adds. */
-.docvar {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1rem;
-}
-.docvar li {
-  display: flex;
-  gap: 1rem;
-  align-items: baseline;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
-}
-.docvar__v {
-  flex: none;
-  width: 2.5rem;
+/* ═══════════════ document-text versions, with one real tool ═══════════════
+   Three columns: the version, what it adds, and the embedded string itself.
+   The last column is data rather than prose, so it is set in the mono face
+   and allowed to wrap; each row shows only what its version appends. */
+.sig--doc { table-layout: fixed; }
+.sig--doc .docvar__v {
+  width: 3.5rem;
   font-family: "Spline Sans Mono", ui-monospace, monospace;
   font-size: var(--t-xs);
+  font-weight: 500;
   color: var(--indigo);
 }
-.docvar__t {
+.sig--doc .sig__def { width: 16rem; }
+.sig--doc .docvar__t {
   font-family: "Spline Sans Mono", ui-monospace, monospace;
-  font-size: 0.8rem;
-  line-height: 1.65;
+  font-size: 0.78rem;
+  line-height: 1.6;
   color: color-mix(in srgb, var(--ink) 78%, var(--bond));
   overflow-wrap: anywhere;
 }
@@ -966,4 +957,10 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   background: var(--band);
   box-shadow: 0 0 0 2px var(--band);
   color: var(--ink);
+}
+
+@media (max-width: 680px) {
+  /* The mono column cannot shrink further, so the gloss folds away and the
+     version plus the document itself carry the row. */
+  .sig--doc .sig__def { display: none; }
 }
