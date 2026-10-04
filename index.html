@@ -976,9 +976,17 @@
             <span class="num">0.68–0.82</span>.</p>
           <p><span class="marker">Why the text helps.</span> The gain lands where the losses were: on tools whose
             gold description runs to five words or fewer, R@10 goes <span class="num">0.348 → 0.568</span>. Two
-            endpoints differing only in verb, or only in path depth, are identical documents under v0. The v3 text
-            is worth a mean <span class="num">+6.0</span> points R@10 and lifts every encoder tried, positive in
-            <span class="num">24</span> of <span class="num">25</span> encoder × split cells.</p>
+            endpoints differing only in HTTP verb are identical documents under v0, and the method token is the
+            whole of what separates them. The v3 text is worth a mean <span class="num">+6.0</span> points R@10 and
+            lifts every encoder tried, positive in <span class="num">24</span> of <span class="num">25</span>
+            encoder × split cells.</p>
+          <p class="diag">The path tokens are narrower than they look. <span class="id">humanize()</span> strips
+            <span class="id">{braces}</span> before tokenizing, so they separate endpoints that add a literal
+            segment (<span class="id">/admin/hooks</span> against
+            <span class="id">/admin/hooks/{hook_id}/pings</span>) but not endpoints differing only by a path
+            parameter. <span class="id">/timezone/{area}/{location}</span> and
+            <span class="id">…/{region}</span> both reduce to <span class="id">timezone</span>, and stay separated
+            only by their names and parameter lists.</p>
           <p class="diag"><span class="marker">Methodological debt.</span> The sweep ran before the dev/test
             partition was cut, so <span class="id">gte-large/v3</span> was chosen while looking at what is now
             test. The single test access should go to the composed pipeline, not to re-confirming the encoder.</p>
