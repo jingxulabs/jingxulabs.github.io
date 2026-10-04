@@ -853,7 +853,7 @@
         <table class="sig sig--meas">
           <thead><tr><th scope="col">Intervention</th><th scope="col">Arm</th><th scope="col">Effect</th><th scope="col">Verdict</th></tr></thead>
           <tbody>
-            <tr>
+            <tr class="sig__row--won">
               <th scope="row" class="sig__name">better encoder + richer document text</th>
               <td class="sig__arm"><span class="num">3</span></td>
               <td class="sig__def">R@1 <span class="num" data-eval="enc.base.r1">0.139</span> → <span class="num" data-eval="enc.both.r1">0.259</span>;
@@ -918,27 +918,57 @@
           enough of them all the way to rank <span class="num">1</span> for R@1 to show a defensible gain
           (p = <span class="num" data-eval="sig.fuse.p">0.124</span>). A gain in MRR with none in R@1 means better
           ordering without a better top pick.</p>
-        <div class="sub__body">
-          <p><span class="marker">What those two middle rows are.</span> Both combine the same two scores and
-            differ only in how. The signal is held fixed; only the combination rule changes. That is what makes the
-            pair worth reporting.</p>
+        <h4 class="worked__head">Encoder and cross-encoder</h4>
+        <p class="diag diag--tight">Two models, two jobs. The difference decides what can be precomputed, and
+          therefore which one is allowed to look at the whole catalog.</p>
+        <div class="ba ba--spec">
+          <div class="ba__pane ba__pane--out">
+            <p class="ba__label">Encoder, for retrieval</p>
+            <dl class="spec">
+              <dt>Here</dt>
+              <dd><span class="id">gte-large</span>, <span class="num">1024</span>-dimension vectors</dd>
+              <dt>Reads</dt>
+              <dd>A query, <em>or</em> a tool document. One at a time, never the two together.</dd>
+              <dt>Returns</dt>
+              <dd>A vector. Relevance is the cosine between two of them.</dd>
+              <dt>Precomputable</dt>
+              <dd>Yes. All <span class="num" data-eval="catalog.total">3,551</span> tool vectors are built once at
+                index time and reused by every query.</dd>
+              <dt>Cost per query</dt>
+              <dd><span class="num">3</span> ms for the entire catalog: one encode, one matrix multiply.</dd>
+            </dl>
+          </div>
+          <div class="ba__pane ba__pane--soft">
+            <p class="ba__label">Cross-encoder, for reranking</p>
+            <dl class="spec">
+              <dt>Here</dt>
+              <dd><span class="id">bge-reranker-large</span></dd>
+              <dt>Reads</dt>
+              <dd>A query <em>and</em> one tool document, concatenated into a single input.</dd>
+              <dt>Returns</dt>
+              <dd>One relevance number for that one pair. No vector, nothing reusable.</dd>
+              <dt>Precomputable</dt>
+              <dd>No. How it reads the document depends on the query it was paired with, so there is no
+                query-independent representation to store.</dd>
+              <dt>Cost per query</dt>
+              <dd><span class="num">3.3–5.0</span> s over <span class="num">100</span> candidates: one forward
+                pass each.</dd>
+            </dl>
+          </div>
         </div>
-        <ul class="gates">
-          <li><span class="gate__name">dense score</span><span class="gate__val">The retriever's. Cosine
-            similarity between the query's embedding and the tool document's, each encoded
-            <em>independently</em>, which is why all <span class="num" data-eval="catalog.total">3,551</span>
-            document vectors are computed once at index time and a query costs
-            <span class="num">3</span> ms.</span></li>
-          <li><span class="gate__name">cross-encoder score</span><span class="gate__val">A second model's, from
-            <span class="id">bge-reranker-large</span>. It reads the query and <em>one</em> candidate document
-            together as a single input and returns one relevance number for that pair. Reading them jointly is what
-            makes it sharp, and why nothing can be precomputed: scoring
-            <span class="num">100</span> candidates means <span class="num">100</span> forward passes per
-            query.</span></li>
-        </ul>
-        <p class="diag diag--tight">So each candidate carries two numbers, and the two rows above are the two ways
-          of resolving them into one ordering. Blending z-scores each first, which is what makes two unrelated
-          scales addable:</p>
+        <p class="diag">That is the whole trade. Seeing both texts at once lets the cross-encoder's attention run
+          between query tokens and document tokens, so it reads the document in light of what was actually asked.
+          An encoder must commit each document to a fixed vector before it has ever seen the query. Giving that up
+          is what buys the encoder its speed, and the speed is what makes
+          <span class="num" data-eval="catalog.total">3,551</span> candidates affordable at all: the cross-encoder
+          over the full catalog would be minutes per query. So the encoder narrows, the cross-encoder only ever
+          reorders what the encoder already found, and its ceiling is whatever recall the encoder reached.</p>
+        <div class="sub__body">
+          <p><span class="marker">What those two middle rows are.</span> Each candidate therefore carries two
+            numbers, an encoder score and a cross-encoder score, and the two rows are the two ways of resolving
+            them into one ordering. The signal is held fixed; only the combination rule changes. Blending z-scores
+            each one first, which is what makes two unrelated scales addable:</p>
+        </div>
         <p class="eq">
           <var>score</var><sub>fused</sub>
           <span class="eq__op">=</span>

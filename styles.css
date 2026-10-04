@@ -985,3 +985,11 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   line-height: 1.4;
   color: var(--graphite);
 }
+
+/* The one intervention that held, marked on the row rather than in the
+   verdict alone. Indigo mixed into the page ground: the inferred mark at low
+   strength, so it reads as a light blue wash and not as a new colour. */
+.sig__row--won > * { background: color-mix(in srgb, var(--indigo) 11%, var(--bond)); }
+.sig__row--won > :first-child { box-shadow: inset 2px 0 0 var(--indigo); }
+.sig--meas .sig__row--won > * { padding-left: 0.7rem; }
+.sig--meas .sig__row--won > :last-child { padding-right: 0.7rem; }
