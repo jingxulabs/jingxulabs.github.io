@@ -481,3 +481,201 @@ setTimeout(() => {
     document.getElementById('player').classList.add('player--fallback');
   }
 }, 5000);
+
+
+/* ═══════════════════════════════════════════════════════════
+   ToolSelection figures, read from the experiment repository.
+
+   Every measured number in #toolselection carries a data-eval key
+   instead of being transcribed into the prose. The keys resolve against
+   the eval JSON that the pipeline itself wrote, fetched from the repo at
+   read time, so the page cannot drift from the data it describes.
+
+   Two deliberate constraints:
+     1. The static HTML holds the last known value. A failed fetch leaves
+        the page exactly as published rather than showing holes, so this
+        degrades to the old behaviour offline.
+     2. Nothing is fetched until the section is near the viewport. A
+        reader who never scrolls to it pays nothing.
+
+   The derivations below are the page's claims stated as code. Where a
+   figure is a macro-average over the five generated splits, that is what
+   GEN encodes — the same pooling DATA.md reports, not a re-aggregation.
+   ═══════════════════════════════════════════════════════════ */
+
+(() => {
+  const section = document.getElementById('toolselection');
+  if (!section || !('fetch' in window)) return;
+
+  const REPO = 'jingxulabs/ToolSelection';
+  const REF  = 'main';            // tracks the repo; pin to a SHA to freeze
+  const BASE = `https://raw.githubusercontent.com/${REPO}/${REF}/`;
+
+  // Only files the derivations actually read. rerank_sweep carries the same
+  // depth-100 numbers as fusion_sweep at a hundredth of the size, so the
+  // 197 KB sweep is deliberately not fetched.
+  const FILES = {
+    corpus:   'data/corpus/corpus_stats.json',
+    baseline: 'data/eval/retrieval_baseline.json',
+    encoder:  'data/eval/encoder_sweep.json',
+    rerank:   'data/eval/rerank_sweep.json',
+    sig:      'data/eval/significance_backfill.json',
+    bm25:     'data/eval/bm25_fusion.json',
+    headroom: 'data/eval/doc_quality_headroom.json',
+  };
+
+  // The five generated splits the section macro-averages over. dev_A is the
+  // MetaTool anchor and is excluded on purpose: pooling it in would mix a
+  // benchmark-labelled split into a generated-split mean.
+  const GEN = ['standard_L2', 'standard_L3', 'standard_L4',
+               'splitD_separable', 'splitD_inseparable'];
+
+  const RERANKER = 'BAAI/bge-reranker-large';
+  const DEPTH    = 'depth_100';   // the depth every reranking row is measured at
+
+  const mean = (xs) => xs.reduce((a, b) => a + b, 0) / xs.length;
+
+  /* ─── Formatters ───
+     Each key declares how it reads, so a ratio never renders as a count. */
+  const fmt = {
+    int:  (v) => v.toLocaleString('en-US'),
+    f1:   (v) => v.toFixed(1),
+    f3:   (v) => v.toFixed(3),
+    sign: (v) => (v < 0 ? '−' : '+') + Math.abs(v).toFixed(3),
+    neg:  (v) => '−' + Math.abs(v).toFixed(3),
+    pct0: (v) => (v * 100).toFixed(0) + '%',
+    pct1: (v) => (v * 100).toFixed(1) + '%',
+  };
+
+  /* ─── Derivations ───
+     Keyed by the data-eval attribute in the markup. Each returns a raw
+     number plus the formatter it should be read through. */
+  function derive(d) {
+    const cs = d.corpus, enc = d.encoder.runs, rs = d.rerank.splits;
+    const pools = d.baseline.test_A.pools;
+    const claims = d.sig.tested_claims;
+    const dq = d.headroom.POOLED_generated.by_doc_quality;
+
+    // Encoder sweep: four configurations, each a macro-average over GEN.
+    const RUN = {
+      base: 'MiniLM-L6-v2/v0 (base)',   // shipped baseline
+      text: 'all-MiniLM-L6-v2/v3',      // document text only
+      enc:  'gte-large/v0',             // encoder only
+      both: 'gte-large/v3',             // both, the shipped winner
+    };
+    const em = (arm, k) => mean(GEN.map((s) => enc[RUN[arm]][s][k]));
+
+    const r100at199  = pools.pool_199.dense['recall@100'];
+    const r100at3551 = pools.pool_3551.dense['recall@100'];
+
+    const denseR1   = mean(GEN.map((s) => rs[s].dense['R@1']));
+    const replaceR1 = mean(GEN.map((s) => rs[s].rerank[RERANKER][DEPTH]['R@1']));
+
+    const replace = claims['§7 replacement (zscore depth100 a1)'].POOLED_generated;
+    const fuse    = claims['§8 fusion (zscore depth100 a0.2)'].POOLED_generated;
+    const bm      = d.bm25.significance.POOLED_generated.full_vs_dense;
+
+    const m = {
+      'catalog.total':       [cs.catalog_total, 'int'],
+      'catalog.labeled':     [cs.labeled_tools, 'int'],
+      'catalog.distractors': [cs.catalog_by_source['apis.guru'], 'int'],
+      'catalog.ratio':       [cs.distractor_ratio, 'f1'],
+      'catalog.pairs':       [cs.intents_total, 'int'],
+      'catalog.heldout':     [cs.heldout_tools, 'int'],
+
+      'pool.r100.at199':  [r100at199, 'f3'],
+      'pool.r100.at3551': [r100at3551, 'f3'],
+      'pool.r100.drop':   [r100at199 - r100at3551, 'neg'],
+      'pool.unreachable': [1 - r100at3551, 'pct0'],
+
+      'enc.l3.r10': [enc[RUN.both].standard_L3['R@10'], 'f3'],
+      'enc.l4.r10': [enc[RUN.both].standard_L4['R@10'], 'f3'],
+
+      'rr.dense.r1':   [denseR1, 'f3'],
+      'rr.replace.r1': [replaceR1, 'f3'],
+
+      'sig.replace.p':    [replace.mcnemar_p, 'f3'],
+      'sig.fuse.dmrr':    [fuse.d_mrr, 'sign'],
+      'sig.fuse.mrr_lo':  [fuse.mrr_ci95[0], 'sign'],
+      'sig.fuse.mrr_hi':  [fuse.mrr_ci95[1], 'sign'],
+      'sig.fuse.p':       [fuse.mcnemar_p, 'f3'],
+
+      'bm25.d_r1': [bm['d_R@1'], 'sign'],
+      'bm25.p':    [bm.mcnemar_p, 'f3'],
+
+      'dq.weak.items': [dq.dq0_none.share_of_items + dq.dq1_poor.share_of_items, 'pct1'],
+      'dq.weak.miss':  [dq.dq0_none['share_of_miss@10'] + dq.dq1_poor['share_of_miss@10'], 'pct1'],
+      'dq.good.items': [dq.dq3_4_good.share_of_items, 'pct0'],
+      'dq.good.miss':  [dq.dq3_4_good['share_of_miss@10'], 'pct0'],
+      'dq.ratio':      [d.headroom.gold_vs_catalog_dq.dq1_poor.representation_ratio, 'f3'],
+    };
+
+    for (const [arm, keys] of Object.entries({
+      base: 'enc.base', text: 'enc.text', enc: 'enc.enc', both: 'enc.both',
+    })) {
+      m[`${keys}.r1`]  = [em(arm, 'R@1'), 'f3'];
+      m[`${keys}.r10`] = [em(arm, 'R@10'), 'f3'];
+      m[`${keys}.r25`] = [em(arm, 'R@25'), 'f3'];
+    }
+    // The two factors read as deltas against the shared baseline.
+    for (const arm of ['enc', 'text', 'both']) {
+      m[`enc.d.${arm}`] = [em(arm, 'R@1') - em('base', 'R@1'), 'sign'];
+    }
+    return m;
+  }
+
+  /* ─── Paint ─── */
+  const prov = document.getElementById('eval-prov');
+  const setState = (s, txt) => {
+    if (!prov) return;
+    prov.dataset.state = s;
+    if (txt) prov.querySelector('.prov__txt').innerHTML = txt;
+  };
+
+  async function load() {
+    setState('loading');
+
+    const names = Object.keys(FILES);
+    const data = {};
+    const parts = await Promise.all(names.map((n) =>
+      fetch(BASE + FILES[n], { cache: 'default' })
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${FILES[n]}: ${r.status}`))))
+    ));
+    names.forEach((n, i) => { data[n] = parts[i]; });
+
+    const m = derive(data);
+    const targets = section.querySelectorAll('[data-eval]');
+    let painted = 0, missing = 0;
+
+    for (const el of targets) {
+      const entry = m[el.dataset.eval];
+      if (!entry || !Number.isFinite(entry[0])) { missing++; continue; }
+      const next = fmt[entry[1]](entry[0]);
+      // Mark only the figures the repo has actually moved since publication.
+      if (next !== el.textContent.trim()) el.classList.add('num--moved');
+      el.textContent = next;
+      painted++;
+    }
+
+    const link = `<a href="https://github.com/${REPO}/tree/${REF}/data/eval">data/eval</a>`;
+    setState('live',
+      `${painted} figure${painted === 1 ? '' : 's'} in this section read live from ${link} ` +
+      `in the experiment repository${missing ? `, ${missing} unresolved` : ''}. ` +
+      `Nothing here is transcribed by hand.`);
+  }
+
+  // Fetch once, a screenful before the section arrives.
+  const io = new IntersectionObserver((entries, obs) => {
+    if (!entries.some((e) => e.isIntersecting)) return;
+    obs.disconnect();
+    load().catch((err) => {
+      // The published values are already on the page; say so and leave them.
+      setState('stale',
+        'The repository could not be reached, so the figures below are the ' +
+        'last published values rather than a live read.');
+      if (window.console) console.warn('ToolSelection eval load failed:', err);
+    });
+  }, { rootMargin: '600px 0px' });
+
+  io.observe(section);
+})();

@@ -885,3 +885,85 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   .horizon__curve { stroke-dashoffset: 0; }
   .horizon__band  { opacity: 1; }
 }
+
+/* ═══════════════ provenance of the measured figures ═══════════════
+   A one-line note under the repository link saying where the numbers in
+   #toolselection came from. The dot carries the state, so the sentence
+   stays readable prose rather than a status widget. */
+.prov {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-xs);
+  line-height: 1.5;
+  color: var(--graphite);
+  margin-top: 0.75rem;
+}
+.prov__dot {
+  flex: none;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  transform: translateY(-0.15rem);
+  background: color-mix(in srgb, var(--ink) 24%, transparent);
+  transition: background 200ms ease;
+}
+.prov[data-state="loading"] .prov__dot { background: var(--ochre); }
+.prov[data-state="live"]    .prov__dot { background: var(--indigo); }
+.prov[data-state="stale"]   .prov__dot { background: color-mix(in srgb, var(--ochre) 55%, transparent); }
+.prov[data-state="stale"]   .prov__txt { color: var(--ochre); }
+
+/* A figure the repository has moved since this page was last written.
+   Marked with the uncertain accent, because the prose around it was
+   composed against the old value and may not have caught up. */
+.num--moved {
+  border-bottom: 1px solid var(--band);
+  padding-bottom: 0.05em;
+}
+
+/* ═══════════════ arm column in the results table ═══════════════ */
+.sig--meas .sig__arm {
+  width: 6.5rem;
+  vertical-align: baseline;
+  padding: 0.6rem 0.9rem 0.6rem 0;
+  color: color-mix(in srgb, var(--ink) 55%, var(--bond));
+  white-space: nowrap;
+}
+
+/* ═══════════════ document-text versions, on one real tool ═══════════════
+   The embedded string is data, not prose, so it is set in the mono face and
+   allowed to wrap. Each row shows only what its version adds. */
+.docvar {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+.docvar li {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
+}
+.docvar__v {
+  flex: none;
+  width: 2.5rem;
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: var(--t-xs);
+  color: var(--indigo);
+}
+.docvar__t {
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: 0.8rem;
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--ink) 78%, var(--bond));
+  overflow-wrap: anywhere;
+}
+.docvar__dim { color: color-mix(in srgb, var(--ink) 34%, var(--bond)); }
+.docvar__add {
+  text-decoration: none;
+  background: var(--band);
+  box-shadow: 0 0 0 2px var(--band);
+  color: var(--ink);
+}
