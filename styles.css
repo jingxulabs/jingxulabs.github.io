@@ -972,3 +972,16 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   color: var(--graphite);
   margin: -0.9rem 0 1rem;
 }
+
+/* The mechanism, carried in the intervention cell rather than in a separate
+   list below the table: how the row was actually run, one line, set quieter
+   than the name it sits under. */
+.sig__how {
+  display: block;
+  margin-top: 0.3rem;
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--graphite);
+}

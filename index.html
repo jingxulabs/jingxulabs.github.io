@@ -861,13 +861,18 @@
               <td class="sig__def vd vd--held">Held. The only large win.</td>
             </tr>
             <tr>
-              <th scope="row" class="sig__name">cross-encoder <em>replacing</em> the dense score</th>
+              <th scope="row" class="sig__name">cross-encoder <em>replacing</em> the dense score
+                <span class="sig__how">Sort the top <span class="num">100</span> purely by cross-encoder, dense
+                  order discarded. What “reranking” usually means.</span></th>
               <td class="sig__arm"><span class="num">3</span> + rerank</td>
               <td class="sig__def">R@1 <span class="num" data-eval="rr.dense.r1">0.253</span> → <span class="num" data-eval="rr.replace.r1">0.214</span>, p = <span class="num" data-eval="sig.replace.p">0.005</span></td>
               <td class="sig__def vd vd--dropped">Dropped. Significantly harmful.</td>
             </tr>
             <tr>
-              <th scope="row" class="sig__name">the same cross-encoder scores <em>blended</em> into it, <span class="num">20%</span> weight</th>
+              <th scope="row" class="sig__name">the same cross-encoder scores <em>blended</em> into it
+                <span class="sig__how">Keep both. Each z-scored per query, then mixed at
+                  <span class="id">α</span> = <span class="num">0.2</span>:
+                  <span class="num">20%</span> cross-encoder, <span class="num">80%</span> dense.</span></th>
               <td class="sig__arm"><span class="num">3</span> + fusion</td>
               <td class="sig__def">MRR <span class="num" data-eval="sig.fuse.dmrr">+0.023</span>
                 [<span class="num" data-eval="sig.fuse.mrr_lo">+0.007</span>, <span class="num" data-eval="sig.fuse.mrr_hi">+0.041</span>]; R@1 p = <span class="num" data-eval="sig.fuse.p">0.124</span></td>
@@ -931,18 +936,9 @@
             <span class="num">100</span> candidates means <span class="num">100</span> forward passes per
             query.</span></li>
         </ul>
-        <p class="diag diag--tight">So each candidate carries two numbers. The two rows are the two ways of
-          resolving them into one ordering:</p>
-        <ul class="gates">
-          <li><span class="gate__name">replacing</span><span class="gate__val">Inside the top
-            <span class="num">100</span>, throw the dense ordering away and sort purely by cross-encoder score.
-            This is what “reranking” usually means.</span></li>
-          <li><span class="gate__name">blending</span><span class="gate__val">Keep both. Each score is turned into
-            a per-query z-score over the same window, so the two scales become comparable, then mixed at
-            <span class="id">α</span> = <span class="num">0.2</span>: the cross-encoder gets
-            <span class="num">20%</span> of the say and the dense score keeps
-            <span class="num">80%</span>.</span></li>
-        </ul>
+        <p class="diag diag--tight">So each candidate carries two numbers, and the two rows above are the two ways
+          of resolving them into one ordering. Blending z-scores each first, which is what makes two unrelated
+          scales addable:</p>
         <p class="eq">
           <var>score</var><sub>fused</sub>
           <span class="eq__op">=</span>
