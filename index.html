@@ -642,8 +642,18 @@
               <li><span class="gate__name">selector</span><span class="gate__val">Shortlist to a single call:
                 <span class="num">25</span> candidates to <span class="num">1</span>. An LLM reading the
                 candidates.</span></li>
+              <li><span class="gate__name">reranker</span><span class="gate__val"><em>Not in this pipeline.</em> A
+                cross-encoder stage between the two was measured on its own over a depth-<span class="num">100</span>
+                window and never composed in, so every number below is two-stage. See fold
+                <span class="num">5</span>.</span></li>
             </ul>
             <p class="diag">The two stages fail for unrelated reasons and are usually optimized as one.</p>
+            <p class="diag"><span class="marker">What “roughly 25” rests on.</span> It is a provisional choice, not
+              a tuned one. The selector's <span class="num">0.93</span> conditional accuracy was measured at
+              <var>k</var> = <span class="num">20</span> under <em>oracle</em> retrieval, with the correct tool
+              forced into the shortlist, which is what isolates selection from retrieval and makes the factored
+              metric in fold <span class="num">7</span> computable. The sweep that would fix <var>k</var> properly
+              has not been run.</p>
           </div>
         </details>
 
