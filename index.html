@@ -845,9 +845,11 @@
           </summary>
         <p class="signals__intro">Six interventions, one of which worked. Effects carry paired tests, because in
           this regime point estimates are noise. <span class="marker">Arm</span> places each one on the ladder in
-          §<span class="num">4</span>: everything that worked, and everything measured, happens inside arm
-          <span class="num">3</span>, the retrieval stage, because the stop rule closed arms
-          <span class="num">4</span> and <span class="num">5</span> before they were built.</p>
+          fold <span class="num">4</span> above, with <span class="id">+ rerank</span> and
+          <span class="id">+ fusion</span> marking work that sits inside an arm rather than being one. Everything
+          that worked, and everything measured, happens inside arm <span class="num">3</span>, the retrieval stage,
+          because the stop rule closed arms <span class="num">4</span> and <span class="num">5</span> before they
+          were built.</p>
         <table class="sig sig--meas">
           <thead><tr><th scope="col">Intervention</th><th scope="col">Arm</th><th scope="col">Effect</th><th scope="col">Verdict</th></tr></thead>
           <tbody>
@@ -860,13 +862,13 @@
             </tr>
             <tr>
               <th scope="row" class="sig__name">cross-encoder <em>replacing</em> the dense score</th>
-              <td class="sig__arm"><span class="num">3</span> + §<span class="num">7</span></td>
+              <td class="sig__arm"><span class="num">3</span> + rerank</td>
               <td class="sig__def">R@1 <span class="num" data-eval="rr.dense.r1">0.253</span> → <span class="num" data-eval="rr.replace.r1">0.214</span>, p = <span class="num" data-eval="sig.replace.p">0.005</span></td>
               <td class="sig__def vd vd--dropped">Dropped. Significantly harmful.</td>
             </tr>
             <tr>
-              <th scope="row" class="sig__name">the same scores <em>blended</em> with it, <span class="num">20%</span> weight</th>
-              <td class="sig__arm"><span class="num">3</span> + §<span class="num">8</span></td>
+              <th scope="row" class="sig__name">the same cross-encoder scores <em>blended</em> into it, <span class="num">20%</span> weight</th>
+              <td class="sig__arm"><span class="num">3</span> + fusion</td>
               <td class="sig__def">MRR <span class="num" data-eval="sig.fuse.dmrr">+0.023</span>
                 [<span class="num" data-eval="sig.fuse.mrr_lo">+0.007</span>, <span class="num" data-eval="sig.fuse.mrr_hi">+0.041</span>]; R@1 p = <span class="num" data-eval="sig.fuse.p">0.124</span></td>
               <td class="sig__def vd vd--mixed">Mixed. MRR real, R@1 not, and <span class="num">5</span> s/query.</td>
@@ -887,7 +889,8 @@
               <th scope="row" class="sig__name">fine-tune the selector (SFT/RL)</th>
               <td class="sig__arm"><span class="num">4</span>, <span class="num">5</span></td>
               <td class="sig__def">Not run; the stop rule tripped</td>
-              <td class="sig__def vd vd--dropped">Dropped before building, by the stop rule in §<span class="num">4</span>.</td>
+              <td class="sig__def vd vd--dropped">Dropped before building, by the stop rule in fold
+                <span class="num">4</span>.</td>
             </tr>
           </tbody>
         </table>
@@ -911,19 +914,34 @@
           (p = <span class="num" data-eval="sig.fuse.p">0.124</span>). A gain in MRR with none in R@1 means better
           ordering without a better top pick.</p>
         <div class="sub__body">
-          <p><span class="marker">What those two middle rows are.</span> They are the same experiment run twice on
-            the <em>identical</em> cross-encoder scores, and they differ only in how those scores are combined with
-            the retriever's. That is the whole point of the pair: the signal is held fixed and only the combination
-            rule changes.</p>
+          <p><span class="marker">What those two middle rows are.</span> Both combine the same two scores and
+            differ only in how. The signal is held fixed; only the combination rule changes. That is what makes the
+            pair worth reporting.</p>
         </div>
+        <ul class="gates">
+          <li><span class="gate__name">dense score</span><span class="gate__val">The retriever's. Cosine
+            similarity between the query's embedding and the tool document's, each encoded
+            <em>independently</em>, which is why all <span class="num" data-eval="catalog.total">3,551</span>
+            document vectors are computed once at index time and a query costs
+            <span class="num">3</span> ms.</span></li>
+          <li><span class="gate__name">cross-encoder score</span><span class="gate__val">A second model's, from
+            <span class="id">bge-reranker-large</span>. It reads the query and <em>one</em> candidate document
+            together as a single input and returns one relevance number for that pair. Reading them jointly is what
+            makes it sharp, and why nothing can be precomputed: scoring
+            <span class="num">100</span> candidates means <span class="num">100</span> forward passes per
+            query.</span></li>
+        </ul>
+        <p class="diag diag--tight">So each candidate carries two numbers. The two rows are the two ways of
+          resolving them into one ordering:</p>
         <ul class="gates">
           <li><span class="gate__name">replacing</span><span class="gate__val">Inside the top
             <span class="num">100</span>, throw the dense ordering away and sort purely by cross-encoder score.
             This is what “reranking” usually means.</span></li>
           <li><span class="gate__name">blending</span><span class="gate__val">Keep both. Each score is turned into
-            a per-query z-score over the same window, then mixed at
-            <span class="id">α</span> = <span class="num">0.2</span>, so the reranker gets
-            <span class="num">20%</span> of the say and the retriever keeps <span class="num">80%</span>.</span></li>
+            a per-query z-score over the same window, so the two scales become comparable, then mixed at
+            <span class="id">α</span> = <span class="num">0.2</span>: the cross-encoder gets
+            <span class="num">20%</span> of the say and the dense score keeps
+            <span class="num">80%</span>.</span></li>
         </ul>
         <p class="eq">
           <var>score</var><sub>fused</sub>
@@ -932,6 +950,21 @@
           <span class="eq__op">+</span>
           <span class="id">α</span> · <var>z</var>(cross-encoder)
         </p>
+        <p class="eq eq--sub">
+          <span class="id">α</span> = <span class="num">0.2</span>
+          <span class="eq__op">→</span>
+          <span class="num">0.80</span> · <var>z</var>(dense)
+          <span class="eq__op">+</span>
+          <span class="num">0.20</span> · <var>z</var>(cross-encoder)
+        </p>
+        <p class="diag diag--tight"><span class="id">α</span> is the <em>cross-encoder's</em> weight, so the
+          <span class="num">20%</span> sits on the cross-encoder and the dense score keeps
+          <span class="num">80%</span>. The sweep confirms the reading at both ends:
+          <span class="id">α</span> = <span class="num">0</span> reproduces the dense baseline exactly
+          (R@1 <span class="num" data-eval="rr.dense.r1">0.253</span>) and
+          <span class="id">α</span> = <span class="num">1</span> reproduces the replacement row
+          (<span class="num" data-eval="rr.replace.r1">0.214</span>). The weaker signal is worth keeping at a
+          minority weight and not worth trusting alone.</p>
         <p class="diag"><span class="marker">Depth.</span> Both rows are measured at depth
           <span class="num">100</span>: the retriever keeps <span class="num">100</span> candidates and the
           cross-encoder rescores all of them. Every number in them is a mean over the five generated splits at that

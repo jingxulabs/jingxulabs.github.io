@@ -964,3 +964,11 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
      version plus the document itself carry the row. */
   .sig--doc .sig__def { display: none; }
 }
+
+/* The same equation with alpha substituted, set under the general form as a
+   quieter restatement rather than a second claim. */
+.eq--sub {
+  font-size: var(--t-s);
+  color: var(--graphite);
+  margin: -0.9rem 0 1rem;
+}
