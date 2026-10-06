@@ -644,6 +644,26 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   max-width: 52ch;
 }
 
+/* Screenshots of a running interface. The frame stays quiet: a hairline and
+   the page ground, so the shot reads as evidence rather than as promotion. */
+.shot { margin: 2rem 0 1.6rem; }
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--bond);
+  border: 1px solid color-mix(in srgb, var(--ink) 13%, var(--bond));
+}
+.shot img + img { margin-top: 1.1rem; }
+.shot figcaption {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.45;
+  color: var(--graphite);
+  margin-top: 0.7rem;
+  max-width: 52ch;
+}
+
 /* One specimen record from a source: label above, value below, so a pair
    and a bare definition can sit side by side without implying a mapping
    where there isn't one. */

@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=44">
+<link rel="stylesheet" href="styles.css?v=45">
 </head>
 <body>
 
@@ -1378,14 +1378,253 @@
       </summary>
       <div class="projects">
 
-    <!-- ══ PROJECT 1 : title only. The body is not written yet. ══ -->
-    <article class="spread project project--stub" id="cabinet">
-      <aside class="rail">
-        <p class="rail__note"><span class="tick tick--stub"></span>Placeholder.</p>
-      </aside>
+    <!-- ══ PROJECT 1 : real ══ -->
+    <article class="spread project project--major" id="cabinet">
       <div class="col">
         <h2 class="project__title">Cabinet, your personal decision intelligence</h2>
-        <p class="stub">Reserved, not yet written.</p>
+        <p class="lede-para">A private council for your life. Consequential decisions fail in ways a chat window
+          makes worse: one confident voice where there should be several, and no record of what you claimed.
+          Cabinet seats <span class="num">51</span> advisers across <span class="num">10</span> tables, and then
+          scores you against your own confidence. The model is interchangeable. The record is not.</p>
+      </div>
+
+      <div class="projfolds">
+        <details class="sub" open>
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">1</span><span class="sub__name">Build</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p class="diag">React and FastAPI, with three model providers behind one interface. A fully functional
+              offline mode means the product demonstrates with no credentials and no network, so nothing here
+              depends on a key being live.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">2</span><span class="sub__name">The problem</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">Problem.</span> Consequential decisions fail in three ways that conversational
+              AI makes worse, not better. One confident voice where there should be several. No memory of what you
+              claimed, so you never learn whether your <span class="num">80%</span> sure means anything. And an
+              answer to the question as posed rather than the one you are avoiding.</p>
+            <p><span class="marker">Position.</span> Cabinet treats this as a structural problem, not a model
+              problem. Every part of the system that matters is the part a better model would not fix.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">The design: a council that disagrees with itself</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>A standing council, seated across ten tables by domain. <span class="num">51</span> seats, and each
+              bench is deliberately composed to disagree with itself. A council that nods is a chat window in
+              costume.</p>
+            <p class="diag">The ten tables: <span class="id">Personal</span>, <span class="id">Finance</span>,
+              <span class="id">Career</span>, <span class="id">Education</span>, <span class="id">AI</span>,
+              <span class="id">Risk</span>, <span class="id">Health</span>, <span class="id">Mind</span>,
+              <span class="id">Family</span>, <span class="id">Leadership</span>.</p>
+          </div>
+        <figure class="flow">
+          <svg viewBox="0 0 612 172" role="img" aria-label="A round: a question fans out to five seats answering concurrently and in isolation, which converge into a synthesis, producing a decision with a confidence and a revisit date, which is later reviewed, and the scored outcome returns to the council as calibration.">
+            <!-- the question -->
+            <text class="flow__lab flow__lab--soft" x="32" y="82" text-anchor="middle">Question</text>
+            <!-- fan out to five isolated seats -->
+            <line class="flow__arrow" x1="66" y1="78" x2="92" y2="22"/>
+            <line class="flow__arrow" x1="66" y1="78" x2="92" y2="50"/>
+            <line class="flow__arrow" x1="66" y1="78" x2="92" y2="78"/>
+            <line class="flow__arrow" x1="66" y1="78" x2="92" y2="106"/>
+            <line class="flow__arrow" x1="66" y1="78" x2="92" y2="134"/>
+            <rect class="flow__box" x="92" y="14" width="86" height="16" rx="1"/>
+            <rect class="flow__box" x="92" y="42" width="86" height="16" rx="1"/>
+            <rect class="flow__box" x="92" y="70" width="86" height="16" rx="1"/>
+            <rect class="flow__box" x="92" y="98" width="86" height="16" rx="1"/>
+            <rect class="flow__box" x="92" y="126" width="86" height="16" rx="1"/>
+            <text class="flow__lab" x="135" y="26" text-anchor="middle">Seat</text>
+            <text class="flow__lab" x="135" y="54" text-anchor="middle">Seat</text>
+            <text class="flow__lab" x="135" y="82" text-anchor="middle">Seat</text>
+            <text class="flow__lab" x="135" y="110" text-anchor="middle">Seat</text>
+            <text class="flow__lab" x="135" y="138" text-anchor="middle">Seat</text>
+            <!-- converge into the synthesis -->
+            <line class="flow__arrow" x1="178" y1="22" x2="214" y2="78"/>
+            <line class="flow__arrow" x1="178" y1="50" x2="214" y2="78"/>
+            <line class="flow__arrow" x1="178" y1="78" x2="214" y2="78"/>
+            <line class="flow__arrow" x1="178" y1="106" x2="214" y2="78"/>
+            <line class="flow__arrow" x1="178" y1="134" x2="214" y2="78"/>
+            <polygon class="flow__head" points="220,78 215,75.4 215,80.6"/>
+            <rect class="flow__box" x="226" y="54" width="104" height="48" rx="1"/>
+            <text class="flow__lab" x="278" y="83" text-anchor="middle">Synthesis</text>
+            <line class="flow__arrow" x1="338" y1="78" x2="358" y2="78"/>
+            <polygon class="flow__head" points="358,78 353,75.4 353,80.6"/>
+            <!-- what the round produces -->
+            <text class="flow__lab flow__lab--soft" x="412" y="70" text-anchor="middle">Decision, confidence,</text>
+            <text class="flow__lab flow__lab--soft" x="412" y="86" text-anchor="middle">revisit date</text>
+            <line class="flow__arrow" x1="466" y1="78" x2="486" y2="78"/>
+            <polygon class="flow__head" points="486,78 481,75.4 481,80.6"/>
+            <rect class="flow__box" x="494" y="54" width="104" height="48" rx="1"/>
+            <text class="flow__lab" x="546" y="83" text-anchor="middle">Review</text>
+            <!-- the loop closes: the scored outcome returns as calibration -->
+            <line class="flow__arrow" x1="546" y1="102" x2="546" y2="160"/>
+            <line class="flow__arrow" x1="546" y1="160" x2="135" y2="160"/>
+            <line class="flow__arrow" x1="135" y1="160" x2="135" y2="148"/>
+            <polygon class="flow__head" points="135,142 132.4,147 137.6,147"/>
+            <text class="flow__lab flow__lab--soft" x="340" y="153" text-anchor="middle">outcome scored, calibration updated</text>
+          </svg>
+          <figcaption>A round. The five seats answer concurrently and in isolation, so the independence is real
+            rather than asserted; the return path at the bottom is the part that compounds.</figcaption>
+        </figure>
+          <div class="sub__body">
+            <p><span class="marker">The round.</span> Pose, fan out, synthesise, push back, decide, review. Five
+              seats answer the same question concurrently and in isolation; none sees another's answer. A synthesis
+              then names the agreement, the real fault line beneath the disagreement, what nobody raised, and what
+              you should resolve before deciding. You can press one adviser privately, put it to the whole table,
+              or re-run the round.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">Demo</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>Two screens from the running application. The first is the Finance table being convened; the second
+              is a round in progress, with each seat answering under its own badge.</p>
+          </div>
+        <figure class="shot">
+          <img src="media/cabinet-council.png" width="1850" height="879" loading="lazy" decoding="async"
+               alt="Cabinet's opening screen. A headline reads &quot;Important decisions deserve more than one perspective.&quot; On the right, ten domain tabs — Personal, Finance, Career, Education, AI, Risk, Health, Mind, Family, Leadership — with Finance selected, above a dark round table ringed by five seats: Suze Orman, Charlie Munger, Jack Bogle, Morgan Housel and Ramit Sethi. The table reads &quot;5 seats at this table.&quot;">
+          <figcaption>The Finance table, convened. Each domain carries its own bench, and the seats are named
+            because a seat you can rename is a seat you can hold to account.</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="media/cabinet-round.png" width="1873" height="917" loading="lazy" decoding="async"
+               alt="A Cabinet round in progress. The question reads &quot;Should I buy the espresso machine that costs more than my first car?&quot; A left rail lists the five advisers with their verdicts — Conditional, Against, Conditional, Conditional, Conditional. A right rail records the table as Finance, opened 6 Oct 2026, stake high, cost if wrong costly, 5 of 5 seats in, above a &quot;Record the decision&quot; button. Charlie Munger and Jack Bogle give opposing answers, each badged Simulated.">
+          <figcaption>A round in progress. Every seat is badged <span class="id">Simulated</span> where no real
+            person stands behind it, the verdicts disagree on the record, and the decision is not closed until it
+            is recorded with a confidence.</figcaption>
+        </figure>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">The feedback loop, which is the actual product</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>Every decision is recorded with a verdict, a confidence number, and a date to revisit it. When that
+              date arrives you score the outcome, and the number moves.</p>
+            <p>Two rules are enforced in the system, not left to good intentions:</p>
+            <ul class="next">
+              <li><span class="next__t">Confidence is sealed.</span> Once an outcome is recorded, the confidence
+                you claimed cannot be amended.</li>
+              <li><span class="next__t">Entries are struck, not edited.</span> An entry can be struck off whole,
+                never quietly revised.</li>
+            </ul>
+            <p>Everything on the intelligence view is computed from the record, not asked of a model. A model can
+              tell you what to do; only your own history can tell you how much to trust yourself when you say
+              seventy per cent.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">AI and human seats, together</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>Every seat is AI-answered; what differs is whether a real person stands behind it. Simulated figures
+              are badged as simulated wherever they speak. Seats representing people in your life answer
+              immediately as an explicitly labelled stand-in, and are superseded the moment the real person
+              replies, by private link or by you recording what they told you. A third of the council sitting
+              silent is worse than an attributed guess.</p>
+            <p class="diag">This is the bridge: the council is useful on day one with nobody else's participation,
+              and becomes more truthful as they join.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">7</span><span class="sub__name">Position, and what is weak</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro">Four things already do part of this job. The column that separates them is the
+          last one, which is in each case a limit of structure rather than of effort or model quality.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Alternative</th><th scope="col">Strength</th><th scope="col">Structural limit</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">General AI assistant</th>
+              <td class="sig__def">Breadth, zero setup</td>
+              <td class="sig__def vd vd--dropped">One voice; nothing recorded; no calibration</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">Persona prompt packs</th>
+              <td class="sig__def">Instant personas</td>
+              <td class="sig__def vd vd--dropped">Personas in one context converge; no track record</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">Multi-agent frameworks</th>
+              <td class="sig__def">Genuine parallelism</td>
+              <td class="sig__def vd vd--mixed">Built for task completion, not for your judgement</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">Decision journals</th>
+              <td class="sig__def">An honest record</td>
+              <td class="sig__def vd vd--mixed">No counsel at all; high friction, so abandoned</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">Cabinet (this work)</th>
+              <td class="sig__def">Counsel and record together</td>
+              <td class="sig__def vd vd--held">The intersection. Counsel of the first, honesty of the last</td>
+            </tr>
+          </tbody>
+        </table>
+          <div class="sub__body">
+            <p class="diag">The defensible asset is the record. Any competitor can seat a better model tomorrow;
+              nobody can hand you two years of your own decisions with the confidence you claimed and the outcomes
+              scored against it. That is switching cost, and unlike a model it compounds.</p>
+            <p>Three strengths are structural rather than asserted: genuine independence between advisers;
+              calibration of the human rather than the model; and integrity defended at the system boundary.</p>
+            <p>Weaknesses, stated plainly:</p>
+            <ul class="next">
+              <li><span class="next__t">Single-user.</span> Without authentication yet.</li>
+              <li><span class="next__t">The loop is slow by nature.</span> The twentieth entry is where it begins
+                telling you things, so retention through the cold period is the central product risk.</li>
+              <li><span class="next__t">Outcomes are self-reported.</span> The scoring has no referee but you.</li>
+              <li><span class="next__t">Cost.</span> The default gateway supports no prompt caching, putting cost
+                per round at roughly <span class="num">5&times;</span> the design intent.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">8</span><span class="sub__name">Next steps</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <ul class="next">
+              <li><span class="next__t">Correctness.</span> Resolve one intermittent rendering defect in the
+                synthesis view, and introduce schema migrations before the first change that must preserve real
+                decisions.</li>
+              <li><span class="next__t">Highest leverage.</span> Per-domain calibration. <q>You are well calibrated
+                on Finance and badly overconfident on Career</q> is the most valuable sentence this product could
+                say, and the data to say it is already being recorded.</li>
+              <li><span class="next__t">Adoption.</span> Route questions to the right table automatically, and
+                drive reviews from outside the app. The loop dies if reviews do not happen.</li>
+              <li><span class="next__t">Scale.</span> A shared event bus to permit more than one worker,
+                authentication and multi-user, a cost model for the default provider, and an export path. The
+                record is the user's most valuable asset and currently has no way out.</li>
+            </ul>
+          </div>
+        </details>
+
       </div>
     </article>
 
