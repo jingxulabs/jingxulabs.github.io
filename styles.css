@@ -160,6 +160,24 @@ html { scroll-behavior: smooth; }
   .nav { right: 7.5rem; }
 }
 
+/* The index is fixed, so the page has to leave it room rather than assume
+   the margin is free. It is not: the 980px breakout blocks — the
+   comparison tables, the screenshots — reach well past the text column,
+   and between about 1000 and 1700px they ran underneath the index, which
+   is too narrow a gutter to hold it.
+
+   Reserved from the width the index appears at, with no upper bound, so
+   there is no viewport where the reservation switches on or off and the
+   page jumps sideways. Wide screens simply centre the page in what is
+   left, which is what the index being in the margin has always meant.
+
+   `.sky .sky__inner` carries a class it does not need, because the hero
+   sets `padding` as a shorthand further down the file and a shorthand
+   later at equal specificity would put the right side back to 2rem. */
+@media (min-width: 861px) {
+  main, .sky .sky__inner { padding-right: 18rem; }
+}
+
 .nav a:hover { color: var(--ink); }
 .nav a:hover::before { opacity: 0.45; }
 .nav a[aria-current="true"] { color: var(--ink); }
@@ -469,14 +487,14 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
    existing accents. */
 .projfolds {
   grid-column: 1 / -1;
-  width: min(980px, calc(100vw - 20rem));   /* clears the fixed side index */
+  width: min(980px, calc(100vw - 25rem));   /* clears the fixed side index */
   margin-top: clamp(1.6rem, 3.5vh, 2.4rem);
 }
 .sub__body { max-width: 68ch; }
 
 /* This project carries no margin rail, so its heading block spans the
    full width and aligns with the disclosures beneath it. */
-.project--major > .col { grid-column: 1 / -1; max-width: min(980px, calc(100vw - 20rem)); }
+.project--major > .col { grid-column: 1 / -1; max-width: min(980px, calc(100vw - 25rem)); }
 .project--major > .col > * { max-width: 62ch; }
 .signals__intro { margin-top: 0.2rem; }
 .signals__intro + .signals__intro { margin-top: -0.6rem; }
