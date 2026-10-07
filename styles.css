@@ -673,6 +673,37 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
 /* Screenshots of a running interface. The frame stays quiet: a hairline and
    the page ground, so the shot reads as evidence rather than as promotion. */
 .shot { margin: 2rem 0 1.6rem; }
+/* A screenshot of an interface is unreadable at column width, so the figure
+   is a link to the file. With no JavaScript that is the browser's own image
+   view, which already zooms; main.js upgrades it into the viewer below. */
+.shot__view {
+  position: relative;
+  display: block;
+  cursor: zoom-in;
+  text-decoration: none;
+}
+.shot__zoom {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-xs);
+  line-height: 1;
+  color: var(--star);
+  padding: 0.45rem 0.75rem;
+  background: color-mix(in srgb, var(--night) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ochre-sky) 48%, transparent);
+  backdrop-filter: blur(6px);
+  /* Legible unprompted rather than revealed on hover: on a touch screen
+     there is no hover to reveal it with. */
+  opacity: 0.88;
+  transition: opacity 160ms ease, border-color 160ms ease;
+}
+.shot__view:hover .shot__zoom,
+.shot__view:focus-visible .shot__zoom {
+  opacity: 1;
+  border-color: var(--ochre-sky);
+}
 .shot img {
   display: block;
   width: 100%;
@@ -688,6 +719,96 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   color: var(--graphite);
   margin-top: 0.7rem;
   max-width: 52ch;
+}
+
+/* ─── the viewer ───
+   Built by main.js on first use, so there is no dialog in the document
+   for a reader who never opens one. Night ground, because the screenshot
+   is the only thing that should be lit. */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  background: color-mix(in srgb, var(--night) 95%, transparent);
+  backdrop-filter: blur(3px);
+}
+.lightbox[hidden] { display: none; }
+
+.lightbox__bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid rgba(224, 166, 68, 0.22);
+}
+/* The caption carries the figure's own words into the viewer, so the
+   screenshot does not arrive stripped of what it was shown to say. */
+.lightbox__cap {
+  flex: 1;
+  min-width: 0;
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-xs);
+  line-height: 1.4;
+  color: var(--graphite-sky);
+  max-width: 58ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lightbox__btn {
+  flex: none;
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1;
+  color: var(--star);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--graphite-sky) 55%, transparent);
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease;
+}
+.lightbox__btn:hover:not(:disabled),
+.lightbox__btn:focus-visible {
+  color: var(--ochre-sky);
+  border-color: var(--ochre-sky);
+}
+.lightbox__btn:disabled { opacity: 0.38; cursor: default; }
+/* Tabular, so stepping the zoom does not shuffle the buttons beside it. */
+.lightbox__pct {
+  flex: none;
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: var(--t-xs);
+  color: var(--graphite-sky);
+  min-width: 5ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.lightbox__stage {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  padding: 1rem;
+  overscroll-behavior: contain;
+}
+/* `margin: auto` rather than centring the flex line: a child larger than
+   an overflowing container gets clipped at the start edge by the latter
+   and stays reachable with the former. */
+.lightbox__img {
+  margin: auto;
+  display: block;
+  background: var(--bond);
+  height: auto;
+}
+.lightbox--pannable .lightbox__img { cursor: grab; }
+.lightbox--panning .lightbox__img { cursor: grabbing; }
+
+@media (max-width: 680px) {
+  .lightbox__cap { display: none; }    /* the bar is only wide enough for the controls */
 }
 
 /* One specimen record from a source: label above, value below, so a pair

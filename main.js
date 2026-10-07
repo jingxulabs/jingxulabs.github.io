@@ -679,3 +679,211 @@ setTimeout(() => {
 
   io.observe(section);
 })();
+
+
+/* ═══════════════════════════════════════════════════════════
+   Screenshot viewer. A screenshot of an interface is unreadable
+   at the width of a text column, so each one is a link to the
+   file. Without this script that link is the browser's own image
+   view, which already zooms; with it, the same link opens the
+   file here instead, fitted to the window and steppable up to
+   three times its own pixels.
+
+   The dialog is built on first use. A reader who never opens one
+   never pays for it, and there is no inert markup in the document
+   for one that may never be wanted.
+   ═══════════════════════════════════════════════════════════ */
+
+(() => {
+  const views = Array.from(document.querySelectorAll('.shot__view'));
+  if (!views.length) return;
+
+  const MAX  = 3;      // 300% of the file's own pixels; past that it is mush
+  const STEP = 1.5;
+  const PAD  = 32;     // .lightbox__stage padding, both sides
+
+  let box, bar, stage, img, cap, pct, inBtn, outBtn, fitBtn, closeBtn;
+  let fit = 1, scale = 1, opener = null, panned = false;
+
+  const build = () => {
+    box = document.createElement('div');
+    box.className = 'lightbox';
+    box.hidden = true;
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
+    box.setAttribute('aria-label', 'Screenshot');
+
+    bar = document.createElement('div');
+    bar.className = 'lightbox__bar';
+
+    cap = document.createElement('p');
+    cap.className = 'lightbox__cap';
+
+    const btn = (label, aria) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'lightbox__btn';
+      b.textContent = label;
+      b.setAttribute('aria-label', aria);
+      return b;
+    };
+    outBtn   = btn('−', 'Zoom out');
+    inBtn    = btn('+', 'Zoom in');
+    fitBtn   = btn('Fit', 'Fit the screenshot to the window');
+    closeBtn = btn('Close', 'Close the screenshot');
+
+    pct = document.createElement('span');
+    pct.className = 'lightbox__pct';
+    // The figure is what changes as you zoom, so it is the live region.
+    pct.setAttribute('aria-live', 'polite');
+
+    stage = document.createElement('div');
+    stage.className = 'lightbox__stage';
+
+    img = document.createElement('img');
+    img.className = 'lightbox__img';
+
+    bar.append(cap, outBtn, pct, inBtn, fitBtn, closeBtn);
+    stage.append(img);
+    box.append(bar, stage);
+    document.body.append(box);
+
+    outBtn.addEventListener('click', () => zoomTo(scale / STEP));
+    inBtn.addEventListener('click', () => zoomTo(scale * STEP));
+    fitBtn.addEventListener('click', () => zoomTo(fit));
+    closeBtn.addEventListener('click', close);
+
+    // Clicking the plate behind the image dismisses; clicking the image
+    // toggles between fitted and its own pixels, which is the one step
+    // most readers actually want.
+    stage.addEventListener('click', (e) => {
+      if (e.target === stage) close();
+    });
+    img.addEventListener('click', () => {
+      // A pan ends with a click on the image. Toggling the zoom there would
+      // undo the pan the reader just made.
+      if (panned) { panned = false; return; }
+      zoomTo(Math.abs(scale - fit) < 1e-3 ? Math.min(1, MAX) : fit);
+    });
+
+    box.addEventListener('keydown', onKey);
+    addPanning();
+  };
+
+  const fitScale = () => Math.min(
+    1,
+    (stage.clientWidth  - PAD) / img.naturalWidth,
+    (stage.clientHeight - PAD) / img.naturalHeight
+  );
+
+  const apply = () => {
+    img.style.width = (img.naturalWidth * scale) + 'px';
+    pct.textContent = Math.round(scale * 100) + '%';
+    outBtn.disabled = scale <= fit  + 1e-3;
+    inBtn.disabled  = scale >= MAX  - 1e-3;
+    fitBtn.disabled = Math.abs(scale - fit) < 1e-3;
+    box.classList.toggle(
+      'lightbox--pannable',
+      stage.scrollWidth > stage.clientWidth || stage.scrollHeight > stage.clientHeight
+    );
+  };
+
+  // Zoom about the middle of what is on screen, so the detail being read
+  // stays roughly under the eye instead of sliding off to a corner.
+  const zoomTo = (next) => {
+    next = Math.min(MAX, Math.max(fit, next));
+    if (Math.abs(next - scale) < 1e-4) return;
+    const cx = stage.scrollLeft + stage.clientWidth  / 2;
+    const cy = stage.scrollTop  + stage.clientHeight / 2;
+    const ratio = next / scale;
+    scale = next;
+    apply();
+    stage.scrollLeft = cx * ratio - stage.clientWidth  / 2;
+    stage.scrollTop  = cy * ratio - stage.clientHeight / 2;
+  };
+
+  const addPanning = () => {
+    let dragging = false, sx = 0, sy = 0, sl = 0, st = 0;
+    img.addEventListener('pointerdown', (e) => {
+      if (!box.classList.contains('lightbox--pannable')) return;
+      dragging = true; panned = false;
+      sx = e.clientX; sy = e.clientY;
+      sl = stage.scrollLeft; st = stage.scrollTop;
+      box.classList.add('lightbox--panning');
+      img.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    img.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - sx, dy = e.clientY - sy;
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) panned = true;
+      stage.scrollLeft = sl - dx;
+      stage.scrollTop  = st - dy;
+    });
+    const end = () => { dragging = false; box.classList.remove('lightbox--panning'); };
+    img.addEventListener('pointerup', end);
+    img.addEventListener('pointercancel', end);
+  };
+
+  function onKey(e) {
+    if (e.key === 'Escape')                  { close(); return; }
+    if (e.key === '+' || e.key === '=')      { zoomTo(scale * STEP); return; }
+    if (e.key === '-' || e.key === '_')      { zoomTo(scale / STEP); return; }
+    if (e.key === '0')                       { zoomTo(fit); return; }
+    if (e.key !== 'Tab') return;
+    // Hold focus inside the dialog: behind it the page is still there and
+    // tabbing onto it would be tabbing onto something nobody can see.
+    const stops = Array.from(box.querySelectorAll('button:not(:disabled)'));
+    if (!stops.length) return;
+    const first = stops[0], last = stops[stops.length - 1];
+    if (e.shiftKey && document.activeElement === first) { last.focus();  e.preventDefault(); }
+    else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+  }
+
+  const open = (link) => {
+    if (!box) build();
+    opener = link;
+    const src = link.getAttribute('href');
+    const thumb = link.querySelector('img');
+    const figure = link.closest('figure');
+    const caption = figure && figure.querySelector('figcaption');
+
+    img.alt = thumb ? thumb.alt : '';
+    cap.textContent = caption ? caption.textContent.replace(/\s+/g, ' ').trim() : '';
+    box.hidden = false;
+    document.documentElement.style.overflow = 'hidden';
+
+    const start = () => { fit = fitScale(); scale = fit; apply(); };
+    if (img.getAttribute('src') === src && img.complete) start();
+    else { img.onload = start; img.setAttribute('src', src); }
+    closeBtn.focus();
+  };
+
+  function close() {
+    box.hidden = true;
+    document.documentElement.style.overflow = '';
+    if (opener) opener.focus();
+    opener = null;
+  }
+
+  // Re-fit on resize: a window that got smaller should not leave the
+  // screenshot stranded wider than the stage with no way back to fitted.
+  let rt;
+  window.addEventListener('resize', () => {
+    if (!box || box.hidden) return;
+    clearTimeout(rt);
+    rt = setTimeout(() => {
+      const wasFitted = Math.abs(scale - fit) < 1e-3;
+      fit = fitScale();
+      scale = wasFitted ? fit : Math.max(fit, scale);
+      apply();
+    }, 150);
+  });
+
+  views.forEach((link) => link.addEventListener('click', (e) => {
+    // Let a modified click do what the reader asked: open the file itself.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    open(link);
+  }));
+})();
