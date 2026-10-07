@@ -18,9 +18,9 @@
 <nav class="nav" aria-label="Sections">
   <a href="#overview">Overview</a>
   <a href="#projects">Experimentations</a>
-  <a href="#humanizedai" class="nav__sub">HumanizedAI</a>
   <a href="#toolselection" class="nav__sub">ToolSelection</a>
   <a href="#appdev">APP Development</a>
+  <a href="#humanizedai" class="nav__sub">HumanizedAI</a>
   <a href="#cabinet" class="nav__sub">Cabinet</a>
   <a href="#posts">Posts</a>
   <a href="#techjokes">Tech jokes</a>
@@ -123,484 +123,6 @@
       <div class="projects">
 
     <!-- ══ PROJECT 1 : real ══ -->
-    <article class="spread project project--major" id="humanizedai">
-      <div class="col">
-        <h2 class="project__title">Improve human communication by humanizing AI-generated text</h2>
-        <p class="lede-para">Most AI humanizers try to change how text looks. HumanizedAI tries to measure why it is
-          tiring to read, rewrite those measured properties, and prove that the rewrite did not alter what the
-          document says.</p>
-      </div>
-
-      <div class="projfolds">
-        <details class="sub" open>
-          <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">1</span><span class="sub__name">Repository</span></span>
-            <span class="fold__mark" aria-hidden="true"></span>
-          </summary>
-          <div class="sub__body">
-            <p class="repo__link"><a href="https://github.com/jingxulabs/HumanizedAI">github.com/jingxulabs/HumanizedAI</a></p>
-            <p class="diag">Python, MIT licensed. The calibration ships prebuilt, so there is nothing to train
-              before a first run. A FastAPI web interface and a command line covering score, signals, features,
-              run, serve and calibrate. The rewriter and the judge run on different vendors' models by design.</p>
-          </div>
-        </details>
-
-        <details class="sub">
-          <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">2</span><span class="sub__name">Project overview and summary</span></span>
-            <span class="fold__mark" aria-hidden="true"></span>
-          </summary>
-          <div class="sub__body">
-            <p><span class="marker">Problem.</span> Machine-written prose wears people out. Everything sounds the same,
-          nothing surprises, and attention goes. Communication nobody attends to has lost its purpose. So the target
-          is readability, not disguise: the tool ships no detector, never optimizes against one, and where reading
-          well and looking less machine-made pull apart it follows readability. It also won't make anything true,
-          since a faithful rewrite of a wrong original stays wrong.</p>
-
-            <p><span class="marker">Approach.</span> <span class="num">31</span> features are calibrated,
-          each scored by how cleanly it separates a labelled human corpus from an AI one.
-          <span class="num">20</span> of them separate the two well enough to be picked as steering signals. On a
-          given document a steering signal only becomes an instruction if it clears three filters
-          (separation <span class="num">≥ 0.65</span>, normalized gap <span class="num">≥ 0.15</span>, and
-          agreement on direction), and at most six are issued per rewrite, strongest discriminator first. The
-          rewriter then builds a ledger of the assertions in the source and writes fresh prose from that ledger
-          rather than editing sentences: the ledger is fixed, the prose is free. Seven deterministic gates can veto
-          any candidate; an LLM judge running on a different vendor's model advises but cannot.</p>
-          </div>
-          <figure class="plot">
-          <svg viewBox="0 0 612 152" role="img" aria-label="Rewrite depth by candidate type: verbatim copy 0.00, shallow rewrite 0.14, synonym pass 0.57, ledger-written 0.88.">
-            <g>
-              <text class="plot__lab" x="148" y="26" text-anchor="end">Verbatim copy</text>
-              <line class="plot__track" x1="166" y1="22" x2="536" y2="22"/>
-              <circle class="plot__knob" cx="166" cy="22" r="4"/>
-              <text class="plot__val" x="604" y="26" text-anchor="end">0.00</text>
-            </g>
-            <g>
-              <text class="plot__lab" x="148" y="60" text-anchor="end">Shallow rewrite</text>
-              <line class="plot__track" x1="166" y1="56" x2="536" y2="56"/>
-              <line class="plot__stem" x1="166" y1="56" x2="217.8" y2="56"/>
-              <circle class="plot__knob" cx="217.8" cy="56" r="4"/>
-              <text class="plot__val" x="604" y="60" text-anchor="end">0.14</text>
-            </g>
-            <g>
-              <text class="plot__lab" x="148" y="94" text-anchor="end">Synonym pass</text>
-              <line class="plot__track" x1="166" y1="90" x2="536" y2="90"/>
-              <line class="plot__stem" x1="166" y1="90" x2="376.9" y2="90"/>
-              <circle class="plot__knob" cx="376.9" cy="90" r="4"/>
-              <text class="plot__val" x="604" y="94" text-anchor="end">0.57</text>
-            </g>
-            <g>
-              <text class="plot__lab" x="148" y="128" text-anchor="end">Ledger-written</text>
-              <line class="plot__track" x1="166" y1="124" x2="536" y2="124"/>
-              <line class="plot__stem plot__stem--key" x1="166" y1="124" x2="491.6" y2="124"/>
-              <circle class="plot__knob plot__knob--key" cx="491.6" cy="124" r="4.5"/>
-              <text class="plot__val" x="604" y="128" text-anchor="end">0.88</text>
-            </g>
-          </svg>
-          <figcaption>Rewrite depth by candidate type. Writing from a ledger of assertions, rather than editing
-            the source sentence by sentence, is what moves it.</figcaption>
-        </figure>
-          <div class="sub__body">
-            <p><span class="marker">Result.</span> The human score of AI-generated text improves significantly after a
-          pass through the tool. The shallow-rewrite failure was the finding that mattered. Across
-          <span class="num">22</span> saved candidates the earlier pipeline returned text
-          <span class="num">88–96%</span> word-identical to its input, with verbatim spans up to
-          <span class="num">276</span> words, and not one gate ever rejected it. After the ledger change, on the
-          same document and model: word similarity <span class="num">0.90 → 0.61</span>, depth
-          <span class="num">0.14 → 0.58</span>, surviving sentences <span class="num">74% → 19%</span>, longest
-          copied span <span class="num">89 → 27</span> words, with literals and meaning still passing. Widening
-          the brief beyond the ten-feature starter set took execution from <span class="num">27%</span> to
-          <span class="num">59%</span>.</p>
-          </div>
-        </details>
-
-        <details class="sub">
-          <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">The twenty steering signals</span></span>
-            <span class="fold__mark" aria-hidden="true"></span>
-          </summary>
-<p class="signals__intro">Calibration runs over <span class="num">248</span> human-written documents
-          and <span class="num">220</span> AI-written ones, computing all <span class="num">31</span> features
-          across both. The two corpora do different jobs. The human corpus defines the target range: for each
-          feature the calibration stores human percentiles (<span class="num">p10</span>,
-          <span class="num">p25</span>, <span class="num">p50</span>, <span class="num">p75</span>,
-          <span class="num">p90</span>). The AI corpus never defines that range. It establishes only how sharply a
-          feature discriminates between the two populations.</p>
-        <p class="signals__intro">Of those <span class="num">31</span> features,
-          <span class="num">20</span> separate human from machine writing well enough to steer a rewrite. Separation
-          is an AUC-like measure: <span class="num">0.50</span> means no useful discrimination,
-          <span class="num">1.00</span> means perfect separation. The system follows the calibrated direction rather
-          than intuition.</p>
-        <table class="sig">
-          <thead>
-            <tr><th scope="col">Signal</th><th scope="col">Separation</th><th scope="col">Humanize direction</th><th scope="col">Definition</th></tr>
-          </thead>
-          <tbody>
-          <tr>
-            <th scope="row" class="sig__name">repetition</th>
-            <td class="sig__sep"><span class="num">0.98</span><span class="sig__bar" aria-hidden="true"><i style="width:96%"></i></span></td>
-            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Reuse the same natural term instead of rotating synonyms.</td>
-            <td class="sig__def">Degree to which the same important words or lemmas are reused instead of repeatedly substituting synonyms. Human writing in this corpus reuses vocabulary more consistently.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">information_density</th>
-            <td class="sig__sep"><span class="num">0.97</span><span class="sig__bar" aria-hidden="true"><i style="width:94%"></i></span></td>
-            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Loosen the prose with natural connective and function words.</td>
-            <td class="sig__def">Share of text made up of content-heavy words such as nouns, verbs, adjectives and adverbs. Very densely packed clauses are more machine-like in this corpus.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">vocabulary_complexity</th>
-            <td class="sig__sep"><span class="num">0.97</span><span class="sig__bar" aria-hidden="true"><i style="width:94%"></i></span></td>
-            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Prefer everyday wording such as “use” over “utilize”, while preserving necessary technical terms.</td>
-            <td class="sig__def">Frequency of long or unusually complex words, implemented largely as the proportion of long words.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">pronoun_rate</th>
-            <td class="sig__sep"><span class="num">0.95</span><span class="sig__bar" aria-hidden="true"><i style="width:90%"></i></span></td>
-            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Use it, they, this and so on rather than repeatedly restating full noun phrases.</td>
-            <td class="sig__def">Frequency of pronouns used to refer back to already-mentioned people, objects or concepts.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">abstraction_rate</th>
-            <td class="sig__sep"><span class="num">0.94</span><span class="sig__bar" aria-hidden="true"><i style="width:88%"></i></span></td>
-            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Convert abstract nouns into direct verbs where possible.</td>
-            <td class="sig__def">Frequency of nominalized or abstract constructions such as -tion, -ment, -ness and similar noun-heavy phrasing.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">sentence_structure_diversity</th>
-            <td class="sig__sep"><span class="num">0.92</span><span class="sig__bar" aria-hidden="true"><i style="width:84%"></i></span></td>
-            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Use a smaller number of natural sentence constructions more consistently.</td>
-            <td class="sig__def">Variety or entropy of syntactic sentence shapes, based on factors such as opening part of speech, clauses, verbs and subordination.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">first_person_rate</th>
-            <td class="sig__sep"><span class="num">0.92</span><span class="sig__bar" aria-hidden="true"><i style="width:84%"></i></span></td>
-            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise where supported. Identify the observer or speaker when the source actually supports it. Never invent experiences.</td>
-            <td class="sig__def">Frequency of first-person forms such as I, me, my, we and our.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">formality</th>
-            <td class="sig__sep"><span class="num">0.87</span><span class="sig__bar" aria-hidden="true"><i style="width:74%"></i></span></td>
-            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Use a more natural conversational register, except when the requested register is formal.</td>
-            <td class="sig__def">Composite measure of formal register, especially low contraction use plus formal or Latinate vocabulary.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">contraction_rate</th>
-            <td class="sig__sep"><span class="num">0.83</span><span class="sig__bar" aria-hidden="true"><i style="width:66%"></i></span></td>
-            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Use contractions where natural.</td>
-            <td class="sig__def">Frequency of contractions such as it&#x27;s, doesn&#x27;t, I&#x27;ve and wasn&#x27;t.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">example_density</th>
-            <td class="sig__sep"><span class="num">0.81</span><span class="sig__bar" aria-hidden="true"><i style="width:62%"></i></span></td>
-            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Keep useful examples but remove unnecessary labels announcing them.</td>
-            <td class="sig__def">Frequency of explicitly signposted examples using phrases such as “for example”, “for instance” and “such as”.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">sentence_length_variance</th>
-            <td class="sig__sep"><span class="num">0.80</span><span class="sig__bar" aria-hidden="true"><i style="width:60%"></i></span></td>
-            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Mix short and longer sentences by splitting or merging existing content naturally.</td>
-            <td class="sig__def">Amount of variation in sentence lengths, typically normalized so it is not just a function of average length.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">cliche_rate</th>
-            <td class="sig__sep"><span class="num">0.78</span><span class="sig__bar" aria-hidden="true"><i style="width:56%"></i></span></td>
-            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Replace stock phrases with the actual plain statement, or remove them when content-free.</td>
-            <td class="sig__def">Frequency of phrases from the repo&#x27;s curated machine-writing and AI-cliché inventory.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">transition_frequency</th>
-            <td class="sig__sep"><span class="num">0.72</span><span class="sig__bar" aria-hidden="true"><i style="width:44%"></i></span></td>
-            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Rely more on natural idea flow. Use simple connectors such as “But” or “So” when needed.</td>
-            <td class="sig__def">Frequency of explicit discourse transitions such as “Moreover”, “Furthermore”, “Additionally” and “In conclusion”.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">specificity</th>
-            <td class="sig__sep"><span class="num">0.68</span><span class="sig__bar" aria-hidden="true"><i style="width:36%"></i></span></td>
-            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower density, not facts. Retain every fact, but mention a specific once and refer back to it rather than restating it.</td>
-            <td class="sig__def">Density of named entities, dates, numbers, figures, products, organizations, places and other concrete specifics.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">fragment_frequency</th>
-            <td class="sig__sep"><span class="num">0.67</span><span class="sig__bar" aria-hidden="true"><i style="width:34%"></i></span></td>
-            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise slightly. Allow occasional meaningful fragments based on existing content. Do not manufacture punchy filler.</td>
-            <td class="sig__def">Percentage or frequency of deliberate sentence fragments rather than fully finite clauses.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">em_dash_per_1k</th>
-            <td class="sig__sep"><span class="num">0.64</span><span class="sig__bar" aria-hidden="true"><i style="width:28%"></i></span></td>
-            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Replace em dashes with commas, periods or parentheses as appropriate.</td>
-            <td class="sig__def">Number of em dashes per 1,000 words.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">paragraph_length_variance</th>
-            <td class="sig__sep"><span class="num">0.62</span><span class="sig__bar" aria-hidden="true"><i style="width:24%"></i></span></td>
-            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower in the calibration. Move toward the human reference band rather than simply maximizing variation.</td>
-            <td class="sig__def">Degree to which paragraph sizes differ from one another.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">modal_usage</th>
-            <td class="sig__sep"><span class="num">0.57</span><span class="sig__bar" aria-hidden="true"><i style="width:14%"></i></span></td>
-            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise according to calibration, while preserving the source&#x27;s actual degree of certainty.</td>
-            <td class="sig__def">Frequency of modal verbs such as may, might, could, would and should.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">symmetry</th>
-            <td class="sig__sep"><span class="num">0.56</span><span class="sig__bar" aria-hidden="true"><i style="width:12%"></i></span></td>
-            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Break mechanically balanced organization and allow ideas to receive unequal space.</td>
-            <td class="sig__def">Degree of artificial structural balance, such as First/Second/Third, equal-sized points, or adjacent sentences with strongly parallel structure.</td>
-          </tr>
-          <tr>
-            <th scope="row" class="sig__name">directness</th>
-            <td class="sig__sep"><span class="num">0.50</span><span class="sig__bar" aria-hidden="true"><i style="width:0%"></i></span></td>
-            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Prefer clear actor and verb constructions and remove unsupported hedging, while retaining genuine qualifications.</td>
-            <td class="sig__def">Composite of active-voice usage and reduced unnecessary hedging or modality.</td>
-          </tr>
-          </tbody>
-        </table>
-        </details>
-
-        <details class="sub">
-          <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">Demo example</span></span>
-            <span class="fold__mark" aria-hidden="true"></span>
-          </summary>
-<p class="signals__intro">One document through the tool. The human writing score measures distance from the
-          human range across the <span class="num">20</span> calibrated signals, each weighted by how well it
-          separates human from machine writing. It is not the probability that a detector will be fooled, and a
-          higher score does not mean a detector will score the text any differently.</p>
-
-        <p class="score__title">Human writing score</p>
-        <div class="score">
-          <span class="score__cell"><span class="score__cap">before</span><span class="score__n score__n--before num">56</span></span>
-          <span class="score__cell"><span class="score__cap">after</span><span class="score__n num">82</span></span>
-          <span class="score__delta num">+26</span>
-        </div>
-
-        <div class="ba">
-          <div class="ba__pane">
-            <p class="ba__label">Original, <span class="num">94</span> words</p>
-            <p>AI slop is a slang term for low-quality, mass-produced content created with generative AI, such as
-              generic articles, repetitive images, fake-looking videos, spammy social posts, or text that sounds
-              fluent but says very little. The key difference between AI slop and ordinary &#8220;human crap&#8221;
-              is not that humans always make better content; people have always produced spam, clickbait, lazy
-              writing, misinformation, and bad art. The difference is scale and cost. A person might spend an hour
-              producing one bad article, while AI can generate hundreds or thousands of similarly bad pieces very
-              quickly and cheaply.</p>
-          </div>
-          <div class="ba__pane ba__pane--out">
-            <p class="ba__label">Rewrite, <span class="num">94</span> words, <span class="num">100%</span> of the original length</p>
-            <p>You&#8217;ve probably seen people call something &#8220;AI slop.&#8221; It&#8217;s slang for bad
-              content made in bulk with generative AI, generic articles, repetitive images, fake-looking videos,
-              spammy social posts, or writing that reads smoothly while saying almost nothing.</p>
-            <p>I think the point isn&#8217;t that humans are always better. People have always made &#8220;human
-              crap&#8221;: spam, clickbait, lazy writing, misinformation, and bad art.</p>
-            <p>What changes with AI is scale and cost. A person might burn an hour on one bad article; AI can spit
-              out hundreds or thousands of similarly bad pieces very quickly and cheaply.</p>
-          </div>
-        </div>
-        <p class="ba__foot">Accepted on iteration <span class="num">3</span>.
-          <span class="num">58%</span> of the brief carried out, <span class="num">60%</span> of the document
-          rewritten, <span class="num">4</span> additions marked as additions, <span class="num">19</span> gateway
-          calls.</p>
-
-        <h4 class="worked__head">Signals outside the human range</h4>
-        <p class="diag diag--tight"><span class="num">8</span> of the <span class="num">20</span> fell outside the
-          human band on this document. The other <span class="num">12</span> measured in range and were left alone.</p>
-        <table class="sig sig--meas">
-          <thead><tr><th scope="col">Signal</th><th scope="col">Yours</th><th scope="col">Human range</th><th scope="col">Separation</th><th scope="col">Reading</th></tr></thead>
-          <tbody>
-            <tr>
-              <th scope="row" class="sig__name">content-word density</th>
-              <td class="sig__sep"><span class="num">0.673</span></td>
-              <td class="sig__def"><span class="num">0.458 to 0.518</span></td>
-              <td class="sig__sep"><span class="num">0.97</span></td>
-              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
-            </tr>
-            <tr>
-              <th scope="row" class="sig__name">sentence-shape variety</th>
-              <td class="sig__sep"><span class="num">1.792</span></td>
-              <td class="sig__def"><span class="num">2.448 to 3.42</span></td>
-              <td class="sig__sep"><span class="num">0.92</span></td>
-              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
-            </tr>
-            <tr>
-              <th scope="row" class="sig__name">word reuse</th>
-              <td class="sig__sep"><span class="num">0.274</span></td>
-              <td class="sig__def"><span class="num">0.303 to 0.359</span></td>
-              <td class="sig__sep"><span class="num">0.98</span></td>
-              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
-            </tr>
-            <tr>
-              <th scope="row" class="sig__name">pronouns and back-reference</th>
-              <td class="sig__sep"><span class="num">7.143</span></td>
-              <td class="sig__def"><span class="num">9.584 to 15.422</span></td>
-              <td class="sig__sep"><span class="num">0.95</span></td>
-              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
-            </tr>
-            <tr>
-              <th scope="row" class="sig__name">formality</th>
-              <td class="sig__sep"><span class="num">0</span></td>
-              <td class="sig__def"><span class="num">0.069 to 0.409</span></td>
-              <td class="sig__sep"><span class="num">0.87</span></td>
-              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
-            </tr>
-            <tr>
-              <th scope="row" class="sig__name">density of named specifics</th>
-              <td class="sig__sep"><span class="num">6.122</span></td>
-              <td class="sig__def"><span class="num">1.488 to 4.574</span></td>
-              <td class="sig__sep"><span class="num">0.68</span></td>
-              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
-            </tr>
-            <tr>
-              <th scope="row" class="sig__name">first-person voice</th>
-              <td class="sig__sep"><span class="num">1.02</span></td>
-              <td class="sig__def"><span class="num">1.836 to 5.851</span></td>
-              <td class="sig__sep"><span class="num">0.92</span></td>
-              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
-            </tr>
-            <tr>
-              <th scope="row" class="sig__name">contractions</th>
-              <td class="sig__sep"><span class="num">3.061</span></td>
-              <td class="sig__def"><span class="num">0.686 to 2.759</span></td>
-              <td class="sig__sep"><span class="num">0.83</span></td>
-              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h4 class="worked__head">What the rewriter was asked for</h4>
-        <p class="diag">It reads machine-written because it packs many categories into one long, evenly weighted
-          list without any concrete instance, source, or situational context that would anchor a human explanation.
-          The prose repeatedly uses abstract framing (&#8220;key difference,&#8221; &#8220;scale and cost&#8221;)
-          and balanced contrast structures that sound like a template for definition-writing rather than someone
-          speaking from experience. It also avoids first-person stance or reader-address, and relies on generic
-          quantifiers (&#8220;hundreds or thousands&#8221;) that feel padded rather than observed.</p>
-        <table class="sig sig--moves">
-          <thead><tr><th scope="col">Move</th><th scope="col">Signal</th><th scope="col">From</th><th scope="col">To</th><th scope="col">Separation</th></tr></thead>
-          <tbody>
-            <tr>
-              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
-              <th scope="row" class="sig__name">word reuse</th>
-              <td class="sig__sep"><span class="num">0.276</span></td>
-              <td class="sig__sep"><span class="num">0.303</span></td>
-              <td class="sig__sep"><span class="num">0.98</span></td>
-            </tr>
-            <tr>
-              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
-              <th scope="row" class="sig__name">content-word density</th>
-              <td class="sig__sep"><span class="num">0.714</span></td>
-              <td class="sig__sep"><span class="num">0.518</span></td>
-              <td class="sig__sep"><span class="num">0.97</span></td>
-            </tr>
-            <tr>
-              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
-              <th scope="row" class="sig__name">long words</th>
-              <td class="sig__sep"><span class="num">15.306</span></td>
-              <td class="sig__sep"><span class="num">12.059</span></td>
-              <td class="sig__sep"><span class="num">0.97</span></td>
-            </tr>
-            <tr>
-              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
-              <th scope="row" class="sig__name">pronouns and back-reference</th>
-              <td class="sig__sep"><span class="num">1.02</span></td>
-              <td class="sig__sep"><span class="num">9.584</span></td>
-              <td class="sig__sep"><span class="num">0.95</span></td>
-            </tr>
-            <tr>
-              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
-              <th scope="row" class="sig__name">abstract nouns</th>
-              <td class="sig__sep"><span class="num">4.082</span></td>
-              <td class="sig__sep"><span class="num">1.612</span></td>
-              <td class="sig__sep"><span class="num">0.94</span></td>
-            </tr>
-            <tr>
-              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
-              <th scope="row" class="sig__name">first-person voice</th>
-              <td class="sig__sep"><span class="num">0</span></td>
-              <td class="sig__sep"><span class="num">1.836</span></td>
-              <td class="sig__sep"><span class="num">0.92</span></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h4 class="worked__head">Gates</h4>
-        <div class="sub__body">
-          <p class="diag">A gate is a pass or fail check that can reject a candidate rewrite outright. Gates veto;
-            the score only ranks whatever survived them. Four properties define one in this codebase.</p>
-          <ol class="gatedef">
-            <li><span class="next__t">It vetoes, it does not rank.</span> Gates run before ranking. A candidate that
-              fails one is discarded, no matter how well it scores.</li>
-            <li><span class="next__t">It tests an invariant, not a target.</span> Violating it means the rewrite is
-              wrong, a dropped figure or a third of the length gone, not merely less good. A missed style target
-              ranks a candidate instead of discarding it.</li>
-            <li><span class="next__t">It is deterministic and cheap.</span> No LLM calls, so every candidate gets
-              every gate.</li>
-            <li><span class="next__t">It has a tier.</span> <span class="id">literals</span> and
-              <span class="id">meaning</span> are integrity gates: they protect content a reader cannot check by
-              eye. The rest protect shape. When the pipeline has to ship the least-bad candidate, integrity
-              wins.</li>
-          </ol>
-          <p class="diag">The seven: <span class="id">length</span>, <span class="id">meaning</span>,
-            <span class="id">literals</span>, <span class="id">readability</span>, <span class="id">structure</span>,
-            <span class="id">divergence</span>, <span class="id">style</span>.</p>
-        </div>
-        <ul class="gates">
-          <li><span class="gate__name">length</span><span class="gate__val">94 vs 94 words, ratio 1.00, allowed 0.70 to 1.20</span></li>
-          <li><span class="gate__name">meaning</span><span class="gate__val">forward min 0.86, mean 0.90; reverse p10 0.85, mean 0.88; document 0.86</span></li>
-          <li><span class="gate__name">literals</span><span class="gate__val">all literals preserved</span></li>
-          <li><span class="gate__name">readability</span><span class="gate__val">grade 13.8 to 9.3 (allowed -6.0 to +2.0), ease 38.1 to 55.9</span></li>
-          <li><span class="gate__name">structure</span><span class="gate__val">1 to 3 paragraphs, allowed 1 to 3</span></li>
-          <li><span class="gate__name">divergence</span><span class="gate__val">depth 0.59; 58% of the wording and 25% of the sentences are the original&#x27;s; longest copied run 11 words</span></li>
-          <li><span class="gate__name">style</span><span class="gate__val">no marketing language; one advisory miss, 10.2 semicolons per 1000 words against a target of at most 3</span></li>
-          <li><span class="gate__name">critic and meaning audit</span><span class="gate__val">passed; four additions flagged to the reader as additions</span></li>
-        </ul>
-        </details>
-
-        <details class="sub" open>
-          <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">Applications of the tool</span></span>
-            <span class="fold__mark" aria-hidden="true"></span>
-          </summary>
-          <div class="sub__body">
-            <p>Elevate your social media, email, and digital communications
-          with messaging that feels more natural, engaging, and human. The tool helps you align your content with
-          proven human communication patterns, so your message connects more effectively with your audience.</p>
-          </div>
-        </details>
-
-        <details class="sub">
-          <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Competitor analysis and next step</span></span>
-            <span class="fold__mark" aria-hidden="true"></span>
-          </summary>
-          <div class="sub__body">
-            <p>Measured against the humanizer tools already on GitHub, HumanizedAI is one of the more
-              technically ambitious designs in the category, particularly around verification and semantic
-              integrity. I do not see many that match its combination of corpus-derived steering, enforced rewrite
-              depth, deterministic integrity gates and a semantic audit.</p>
-            <p>The large existing projects still beat it today on adoption and convenience. The gap is not the
-              method. It is everything around the method, and that is the work:</p>
-            <ul class="next">
-              <li><span class="next__t">Maturity.</span> Several thresholds were tuned while watching a single
-                document fail, the control run over human fixtures is still outstanding, and negation remains
-                invisible to the meaning gate at <span class="num">0.995</span>.</li>
-              <li><span class="next__t">Installation.</span> Too much setup stands between a curious reader and a
-                first run.</li>
-              <li><span class="next__t">English only.</span> The feature set and the calibration both assume
-                English.</li>
-              <li><span class="next__t">Comparative evaluation.</span> No broad head-to-head against the tools it
-                claims to differ from, which is exactly the claim that most needs evidence.</li>
-              <li><span class="next__t">Distribution and interface.</span> The incumbents win on both, and adoption
-                turns on those rather than on method.</li>
-            </ul>
-          </div>
-        </details>
-
-      </div>
-    </article>
-
-    <!-- ══ PROJECT 2 : real ══ -->
     <article class="spread project project--major" id="toolselection">
       <div class="col">
         <h2 class="project__title">Scaling Tool Selection: Retrieval Bottlenecks and a System One Proposal</h2>
@@ -1379,6 +901,484 @@
       <div class="projects">
 
     <!-- ══ PROJECT 1 : real ══ -->
+    <article class="spread project project--major" id="humanizedai">
+      <div class="col">
+        <h2 class="project__title">Improve human communication by humanizing AI-generated text</h2>
+        <p class="lede-para">Most AI humanizers try to change how text looks. HumanizedAI tries to measure why it is
+          tiring to read, rewrite those measured properties, and prove that the rewrite did not alter what the
+          document says.</p>
+      </div>
+
+      <div class="projfolds">
+        <details class="sub" open>
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">1</span><span class="sub__name">Repository</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p class="repo__link"><a href="https://github.com/jingxulabs/HumanizedAI">github.com/jingxulabs/HumanizedAI</a></p>
+            <p class="diag">Python, MIT licensed. The calibration ships prebuilt, so there is nothing to train
+              before a first run. A FastAPI web interface and a command line covering score, signals, features,
+              run, serve and calibrate. The rewriter and the judge run on different vendors' models by design.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">2</span><span class="sub__name">Project overview and summary</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">Problem.</span> Machine-written prose wears people out. Everything sounds the same,
+          nothing surprises, and attention goes. Communication nobody attends to has lost its purpose. So the target
+          is readability, not disguise: the tool ships no detector, never optimizes against one, and where reading
+          well and looking less machine-made pull apart it follows readability. It also won't make anything true,
+          since a faithful rewrite of a wrong original stays wrong.</p>
+
+            <p><span class="marker">Approach.</span> <span class="num">31</span> features are calibrated,
+          each scored by how cleanly it separates a labelled human corpus from an AI one.
+          <span class="num">20</span> of them separate the two well enough to be picked as steering signals. On a
+          given document a steering signal only becomes an instruction if it clears three filters
+          (separation <span class="num">≥ 0.65</span>, normalized gap <span class="num">≥ 0.15</span>, and
+          agreement on direction), and at most six are issued per rewrite, strongest discriminator first. The
+          rewriter then builds a ledger of the assertions in the source and writes fresh prose from that ledger
+          rather than editing sentences: the ledger is fixed, the prose is free. Seven deterministic gates can veto
+          any candidate; an LLM judge running on a different vendor's model advises but cannot.</p>
+          </div>
+          <figure class="plot">
+          <svg viewBox="0 0 612 152" role="img" aria-label="Rewrite depth by candidate type: verbatim copy 0.00, shallow rewrite 0.14, synonym pass 0.57, ledger-written 0.88.">
+            <g>
+              <text class="plot__lab" x="148" y="26" text-anchor="end">Verbatim copy</text>
+              <line class="plot__track" x1="166" y1="22" x2="536" y2="22"/>
+              <circle class="plot__knob" cx="166" cy="22" r="4"/>
+              <text class="plot__val" x="604" y="26" text-anchor="end">0.00</text>
+            </g>
+            <g>
+              <text class="plot__lab" x="148" y="60" text-anchor="end">Shallow rewrite</text>
+              <line class="plot__track" x1="166" y1="56" x2="536" y2="56"/>
+              <line class="plot__stem" x1="166" y1="56" x2="217.8" y2="56"/>
+              <circle class="plot__knob" cx="217.8" cy="56" r="4"/>
+              <text class="plot__val" x="604" y="60" text-anchor="end">0.14</text>
+            </g>
+            <g>
+              <text class="plot__lab" x="148" y="94" text-anchor="end">Synonym pass</text>
+              <line class="plot__track" x1="166" y1="90" x2="536" y2="90"/>
+              <line class="plot__stem" x1="166" y1="90" x2="376.9" y2="90"/>
+              <circle class="plot__knob" cx="376.9" cy="90" r="4"/>
+              <text class="plot__val" x="604" y="94" text-anchor="end">0.57</text>
+            </g>
+            <g>
+              <text class="plot__lab" x="148" y="128" text-anchor="end">Ledger-written</text>
+              <line class="plot__track" x1="166" y1="124" x2="536" y2="124"/>
+              <line class="plot__stem plot__stem--key" x1="166" y1="124" x2="491.6" y2="124"/>
+              <circle class="plot__knob plot__knob--key" cx="491.6" cy="124" r="4.5"/>
+              <text class="plot__val" x="604" y="128" text-anchor="end">0.88</text>
+            </g>
+          </svg>
+          <figcaption>Rewrite depth by candidate type. Writing from a ledger of assertions, rather than editing
+            the source sentence by sentence, is what moves it.</figcaption>
+        </figure>
+          <div class="sub__body">
+            <p><span class="marker">Result.</span> The human score of AI-generated text improves significantly after a
+          pass through the tool. The shallow-rewrite failure was the finding that mattered. Across
+          <span class="num">22</span> saved candidates the earlier pipeline returned text
+          <span class="num">88–96%</span> word-identical to its input, with verbatim spans up to
+          <span class="num">276</span> words, and not one gate ever rejected it. After the ledger change, on the
+          same document and model: word similarity <span class="num">0.90 → 0.61</span>, depth
+          <span class="num">0.14 → 0.58</span>, surviving sentences <span class="num">74% → 19%</span>, longest
+          copied span <span class="num">89 → 27</span> words, with literals and meaning still passing. Widening
+          the brief beyond the ten-feature starter set took execution from <span class="num">27%</span> to
+          <span class="num">59%</span>.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">The twenty steering signals</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+<p class="signals__intro">Calibration runs over <span class="num">248</span> human-written documents
+          and <span class="num">220</span> AI-written ones, computing all <span class="num">31</span> features
+          across both. The two corpora do different jobs. The human corpus defines the target range: for each
+          feature the calibration stores human percentiles (<span class="num">p10</span>,
+          <span class="num">p25</span>, <span class="num">p50</span>, <span class="num">p75</span>,
+          <span class="num">p90</span>). The AI corpus never defines that range. It establishes only how sharply a
+          feature discriminates between the two populations.</p>
+        <p class="signals__intro">Of those <span class="num">31</span> features,
+          <span class="num">20</span> separate human from machine writing well enough to steer a rewrite. Separation
+          is an AUC-like measure: <span class="num">0.50</span> means no useful discrimination,
+          <span class="num">1.00</span> means perfect separation. The system follows the calibrated direction rather
+          than intuition.</p>
+        <table class="sig">
+          <thead>
+            <tr><th scope="col">Signal</th><th scope="col">Separation</th><th scope="col">Humanize direction</th><th scope="col">Definition</th></tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th scope="row" class="sig__name">repetition</th>
+            <td class="sig__sep"><span class="num">0.98</span><span class="sig__bar" aria-hidden="true"><i style="width:96%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Reuse the same natural term instead of rotating synonyms.</td>
+            <td class="sig__def">Degree to which the same important words or lemmas are reused instead of repeatedly substituting synonyms. Human writing in this corpus reuses vocabulary more consistently.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">information_density</th>
+            <td class="sig__sep"><span class="num">0.97</span><span class="sig__bar" aria-hidden="true"><i style="width:94%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Loosen the prose with natural connective and function words.</td>
+            <td class="sig__def">Share of text made up of content-heavy words such as nouns, verbs, adjectives and adverbs. Very densely packed clauses are more machine-like in this corpus.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">vocabulary_complexity</th>
+            <td class="sig__sep"><span class="num">0.97</span><span class="sig__bar" aria-hidden="true"><i style="width:94%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Prefer everyday wording such as “use” over “utilize”, while preserving necessary technical terms.</td>
+            <td class="sig__def">Frequency of long or unusually complex words, implemented largely as the proportion of long words.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">pronoun_rate</th>
+            <td class="sig__sep"><span class="num">0.95</span><span class="sig__bar" aria-hidden="true"><i style="width:90%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Use it, they, this and so on rather than repeatedly restating full noun phrases.</td>
+            <td class="sig__def">Frequency of pronouns used to refer back to already-mentioned people, objects or concepts.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">abstraction_rate</th>
+            <td class="sig__sep"><span class="num">0.94</span><span class="sig__bar" aria-hidden="true"><i style="width:88%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Convert abstract nouns into direct verbs where possible.</td>
+            <td class="sig__def">Frequency of nominalized or abstract constructions such as -tion, -ment, -ness and similar noun-heavy phrasing.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">sentence_structure_diversity</th>
+            <td class="sig__sep"><span class="num">0.92</span><span class="sig__bar" aria-hidden="true"><i style="width:84%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Use a smaller number of natural sentence constructions more consistently.</td>
+            <td class="sig__def">Variety or entropy of syntactic sentence shapes, based on factors such as opening part of speech, clauses, verbs and subordination.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">first_person_rate</th>
+            <td class="sig__sep"><span class="num">0.92</span><span class="sig__bar" aria-hidden="true"><i style="width:84%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise where supported. Identify the observer or speaker when the source actually supports it. Never invent experiences.</td>
+            <td class="sig__def">Frequency of first-person forms such as I, me, my, we and our.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">formality</th>
+            <td class="sig__sep"><span class="num">0.87</span><span class="sig__bar" aria-hidden="true"><i style="width:74%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Use a more natural conversational register, except when the requested register is formal.</td>
+            <td class="sig__def">Composite measure of formal register, especially low contraction use plus formal or Latinate vocabulary.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">contraction_rate</th>
+            <td class="sig__sep"><span class="num">0.83</span><span class="sig__bar" aria-hidden="true"><i style="width:66%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Use contractions where natural.</td>
+            <td class="sig__def">Frequency of contractions such as it&#x27;s, doesn&#x27;t, I&#x27;ve and wasn&#x27;t.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">example_density</th>
+            <td class="sig__sep"><span class="num">0.81</span><span class="sig__bar" aria-hidden="true"><i style="width:62%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Keep useful examples but remove unnecessary labels announcing them.</td>
+            <td class="sig__def">Frequency of explicitly signposted examples using phrases such as “for example”, “for instance” and “such as”.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">sentence_length_variance</th>
+            <td class="sig__sep"><span class="num">0.80</span><span class="sig__bar" aria-hidden="true"><i style="width:60%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Mix short and longer sentences by splitting or merging existing content naturally.</td>
+            <td class="sig__def">Amount of variation in sentence lengths, typically normalized so it is not just a function of average length.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">cliche_rate</th>
+            <td class="sig__sep"><span class="num">0.78</span><span class="sig__bar" aria-hidden="true"><i style="width:56%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Replace stock phrases with the actual plain statement, or remove them when content-free.</td>
+            <td class="sig__def">Frequency of phrases from the repo&#x27;s curated machine-writing and AI-cliché inventory.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">transition_frequency</th>
+            <td class="sig__sep"><span class="num">0.72</span><span class="sig__bar" aria-hidden="true"><i style="width:44%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Rely more on natural idea flow. Use simple connectors such as “But” or “So” when needed.</td>
+            <td class="sig__def">Frequency of explicit discourse transitions such as “Moreover”, “Furthermore”, “Additionally” and “In conclusion”.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">specificity</th>
+            <td class="sig__sep"><span class="num">0.68</span><span class="sig__bar" aria-hidden="true"><i style="width:36%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower density, not facts. Retain every fact, but mention a specific once and refer back to it rather than restating it.</td>
+            <td class="sig__def">Density of named entities, dates, numbers, figures, products, organizations, places and other concrete specifics.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">fragment_frequency</th>
+            <td class="sig__sep"><span class="num">0.67</span><span class="sig__bar" aria-hidden="true"><i style="width:34%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise slightly. Allow occasional meaningful fragments based on existing content. Do not manufacture punchy filler.</td>
+            <td class="sig__def">Percentage or frequency of deliberate sentence fragments rather than fully finite clauses.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">em_dash_per_1k</th>
+            <td class="sig__sep"><span class="num">0.64</span><span class="sig__bar" aria-hidden="true"><i style="width:28%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Replace em dashes with commas, periods or parentheses as appropriate.</td>
+            <td class="sig__def">Number of em dashes per 1,000 words.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">paragraph_length_variance</th>
+            <td class="sig__sep"><span class="num">0.62</span><span class="sig__bar" aria-hidden="true"><i style="width:24%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower in the calibration. Move toward the human reference band rather than simply maximizing variation.</td>
+            <td class="sig__def">Degree to which paragraph sizes differ from one another.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">modal_usage</th>
+            <td class="sig__sep"><span class="num">0.57</span><span class="sig__bar" aria-hidden="true"><i style="width:14%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise according to calibration, while preserving the source&#x27;s actual degree of certainty.</td>
+            <td class="sig__def">Frequency of modal verbs such as may, might, could, would and should.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">symmetry</th>
+            <td class="sig__sep"><span class="num">0.56</span><span class="sig__bar" aria-hidden="true"><i style="width:12%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Break mechanically balanced organization and allow ideas to receive unequal space.</td>
+            <td class="sig__def">Degree of artificial structural balance, such as First/Second/Third, equal-sized points, or adjacent sentences with strongly parallel structure.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">directness</th>
+            <td class="sig__sep"><span class="num">0.50</span><span class="sig__bar" aria-hidden="true"><i style="width:0%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Prefer clear actor and verb constructions and remove unsupported hedging, while retaining genuine qualifications.</td>
+            <td class="sig__def">Composite of active-voice usage and reduced unnecessary hedging or modality.</td>
+          </tr>
+          </tbody>
+        </table>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">Demo example</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+<p class="signals__intro">One document through the tool. The human writing score measures distance from the
+          human range across the <span class="num">20</span> calibrated signals, each weighted by how well it
+          separates human from machine writing. It is not the probability that a detector will be fooled, and a
+          higher score does not mean a detector will score the text any differently.</p>
+
+        <p class="score__title">Human writing score</p>
+        <div class="score">
+          <span class="score__cell"><span class="score__cap">before</span><span class="score__n score__n--before num">56</span></span>
+          <span class="score__cell"><span class="score__cap">after</span><span class="score__n num">82</span></span>
+          <span class="score__delta num">+26</span>
+        </div>
+
+        <div class="ba">
+          <div class="ba__pane">
+            <p class="ba__label">Original, <span class="num">94</span> words</p>
+            <p>AI slop is a slang term for low-quality, mass-produced content created with generative AI, such as
+              generic articles, repetitive images, fake-looking videos, spammy social posts, or text that sounds
+              fluent but says very little. The key difference between AI slop and ordinary &#8220;human crap&#8221;
+              is not that humans always make better content; people have always produced spam, clickbait, lazy
+              writing, misinformation, and bad art. The difference is scale and cost. A person might spend an hour
+              producing one bad article, while AI can generate hundreds or thousands of similarly bad pieces very
+              quickly and cheaply.</p>
+          </div>
+          <div class="ba__pane ba__pane--out">
+            <p class="ba__label">Rewrite, <span class="num">94</span> words, <span class="num">100%</span> of the original length</p>
+            <p>You&#8217;ve probably seen people call something &#8220;AI slop.&#8221; It&#8217;s slang for bad
+              content made in bulk with generative AI, generic articles, repetitive images, fake-looking videos,
+              spammy social posts, or writing that reads smoothly while saying almost nothing.</p>
+            <p>I think the point isn&#8217;t that humans are always better. People have always made &#8220;human
+              crap&#8221;: spam, clickbait, lazy writing, misinformation, and bad art.</p>
+            <p>What changes with AI is scale and cost. A person might burn an hour on one bad article; AI can spit
+              out hundreds or thousands of similarly bad pieces very quickly and cheaply.</p>
+          </div>
+        </div>
+        <p class="ba__foot">Accepted on iteration <span class="num">3</span>.
+          <span class="num">58%</span> of the brief carried out, <span class="num">60%</span> of the document
+          rewritten, <span class="num">4</span> additions marked as additions, <span class="num">19</span> gateway
+          calls.</p>
+
+        <h4 class="worked__head">Signals outside the human range</h4>
+        <p class="diag diag--tight"><span class="num">8</span> of the <span class="num">20</span> fell outside the
+          human band on this document. The other <span class="num">12</span> measured in range and were left alone.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Signal</th><th scope="col">Yours</th><th scope="col">Human range</th><th scope="col">Separation</th><th scope="col">Reading</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">content-word density</th>
+              <td class="sig__sep"><span class="num">0.673</span></td>
+              <td class="sig__def"><span class="num">0.458 to 0.518</span></td>
+              <td class="sig__sep"><span class="num">0.97</span></td>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">sentence-shape variety</th>
+              <td class="sig__sep"><span class="num">1.792</span></td>
+              <td class="sig__def"><span class="num">2.448 to 3.42</span></td>
+              <td class="sig__sep"><span class="num">0.92</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">word reuse</th>
+              <td class="sig__sep"><span class="num">0.274</span></td>
+              <td class="sig__def"><span class="num">0.303 to 0.359</span></td>
+              <td class="sig__sep"><span class="num">0.98</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">pronouns and back-reference</th>
+              <td class="sig__sep"><span class="num">7.143</span></td>
+              <td class="sig__def"><span class="num">9.584 to 15.422</span></td>
+              <td class="sig__sep"><span class="num">0.95</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">formality</th>
+              <td class="sig__sep"><span class="num">0</span></td>
+              <td class="sig__def"><span class="num">0.069 to 0.409</span></td>
+              <td class="sig__sep"><span class="num">0.87</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">density of named specifics</th>
+              <td class="sig__sep"><span class="num">6.122</span></td>
+              <td class="sig__def"><span class="num">1.488 to 4.574</span></td>
+              <td class="sig__sep"><span class="num">0.68</span></td>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">first-person voice</th>
+              <td class="sig__sep"><span class="num">1.02</span></td>
+              <td class="sig__def"><span class="num">1.836 to 5.851</span></td>
+              <td class="sig__sep"><span class="num">0.92</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">contractions</th>
+              <td class="sig__sep"><span class="num">3.061</span></td>
+              <td class="sig__def"><span class="num">0.686 to 2.759</span></td>
+              <td class="sig__sep"><span class="num">0.83</span></td>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 class="worked__head">What the rewriter was asked for</h4>
+        <p class="diag">It reads machine-written because it packs many categories into one long, evenly weighted
+          list without any concrete instance, source, or situational context that would anchor a human explanation.
+          The prose repeatedly uses abstract framing (&#8220;key difference,&#8221; &#8220;scale and cost&#8221;)
+          and balanced contrast structures that sound like a template for definition-writing rather than someone
+          speaking from experience. It also avoids first-person stance or reader-address, and relies on generic
+          quantifiers (&#8220;hundreds or thousands&#8221;) that feel padded rather than observed.</p>
+        <table class="sig sig--moves">
+          <thead><tr><th scope="col">Move</th><th scope="col">Signal</th><th scope="col">From</th><th scope="col">To</th><th scope="col">Separation</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+              <th scope="row" class="sig__name">word reuse</th>
+              <td class="sig__sep"><span class="num">0.276</span></td>
+              <td class="sig__sep"><span class="num">0.303</span></td>
+              <td class="sig__sep"><span class="num">0.98</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+              <th scope="row" class="sig__name">content-word density</th>
+              <td class="sig__sep"><span class="num">0.714</span></td>
+              <td class="sig__sep"><span class="num">0.518</span></td>
+              <td class="sig__sep"><span class="num">0.97</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+              <th scope="row" class="sig__name">long words</th>
+              <td class="sig__sep"><span class="num">15.306</span></td>
+              <td class="sig__sep"><span class="num">12.059</span></td>
+              <td class="sig__sep"><span class="num">0.97</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+              <th scope="row" class="sig__name">pronouns and back-reference</th>
+              <td class="sig__sep"><span class="num">1.02</span></td>
+              <td class="sig__sep"><span class="num">9.584</span></td>
+              <td class="sig__sep"><span class="num">0.95</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+              <th scope="row" class="sig__name">abstract nouns</th>
+              <td class="sig__sep"><span class="num">4.082</span></td>
+              <td class="sig__sep"><span class="num">1.612</span></td>
+              <td class="sig__sep"><span class="num">0.94</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+              <th scope="row" class="sig__name">first-person voice</th>
+              <td class="sig__sep"><span class="num">0</span></td>
+              <td class="sig__sep"><span class="num">1.836</span></td>
+              <td class="sig__sep"><span class="num">0.92</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 class="worked__head">Gates</h4>
+        <div class="sub__body">
+          <p class="diag">A gate is a pass or fail check that can reject a candidate rewrite outright. Gates veto;
+            the score only ranks whatever survived them. Four properties define one in this codebase.</p>
+          <ol class="gatedef">
+            <li><span class="next__t">It vetoes, it does not rank.</span> Gates run before ranking. A candidate that
+              fails one is discarded, no matter how well it scores.</li>
+            <li><span class="next__t">It tests an invariant, not a target.</span> Violating it means the rewrite is
+              wrong, a dropped figure or a third of the length gone, not merely less good. A missed style target
+              ranks a candidate instead of discarding it.</li>
+            <li><span class="next__t">It is deterministic and cheap.</span> No LLM calls, so every candidate gets
+              every gate.</li>
+            <li><span class="next__t">It has a tier.</span> <span class="id">literals</span> and
+              <span class="id">meaning</span> are integrity gates: they protect content a reader cannot check by
+              eye. The rest protect shape. When the pipeline has to ship the least-bad candidate, integrity
+              wins.</li>
+          </ol>
+          <p class="diag">The seven: <span class="id">length</span>, <span class="id">meaning</span>,
+            <span class="id">literals</span>, <span class="id">readability</span>, <span class="id">structure</span>,
+            <span class="id">divergence</span>, <span class="id">style</span>.</p>
+        </div>
+        <ul class="gates">
+          <li><span class="gate__name">length</span><span class="gate__val">94 vs 94 words, ratio 1.00, allowed 0.70 to 1.20</span></li>
+          <li><span class="gate__name">meaning</span><span class="gate__val">forward min 0.86, mean 0.90; reverse p10 0.85, mean 0.88; document 0.86</span></li>
+          <li><span class="gate__name">literals</span><span class="gate__val">all literals preserved</span></li>
+          <li><span class="gate__name">readability</span><span class="gate__val">grade 13.8 to 9.3 (allowed -6.0 to +2.0), ease 38.1 to 55.9</span></li>
+          <li><span class="gate__name">structure</span><span class="gate__val">1 to 3 paragraphs, allowed 1 to 3</span></li>
+          <li><span class="gate__name">divergence</span><span class="gate__val">depth 0.59; 58% of the wording and 25% of the sentences are the original&#x27;s; longest copied run 11 words</span></li>
+          <li><span class="gate__name">style</span><span class="gate__val">no marketing language; one advisory miss, 10.2 semicolons per 1000 words against a target of at most 3</span></li>
+          <li><span class="gate__name">critic and meaning audit</span><span class="gate__val">passed; four additions flagged to the reader as additions</span></li>
+        </ul>
+        </details>
+
+        <details class="sub" open>
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">Applications of the tool</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>Elevate your social media, email, and digital communications
+          with messaging that feels more natural, engaging, and human. The tool helps you align your content with
+          proven human communication patterns, so your message connects more effectively with your audience.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Competitor analysis and next step</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>Measured against the humanizer tools already on GitHub, HumanizedAI is one of the more
+              technically ambitious designs in the category, particularly around verification and semantic
+              integrity. I do not see many that match its combination of corpus-derived steering, enforced rewrite
+              depth, deterministic integrity gates and a semantic audit.</p>
+            <p>The large existing projects still beat it today on adoption and convenience. The gap is not the
+              method. It is everything around the method, and that is the work:</p>
+            <ul class="next">
+              <li><span class="next__t">Maturity.</span> Several thresholds were tuned while watching a single
+                document fail, the control run over human fixtures is still outstanding, and negation remains
+                invisible to the meaning gate at <span class="num">0.995</span>.</li>
+              <li><span class="next__t">Installation.</span> Too much setup stands between a curious reader and a
+                first run.</li>
+              <li><span class="next__t">English only.</span> The feature set and the calibration both assume
+                English.</li>
+              <li><span class="next__t">Comparative evaluation.</span> No broad head-to-head against the tools it
+                claims to differ from, which is exactly the claim that most needs evidence.</li>
+              <li><span class="next__t">Distribution and interface.</span> The incumbents win on both, and adoption
+                turns on those rather than on method.</li>
+            </ul>
+          </div>
+        </details>
+
+      </div>
+    </article>
+
+    <!-- ══ PROJECT 2 : real ══ -->
     <article class="spread project project--major" id="cabinet">
       <div class="col">
         <h2 class="project__title">Cabinet, your personal decision intelligence</h2>
