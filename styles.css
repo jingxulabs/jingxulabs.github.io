@@ -115,7 +115,7 @@ html { scroll-behavior: smooth; }
 
 .nav {
   position: fixed;
-  right: 1.9rem;
+  right: 2.75rem;
   top: 50%;
   /* see the wide-viewport rule below: the index moves into the gutter once
      there is a gutter to move into. */
@@ -129,9 +129,12 @@ html { scroll-behavior: smooth; }
 .nav a {
   position: relative;
   font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
-  font-size: var(--t-s);
+  font-size: 1.125rem;
   line-height: 1.2;
-  color: var(--graphite);
+  /* The rail is navigation, not margin notes: it has to be legible at a
+     glance from the far side of the page, so it is set darker than the
+     --graphite the rest of the margin uses. */
+  color: color-mix(in srgb, var(--graphite) 55%, var(--ink));
   text-decoration: none;
   padding: 0.5rem 0 0.5rem 1.9rem;     /* generous hit area */
   transition: color 160ms ease;
@@ -154,7 +157,7 @@ html { scroll-behavior: smooth; }
    it. Below that the page fills the window and there is nowhere to go, so
    the offset stays as it was rather than climbing onto the column. */
 @media (min-width: 1320px) {
-  .nav { right: 5.5rem; }
+  .nav { right: 7.5rem; }
 }
 
 .nav a:hover { color: var(--ink); }
@@ -164,18 +167,20 @@ html { scroll-behavior: smooth; }
 
 /* A project hangs under its section, set smaller and pulled in. */
 .nav a.nav__sub {
-  font-size: var(--t-xs);
+  font-size: 1rem;
   padding-top: 0.15rem;
   padding-bottom: 0.45rem;
   margin-top: -0.35rem;
   padding-right: 0.9rem;
-  color: color-mix(in srgb, var(--graphite) 82%, var(--bond));
+  /* Subordinate to its section, but still a link you are meant to read:
+     stepped down in size rather than faded towards the ground. */
+  color: color-mix(in srgb, var(--graphite) 85%, var(--ink));
 }
 .nav a.nav__sub::before { width: 9px; }
-.nav--onsky a.nav__sub { color: color-mix(in srgb, var(--graphite-sky) 82%, var(--night)); }
+.nav--onsky a.nav__sub { color: color-mix(in srgb, var(--graphite-sky) 80%, var(--star)); }
 
 /* Over the night hero the same list flips to the sky palette. */
-.nav--onsky a { color: var(--graphite-sky); }
+.nav--onsky a { color: color-mix(in srgb, var(--graphite-sky) 55%, var(--star)); }
 .nav--onsky a:hover,
 .nav--onsky a[aria-current="true"] { color: var(--star); }
 .nav--onsky a::before { background: var(--ochre-sky); }
@@ -844,7 +849,9 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
     backdrop-filter: blur(8px);
     border-bottom: 1px solid color-mix(in srgb, var(--ink) 11%, transparent);
   }
-  .nav a { padding: 0.4rem 0; }
+  /* Back to 1rem: six items abreast, the bar has no width to spare for the
+     larger size the side rail uses. */
+  .nav a { padding: 0.4rem 0; font-size: 1rem; }
   .nav a.nav__sub { display: none; }   /* no room in the top bar */
   .nav a::before { display: none; }
   .nav a[aria-current="true"] { text-decoration: underline; text-underline-offset: 0.3em; }
