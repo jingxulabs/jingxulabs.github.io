@@ -264,6 +264,11 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   overflow: hidden;
   display: flex;
   align-items: flex-end;   /* the name sits on the horizon, sky above */
+  /* The hero's text column: .sky__inner is centred under --inner-max with
+     --inner-pad inside it. Declared here, not on .sky__inner, so .player
+     can read the same two numbers and land on the same left edge. */
+  --inner-pad: 2rem;
+  --inner-max: calc(var(--rail-w) + var(--gap) + 64ch + 4rem);
 }
 .sky__canvas {
   position: absolute;
@@ -293,11 +298,11 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
 .sky__inner {
   position: relative;
   width: 100%;
-  max-width: calc(var(--rail-w) + var(--gap) + 64ch + 4rem);
+  max-width: var(--inner-max);
   margin-inline: auto;
   /* Clears the widget. Tracks .player's `bottom`: the +7cm here is the
      same 7cm the widget was raised by. */
-  padding: 0 2rem calc(clamp(12rem, 28vh, 16rem) + 7cm);
+  padding: 0 var(--inner-pad) calc(clamp(12rem, 28vh, 16rem) + 7cm);
 }
 .sky__name {
   font-size: clamp(3.75rem, 12vw, 8.5rem);
@@ -338,7 +343,10 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
    beneath it are ours. */
 .player {
   position: absolute;
-  left: 2rem;
+  /* Flush with the name. .sky__inner is centred under --inner-max, so its
+     left edge is that gutter plus its own padding — the line the J sits
+     on. Re-derived rather than inherited, since .player is its sibling. */
+  left: calc(max(0px, (100% - var(--inner-max)) / 2) + var(--inner-pad));
   /* Raised 7cm off its original 2.25rem seat. The lede's clearance below
      is raised by the same 7cm, or the widget rides up into the text. */
   bottom: calc(2.25rem + 7cm);
@@ -1036,8 +1044,8 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
 
   .rail { order: 2; margin-top: 2rem; padding-left: 1rem; border-left: 1px solid var(--band); }
   .col  { order: 1; }
-  .sky__inner { padding-inline: 1.5rem; max-width: 40rem; }
-  .player { left: 1.5rem; }
+  /* Set on .sky so .player follows the inner box in. */
+  .sky { --inner-pad: 1.5rem; --inner-max: 40rem; }
   .sky__lede br { display: none; }
 }
 
