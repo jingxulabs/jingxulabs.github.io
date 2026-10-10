@@ -295,7 +295,9 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   width: 100%;
   max-width: calc(var(--rail-w) + var(--gap) + 64ch + 4rem);
   margin-inline: auto;
-  padding: 0 2rem clamp(12rem, 28vh, 16rem);  /* clears the widget */
+  /* Clears the widget. Tracks .player's `bottom`: the +3cm here is the
+     same 3cm the widget was raised by. */
+  padding: 0 2rem calc(clamp(12rem, 28vh, 16rem) + 3cm);
 }
 .sky__name {
   font-size: clamp(3.75rem, 12vw, 8.5rem);
@@ -337,7 +339,9 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
 .player {
   position: absolute;
   left: 2rem;
-  bottom: 2.25rem;
+  /* Raised 3cm off its original 2.25rem seat. The lede's clearance below
+     is raised by the same 3cm, or the widget rides up into the text. */
+  bottom: calc(2.25rem + 3cm);
   z-index: 2;
   width: min(300px, calc(100% - 3rem));
 }
