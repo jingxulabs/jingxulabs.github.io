@@ -19,14 +19,36 @@
   const HEAD  = '255, 246, 224';
   const SPARK = '255, 212, 106';   // the ochre accent, pushed toward yellow
 
+  // The card's own answer: cold where the horizon's is warm, so the two
+  // kinds of impact are told apart by colour alone.
+  const BLUE      = '126, 182, 255';
+  const BLUE_DEEP = '58, 118, 232';
+  const BLUE_HOT  = '228, 241, 255';
+
   // A burst is the most expensive thing on the page, so it is rationed:
   // one full one at a time, a token one for hits that land during the hold.
   const BURST_HOLD = 620;    // ms before another full burst is allowed
   const SPARK_CAP  = 340;    // live particles, a hard ceiling for slow devices
   const GRAVITY    = 0.00012;
 
+  /* The two impacts a meteor can have. The horizon's is a flattened
+     fountain thrown upward off the curve; the card's is round, faster and
+     blue — a firework rather than a splash. The card's is also allowed to
+     jump the queue: it is a scheduled event, rare by construction, and the
+     whole point of aiming a meteor at the widget is that you see it land. */
+  const FOUNTAIN = {
+    tones: [HEAD, SPARK, TRAIL], flash: [HEAD, SPARK],
+    flatten: 0.72, lift: -0.05, speed: 1, flashLife: 300, flashSize: 1
+  };
+  const FIREWORK = {
+    tones: [BLUE_HOT, BLUE, BLUE_DEEP], flash: [BLUE_HOT, BLUE],
+    flatten: 1, lift: -0.02, speed: 1.2, flashLife: 420, flashSize: 0.85,
+    priority: true
+  };
+
   let W = 0, H = 0, stars = [], meteors = [], sparks = [], flashes = [];
   let raf = null, last = 0, nextSpawn = 700, onScreen = true, burstHold = 0;
+  let nextCardHit = 2000;   // literal: rand() is not initialised yet here
 
   const rand = (a, b) => a + Math.random() * (b - a);
 
@@ -41,6 +63,7 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     seedStars();
     measureHorizon();
+    measureCard();
     if (reduced.matches) drawStatic();
   }
 
@@ -89,6 +112,55 @@
     return toCanvasY(CURVE[CURVE.length - 1].y);
   }
 
+  /* ─── The 'Yellow' card as a second obstacle ───
+     Measured from the DOM rather than restated here, so moving or
+     rescaling the widget moves what the sky aims at. The embed is drawn
+     by a transform, so the iframe's own rect is already the visible card;
+     before Spotify answers, the frame box stands in for it. While the
+     widget is missing entirely (the fallback link) there is no card, and
+     the sky quietly behaves as it always did.
+
+     Nothing is ever drawn on top of the widget: the canvas sits behind it,
+     and sparks are thrown outward from the face that was struck. Spotify's
+     Widget Terms forbid obscuring it, and a burst centred inside an opaque
+     card would be invisible anyway. */
+
+  const playerEl = document.getElementById('player');
+  let card = null;
+
+  function measureCard() {
+    card = null;
+    if (!playerEl || playerEl.classList.contains('player--fallback')) return;
+    const el = playerEl.querySelector('iframe') || document.getElementById('spotifyFrame');
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    if (r.width < 8 || r.height < 8) return;
+    const h = hero.getBoundingClientRect();
+    card = { x: r.left - h.left, y: r.top - h.top, w: r.width, h: r.height };
+  }
+
+  /* Entry point of the segment (x0,y0)→(x1,y1) into the rect, with the
+     outward normal of the face it came through. Liang–Barsky, kept whole
+     because the normal is what aims the sparks. Null when it misses. */
+  function rectEntry(x0, y0, x1, y1, r) {
+    const dx = x1 - x0, dy = y1 - y0;
+    let t0 = 0, t1 = 1, nx = 0, ny = 0;
+    const edges = [
+      [-dx, x0 - r.x,              -1,  0],
+      [ dx, r.x + r.w - x0,         1,  0],
+      [-dy, y0 - r.y,               0, -1],
+      [ dy, r.y + r.h - y0,         0,  1]
+    ];
+    for (const [p, q, ex, ey] of edges) {
+      if (p === 0) { if (q < 0) return null; continue; }
+      const t = q / p;
+      if (p < 0) { if (t > t1) return null; if (t > t0) { t0 = t; nx = ex; ny = ey; } }
+      else       { if (t < t0) return null; if (t < t1) t1 = t; }
+    }
+    if (t0 > t1) return null;
+    return { x: x0 + dx * t0, y: y0 + dy * t0, nx, ny };
+  }
+
   function seedStars() {
     const target = Math.min(Math.round((W * H) / 3000), 380);
     stars = Array.from({ length: target }, () => ({
@@ -106,13 +178,41 @@
   // That is what gives the directions their variety and their coherence.
   const RADIANT = () => ({ x: W * 0.82, y: -H * 0.45 });
 
-  function spawnMeteor() {
+  function spawnMeteor(aimAtCard) {
     // Scale varies per meteor: a uniform shower reads as an effect,
     // a mixed one reads as a sky.
     const scale = rand(0.55, 1.7);
     const speed = rand(0.30, 0.58) * (0.7 + scale * 0.4);
 
     const r = RADIANT();
+
+    /* An aimed meteor is spawned on the ray that already runs from the
+       radiant through the card, so it still belongs to the fan — it is
+       simply the streak whose line happens to end at the widget. Its life
+       is derived from the distance it has to cover, so it arrives at the
+       card around two-thirds through, while the trail is still at full
+       brightness rather than fading. */
+    if (aimAtCard && card) {
+      const tx = card.x + rand(0.16, 0.84) * card.w;
+      const ty = card.y + rand(0.18, 0.82) * card.h;
+      let dx = tx - r.x, dy = ty - r.y;
+      const d = Math.hypot(dx, dy) || 1;
+      dx /= d; dy /= d;
+      const back   = d * rand(0.6, 0.85);
+      const travel = back / speed;
+      return {
+        x: tx - dx * back,
+        y: ty - dy * back,
+        vx: dx * speed,
+        vy: dy * speed,
+        len: rand(110, 260) * scale,
+        scale,
+        age: 0,
+        life: travel / rand(0.45, 0.62),
+        aimed: true
+      };
+    }
+
     const x = rand(-W * 0.1, W * 1.1);
     const y = rand(-H * 0.12, H * 0.85);
 
@@ -182,28 +282,40 @@
      bias and gravity brings them back down, so the shape is a fountain
      over the horizon and not a symmetrical ball. */
 
-  function burst(x, y, scale) {
+  function burst(x, y, scale, kind, nx = 0, ny = 0) {
     // Full bursts are rate limited. A hit arriving inside the hold still
-    // registers, as a handful of sparks, so the cause stays visible.
-    const full = burstHold <= 0 && sparks.length < SPARK_CAP;
+    // registers, as a handful of sparks, so the cause stays visible. The
+    // card's firework is exempt from the hold but not from the cap.
+    const full = (kind.priority || burstHold <= 0) && sparks.length < SPARK_CAP;
     const n = full ? Math.round(rand(26, 38) * (0.7 + scale * 0.3)) : Math.round(rand(5, 9));
     if (full) {
       burstHold = BURST_HOLD;
-      flashes.push({ x, y, age: 0, life: 300, scale });
+      flashes.push({ x, y, age: 0, life: kind.flashLife, scale, kind });
     }
 
     for (let i = 0; i < n; i++) {
       const a  = rand(0, Math.PI * 2);
-      const sp = rand(0.08, 0.23) * (0.75 + scale * 0.35) * (full ? 1 : 0.65);
-      const t  = Math.random();
+      const sp = rand(0.08, 0.23) * (0.75 + scale * 0.35) * (full ? 1 : 0.65) * kind.speed;
+      let vx = Math.cos(a) * sp;
+      let vy = Math.sin(a) * sp * kind.flatten + kind.lift;
+
+      // Struck a face: fold the sparks heading into the surface back out of
+      // it, then bias the whole burst along the normal. The firework sprays
+      // off the card instead of disappearing behind it.
+      if (nx || ny) {
+        const into = vx * nx + vy * ny;
+        if (into < 0) { vx -= 2 * into * nx; vy -= 2 * into * ny; }
+        vx += nx * sp * 0.4;
+        vy += ny * sp * 0.4;
+      }
+
+      const t = Math.random();
       sparks.push({
-        x, y,
-        vx: Math.cos(a) * sp,
-        vy: Math.sin(a) * sp * 0.72 - 0.05,   // flattened, and thrown upward
+        x, y, vx, vy,
         age: 0,
         life: rand(780, 1250) * (full ? 1 : 0.7),
         r: rand(0.7, 1.7) * (0.8 + scale * 0.2),
-        tone: t < 0.18 ? HEAD : t < 0.8 ? SPARK : TRAIL
+        tone: t < 0.18 ? kind.tones[0] : t < 0.8 ? kind.tones[1] : kind.tones[2]
       });
     }
   }
@@ -214,12 +326,12 @@
       f.age += dt;
       if (f.age > f.life) { flashes.splice(i, 1); continue; }
       const k = f.age / f.life;
-      const r = (10 + 46 * k) * f.scale;
+      const r = (10 + 46 * k) * f.scale * f.kind.flashSize;
       const a = (1 - k) * 0.62;
       const g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, r);
-      g.addColorStop(0,    `rgba(${HEAD},  ${a.toFixed(3)})`);
-      g.addColorStop(0.45, `rgba(${SPARK}, ${(a * 0.55).toFixed(3)})`);
-      g.addColorStop(1,    `rgba(${SPARK}, 0)`);
+      g.addColorStop(0,    `rgba(${f.kind.flash[0]}, ${a.toFixed(3)})`);
+      g.addColorStop(0.45, `rgba(${f.kind.flash[1]}, ${(a * 0.55).toFixed(3)})`);
+      g.addColorStop(1,    `rgba(${f.kind.flash[1]}, 0)`);
       ctx.fillStyle = g;
       ctx.beginPath();
       ctx.arc(f.x, f.y, r, 0, Math.PI * 2);
@@ -266,19 +378,47 @@
       nextSpawn = rand(110, 420);
     }
 
+    // One meteor every few seconds is aimed at the card, so the firework is
+    // something the sky reliably does rather than something you might catch.
+    if (card) {
+      nextCardHit -= dt;
+      if (nextCardHit <= 0 && meteors.length < 22) {
+        meteors.push(spawnMeteor(true));
+        nextCardHit = rand(3400, 7200);
+      }
+    }
+
     for (let i = meteors.length - 1; i >= 0; i--) {
       const m = meteors[i];
       m.age += dt;
-      const prevY = m.y;
+      const prevX = m.x, prevY = m.y;
       m.x += m.vx * dt;
       m.y += m.vy * dt;
+
+      // The card is above the horizon, so it is tested first. Any meteor
+      // crossing it bursts, not just the aimed ones.
+      if (card) {
+        const hit = rectEntry(prevX, prevY, m.x, m.y, card);
+        if (hit) {
+          // Entering from inside leaves no face to push off; the meteor's
+          // own heading, reversed, stands in for the normal.
+          let { nx, ny } = hit;
+          if (!nx && !ny) {
+            const mag = Math.hypot(m.vx, m.vy) || 1;
+            nx = -m.vx / mag; ny = -m.vy / mag;
+          }
+          burst(hit.x, hit.y, m.scale || 1, FIREWORK, nx, ny);
+          meteors.splice(i, 1);
+          continue;
+        }
+      }
 
       // Descending across the curve, from above it, within the frame: a hit.
       // Meteors that spawn below the curve never satisfy the first test.
       if (m.vy > 0 && m.x >= 0 && m.x <= W) {
         const hy = horizonY(m.x);
         if (prevY < hy && m.y >= hy) {
-          burst(m.x, hy, m.scale || 1);
+          burst(m.x, hy, m.scale || 1, FOUNTAIN);
           meteors.splice(i, 1);
           continue;
         }
@@ -318,6 +458,15 @@
 
   let rt;
   window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(resize, 150); });
+
+  // Spotify's iframe arrives whenever it arrives, and the fallback may swap
+  // in later still. Re-measure on either, so the sky learns where the card
+  // is without polling for it.
+  if (playerEl) {
+    new MutationObserver(measureCard)
+      .observe(playerEl, { childList: true, subtree: true, attributes: true,
+                           attributeFilter: ['class', 'style', 'width', 'height'] });
+  }
 
   resize();
   start();
