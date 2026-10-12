@@ -21,17 +21,37 @@
   --band:         rgba(156, 107, 47, 0.19);
   --band-sky:     rgba(224, 166, 68, 0.22);
 
-  /* 1.25 major third. Broken in exactly one place: the name. */
+  /* 1.25 major third. Broken in exactly one place: the name.
+     The top two steps exist so a section name can reach display scale: the
+     paper needs three legible registers — section, project, body — where it
+     used to have one. */
   --t-xs:   0.875rem;
   --t-s:    1rem;
   --t-base: 1.1875rem;
   --t-m:    1.484rem;
   --t-l:    1.855rem;
   --t-xl:   2.318rem;
+  --t-xxl:  2.898rem;
+  --t-3xl:  3.622rem;
 
   --rail-w: 168px;
   --gap:    3.25rem;
   --measure: 64ch;
+
+  /* The page's own width, named once. Every box that has to line up with the
+     spread reads this: the margin rule, the hero's inner column, the folds.
+     `ch` resolves against the element using it, and every user inherits
+     body's Spectral, so they all compute the same number. */
+  --page-max: calc(var(--rail-w) + var(--gap) + 64ch + 4rem);
+
+  /* Where the margin rule stands: inside the page's left padding, clear of
+     every text block. It cannot stand at the rail's right edge instead — a
+     major project spans both columns, so a rule there would run down through
+     its prose and its fold list. Two bases, because two kinds of box need
+     it: one centred by `margin-inline: auto` inside the page, one spanning
+     the full width of it. */
+  --rule-local: 1rem;
+  --rule-x: calc(max(0px, (100% - var(--page-max)) / 2) + var(--rule-local));
 }
 
 /* ─── reset ─── */
@@ -83,7 +103,7 @@ a:hover { text-decoration-color: var(--indigo); }
   display: grid;
   grid-template-columns: var(--rail-w) minmax(0, var(--measure));
   column-gap: var(--gap);
-  max-width: calc(var(--rail-w) + var(--gap) + 64ch + 4rem);
+  max-width: var(--page-max);
   margin-inline: auto;
   padding-inline: 2rem;
 }
@@ -175,7 +195,7 @@ html { scroll-behavior: smooth; }
    sets `padding` as a shorthand further down the file and a shorthand
    later at equal specificity would put the right side back to 2rem. */
 @media (min-width: 861px) {
-  main, .sky .sky__inner { padding-right: 18rem; }
+  main, .sky .sky__inner, .close { padding-right: 18rem; }
 }
 
 .nav a:hover { color: var(--ink); }
@@ -203,30 +223,108 @@ html { scroll-behavior: smooth; }
 .nav--onsky a[aria-current="true"] { color: var(--star); }
 .nav--onsky a::before { background: var(--ochre-sky); }
 
-/* ═══════════════ FOLDS ═══════════════
-   Native <details>, so the page works with JavaScript off and the
-   keyboard gets disclosure behaviour for free. The marker is the ochre
-   tick used everywhere else, with a second stroke that makes it a plus
-   when the section is shut. */
-.fold { border-top: 1px solid color-mix(in srgb, var(--ink) 16%, transparent); }
-.fold:first-of-type { border-top: 0; }
+/* ═══════════════ THE MEASURED MARGIN ═══════════════
+   The paper register is ruled the way a manuscript page is: one hairline
+   down the far left of the text block, graduated with the same ochre tick
+   the margin uses to mark a note, and carrying one indigo index mark at the
+   reader's position.
 
-.fold__sum {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  max-width: calc(var(--rail-w) + var(--gap) + 64ch + 4rem);
-  margin-inline: auto;
-  padding: clamp(1.6rem, 3.4vh, 2.4rem) 2rem;
-  cursor: pointer;
-  list-style: none;
+   This is the second job a hairline does on this page, and the only one.
+   The horizontal rule divides — it separates project entries, nothing else.
+   This one measures. They are never confusable: one runs across a column,
+   one runs the length of the document, and where they meet is a graduation.
+
+   Ticks graduate leftward, out to the edge of the page's padding, so they
+   finish flush with where the project rules begin and never reach into a
+   margin note. */
+.measured { position: relative; }
+
+.rule {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--rule-x);
+  width: 1px;
+  background: color-mix(in srgb, var(--ink) 13%, transparent);
+  pointer-events: none;
 }
-.fold__sum::-webkit-details-marker { display: none; }
-.fold__name { font-size: var(--t-l); font-weight: 500; letter-spacing: -0.008em; }
-.fold__sum:hover .fold__name { color: var(--indigo); }
-.fold__d[open] .fold__sum { padding-bottom: 0.6rem; }
+/* Where the reader is in the document. Positional state, not an animation:
+   it is set from scroll offset with no easing and no entrance, so the motion
+   budget stays spent on the page-load sequence. */
+.rule__idx {
+  position: absolute;
+  left: -1px;
+  width: 3px;
+  height: 52px;
+  top: calc(var(--idx, 0) * (100% - 52px));
+  background: var(--indigo);
+}
 
+/* ═══════════════ SECTION HEADS ═══════════════
+   A section announces itself at display scale, with its contents measured
+   in the margin beside it: how much is in there, and one line on what it is.
+   The count is real numerals, so it takes the mono face; the gloss is the
+   margin's own voice, so it takes Archivo Narrow.
+
+   No rule under the name and no eyebrow over it. The name is 3.6rem against
+   a 1.1875rem body — that is the separation. */
+.sec { padding-top: clamp(4.25rem, 9.5vh, 7rem); }
+.sec:first-child { padding-top: clamp(3rem, 6vh, 4.25rem); }
+
+.sechead {
+  position: relative;
+  align-items: start;
+  padding-bottom: clamp(1.4rem, 3vh, 2.2rem);
+}
+/* The section's graduation on the rule, running out to the edge of the
+   page's padding — the same vertical the project rules start on. */
+.sechead::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1.55rem;
+  width: var(--rule-local);
+  height: 2px;
+  background: var(--ochre);
+}
+
+.sechead__name {
+  font-size: clamp(2.35rem, 5.2vw, var(--t-3xl));
+  font-weight: 300;
+  line-height: 1.02;
+  letter-spacing: -0.028em;
+  /* Hung to the same optical left edge as the hero's J. */
+  margin-left: -0.038em;
+  text-wrap: balance;
+}
+
+.sechead__count {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.45;
+  color: var(--graphite);
+  margin: 0.55rem 0 0.5em;
+}
+.sechead__gloss {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--graphite) 82%, var(--bond));
+  margin: 0;
+  text-wrap: pretty;
+}
+/* With no count above it the gloss carries the margin alone, so it starts on
+   the name's first baseline rather than floating at the top of the block. */
+.sechead__count + .sechead__gloss { margin-top: 0; }
+.rail > .sechead__gloss:first-child { margin-top: 0.55rem; }
+
+/* ═══════════════ FOLDS ═══════════════
+   Native <details>, so the page works with JavaScript off and the keyboard
+   gets disclosure behaviour for free. Folding survives only inside a
+   project, where one entry carries nine dense sub-sections; a section is
+   never folded, because a reader cannot judge from the outside whether they
+   want what is inside. The marker is the ochre tick used everywhere else,
+   with a second stroke that makes it a plus when the block is shut. */
 .fold__mark { position: relative; width: 15px; height: 15px; flex: none; }
 .fold__mark::before,
 .fold__mark::after { content: ""; position: absolute; background: var(--ochre); }
@@ -235,8 +333,7 @@ html { scroll-behavior: smooth; }
   left: 6.5px; top: 0; width: 2px; height: 15px;
   transition: opacity 180ms ease, transform 180ms ease;
 }
-details[open] > .fold__sum .fold__mark::after,
-details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0); }
+details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0); }
 
 /* Reference blocks inside a project: same mechanism, quieter. */
 .sub { border-top: 1px solid color-mix(in srgb, var(--ink) 11%, transparent); }
@@ -268,7 +365,7 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
      --inner-pad inside it. Declared here, not on .sky__inner, so .player
      can read the same two numbers and land on the same left edge. */
   --inner-pad: 2rem;
-  --inner-max: calc(var(--rail-w) + var(--gap) + 64ch + 4rem);
+  --inner-max: var(--page-max);
 }
 .sky__canvas {
   position: absolute;
@@ -415,11 +512,37 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   font-weight: 300;
   line-height: 1.5;
   margin-bottom: 1.3em;
+  hanging-punctuation: first;
+}
+
+/* ─── the initial ───
+   One, on the Ceres passage, which is the only literary sentence on the
+   page. Two lines deep, in ink: an initial is a way into the prose, not a
+   claim about uncertainty, so it is never ochre. There is no second one
+   anywhere on the site — that is what keeps it a choice and not a motif. */
+.lede-para--initial::first-letter {
+  float: left;
+  font-size: 4.3em;
+  line-height: 0.7;
+  font-weight: 300;
+  padding: 0.04em 0.07em 0 0;
+  color: var(--ink);
 }
 
 /* The single structural device: one rule, one job — separating entries. */
 .project { border-top: 1px solid color-mix(in srgb, var(--ink) 16%, transparent); }
-.project { padding-top: clamp(3.25rem, 7vh, 4.75rem); padding-bottom: clamp(3.25rem, 7vh, 4.75rem); }
+.project { position: relative; padding-top: clamp(3.25rem, 7vh, 4.75rem); padding-bottom: clamp(3.25rem, 7vh, 4.75rem); }
+/* A project's graduation on the margin rule: the same tick a section gets,
+   shorter and quieter, because a project is the smaller division. */
+.project::before {
+  content: "";
+  position: absolute;
+  left: 0.4rem;
+  top: -1px;
+  width: calc(var(--rule-local) - 0.4rem);
+  height: 2px;
+  background: color-mix(in srgb, var(--ochre) 52%, var(--bond));
+}
 .project--major { padding-top: clamp(4rem, 9vh, 6rem); padding-bottom: clamp(4rem, 9vh, 6rem); }
 .project--minor { padding-top: clamp(2.5rem, 5vh, 3.5rem); padding-bottom: clamp(2.5rem, 5vh, 3.5rem); }
 
@@ -971,17 +1094,71 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   max-width: 54ch;
 }
 
+/* ═══════════════ THE CLOSE ═══════════════
+   The page returns to night. It opens on an estimate a long way from its
+   asymptote and closes on one that has very nearly arrived and still has
+   not: the curve here is the same curve, much later, drawn flat against the
+   dashed line it is approaching.
+
+   The uncertainty band is gone, not faded. In the hero it spans 25.4 units;
+   by here it has closed. That is the whole claim of the colophon —
+   the estimate settles, the curve never lands — rendered rather than
+   asserted.
+
+   Outside <main>, so the night bleeds the full width of the window while
+   the text inside it still clears the fixed index. */
+.close {
+  position: relative;
+  background: var(--night);
+  color: color-mix(in srgb, var(--star) 86%, var(--night));
+  padding-top: clamp(7rem, 15vh, 10.5rem);
+}
+.close__curve {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: clamp(74px, 11vh, 118px);
+}
+.close__asym {
+  fill: none;
+  stroke: color-mix(in srgb, var(--graphite-sky) 60%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.close__line {
+  fill: none;
+  stroke: var(--indigo-sky);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+}
+
+/* The rule stops where the paper stops, so the close carries no graduation:
+   there is nothing after it left to measure. */
+.close .sechead::before { display: none; }
+.close .sechead__count,
+.close .sechead__gloss { color: var(--graphite-sky); }
+
 /* ─── contact ─── */
+.close .rail__note { color: var(--graphite-sky); }
+.close .tick { background: var(--ochre-sky); }
+.close a {
+  color: var(--indigo-sky);
+  text-decoration-color: color-mix(in srgb, var(--indigo-sky) 45%, transparent);
+}
+.close a:hover { text-decoration-color: var(--indigo-sky); }
+.close :focus-visible { outline-color: var(--ochre-sky); }
+
 .contact {
   padding-top: 0;
   padding-bottom: clamp(5rem, 11vh, 8rem);
 }
-.contact__head { font-size: var(--t-l); margin-bottom: 1rem; }
-.contact__lines { line-height: 1.95; }
+.contact__lines { line-height: 1.95; font-size: var(--t-m); }
 .colophon {
   font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
   font-size: var(--t-s);
-  color: var(--graphite);
+  line-height: 1.5;
+  color: var(--graphite-sky);
   margin-top: 3rem;
   max-width: 46ch;
 }
@@ -1014,6 +1191,26 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
     border-bottom-color: rgba(224, 166, 68, 0.2);
   }
   #overview, #projects, #humanizedai, #posts, #techjokes, #contact { scroll-margin-top: 3.6rem; }
+
+  /* There is no rail to rule beside, so the instrument edge goes away
+     entirely rather than standing in the text. Its graduations go with it. */
+  .rule { display: none; }
+  .sechead::before, .project::before { display: none; }
+
+  /* The margin folds under the name, so the count and gloss become a
+     caption to it rather than a note beside it. */
+  .sechead { padding-bottom: clamp(1.1rem, 2.4vh, 1.6rem); }
+  .sechead .rail {
+    order: 2;
+    margin-top: 0.85rem;
+    padding-left: 0;
+    border-left: 0;
+  }
+  .sechead__name { margin-left: -0.03em; }
+  .sec { padding-top: clamp(3.25rem, 7vh, 4.5rem); }
+
+  .close { padding-top: clamp(5rem, 11vh, 7rem); }
+
   .spread {
     grid-template-columns: minmax(0, 1fr);
     padding-inline: 1.5rem;
@@ -1034,8 +1231,6 @@ details[open] > .sub__sum  .fold__mark::after { opacity: 0; transform: scaleY(0)
   .score { gap: 1.4rem; }
   .score__n { font-size: 2.2rem; }
 
-  .fold__sum { padding-inline: 1.5rem; max-width: 40rem; }
-  .fold__name { font-size: var(--t-m); }
 
   .post { grid-template-columns: minmax(0, 1fr); }
   .joke__line { grid-template-columns: minmax(0, 1fr); }

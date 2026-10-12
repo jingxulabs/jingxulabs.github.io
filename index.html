@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=49">
+<link rel="stylesheet" href="styles.css?v=50">
 </head>
 <body>
 
@@ -84,14 +84,24 @@
 </header>
 
 <main>
+<div class="measured">
+  <!-- The instrument edge: one hairline down the length of the paper,
+       graduated at every section and project, carrying the reader's
+       position. Decorative to look at, but it is reporting where you are. -->
+  <div class="rule" aria-hidden="true"><i class="rule__idx"></i></div>
 
   <!-- ───────────────────────── THESIS ───────────────────────── -->
-    <section class="fold" id="overview">
-    <details class="fold__d">
-      <summary class="fold__sum">
-        <span class="fold__name">Overview</span>
-        <span class="fold__mark" aria-hidden="true"></span>
-      </summary>
+  <section class="sec" id="overview">
+    <div class="spread sechead">
+      <div class="rail">
+        <!-- COPY -->
+        <p class="sechead__gloss">Gauss, Ceres, and what a prediction is worth.</p>
+      </div>
+      <div class="col">
+        <h2 class="sechead__name">Overview</h2>
+      </div>
+    </div>
+
       <div class="spread thesis">
     <aside class="rail">
       <p class="rail__note"><span class="tick"></span>Gauss, <span class="num">1805</span>. Legendre published the
@@ -99,10 +109,13 @@
         <span class="num">1795</span>. They argued about it for years.</p>
       <p class="rail__note"><span class="tick"></span>Ceres was recovered on <span class="num">31 December 1801</span>,
         within half a degree of the predicted position.</p>
+      <!-- COPY -->
+      <p class="rail__note"><span class="tick"></span>Three sightings, six orbital elements. The problem was
+        overdetermined in the wrong direction, which is why it needed a method and not just arithmetic.</p>
     </aside>
 
     <div class="col">
-      <p class="lede-para">In 1805 the asteroid Ceres was observed three times and then lost behind the sun. To recover
+      <p class="lede-para lede-para--initial">In 1805 the asteroid Ceres was observed three times and then lost behind the sun. To recover
         its orbit from three noisy sightings, Carl Friedrich Gauss formalized the method of least squares.</p>
 
       <p>Every loss function since is a descendant of that problem. Something real is out there; the measurements are
@@ -113,16 +126,21 @@
         what the prediction is worth, and how anyone downstream would know when it stops being worth that.</p>
     </div>
   </div>
-    </details>
   </section>
 
   <!-- ───────────────────────── PROJECTS ───────────────────────── -->
-    <section class="fold" id="projects">
-    <details class="fold__d">
-      <summary class="fold__sum">
-        <span class="fold__name">Experimentations</span>
-        <span class="fold__mark" aria-hidden="true"></span>
-      </summary>
+  <section class="sec" id="projects">
+    <div class="spread sechead">
+      <div class="rail">
+        <!-- COPY -->
+        <p class="sechead__count"><span class="num">4</span> entries, <span class="num">2</span> written</p>
+        <p class="sechead__gloss">Where agents fail at production scale.</p>
+      </div>
+      <div class="col">
+        <h2 class="sechead__name">Experimentations</h2>
+      </div>
+    </div>
+
       <div class="projects">
 
     <!-- ══ PROJECT 1 : real ══ -->
@@ -891,16 +909,21 @@
     </article>
 
   </div>
-    </details>
   </section>
 
   <!-- ───────────────────────── APP DEVELOPMENT ───────────────────────── -->
-    <section class="fold" id="appdev">
-    <details class="fold__d">
-      <summary class="fold__sum">
-        <span class="fold__name">APP Development</span>
-        <span class="fold__mark" aria-hidden="true"></span>
-      </summary>
+  <section class="sec" id="appdev">
+    <div class="spread sechead">
+      <div class="rail">
+        <!-- COPY -->
+        <p class="sechead__count"><span class="num">2</span> projects</p>
+        <p class="sechead__gloss">Shipped, measured, weaknesses included.</p>
+      </div>
+      <div class="col">
+        <h2 class="sechead__name">APP Development</h2>
+      </div>
+    </div>
+
       <div class="projects">
 
     <!-- ══ PROJECT 1 : real ══ -->
@@ -1639,16 +1662,21 @@
     </article>
 
   </div>
-    </details>
   </section>
 
   <!-- ───────────────────────── POSTS ───────────────────────── -->
-    <section class="fold" id="posts">
-    <details class="fold__d">
-      <summary class="fold__sum">
-        <span class="fold__name">Posts</span>
-        <span class="fold__mark" aria-hidden="true"></span>
-      </summary>
+  <section class="sec" id="posts">
+    <div class="spread sechead">
+      <div class="rail">
+        <!-- COPY -->
+        <p class="sechead__count"><span class="num">11</span> notes</p>
+        <p class="sechead__gloss">Written elsewhere, indexed here.</p>
+      </div>
+      <div class="col">
+        <h2 class="sechead__name">Posts</h2>
+      </div>
+    </div>
+
       <div class="spread posts-section">
     <aside class="rail">
       <p class="rail__note"><span class="tick"></span>Written on LinkedIn, newest first.</p>
@@ -1738,20 +1766,27 @@
       </ol>
     </div>
   </div>
-    </details>
   </section>
 
   <!-- ───────────────────────── TECHJOKES ───────────────────────── -->
-    <section class="fold" id="techjokes">
-    <details class="fold__d">
-      <summary class="fold__sum">
-        <span class="fold__name">Tech jokes</span>
-        <span class="fold__mark" aria-hidden="true"></span>
-      </summary>
+  <section class="sec" id="techjokes">
+    <div class="spread sechead">
+      <div class="rail">
+        <!-- COPY -->
+        <p class="sechead__count"><span class="num">5</span> dialogues</p>
+        <p class="sechead__gloss">Mostly arguments. Nobody wins one.</p>
+      </div>
+      <div class="col">
+        <h2 class="sechead__name">Tech jokes</h2>
+      </div>
+    </div>
+
       <div class="spread jokes-section">
     <aside class="rail">
       <p class="rail__note"><span class="tick"></span>Original, all of them. Written by Jing Xu, not collected.</p>
       <p class="rail__note"><span class="tick"></span>Each date links to where it was first posted.</p>
+      <!-- COPY -->
+      <p class="rail__note"><span class="tick"></span>The last one has no date. It was never posted anywhere.</p>
     </aside>
 
     <div class="col">
@@ -1798,20 +1833,45 @@
       </article>
     </div>
   </div>
-    </details>
   </section>
 
-  <!-- ───────────────────────── CONTACT ───────────────────────── -->
-    <section class="fold" id="contact">
-    <details class="fold__d">
-      <summary class="fold__sum">
-        <span class="fold__name">Contact</span>
-        <span class="fold__mark" aria-hidden="true"></span>
-      </summary>
-      <div class="spread contact">
-    <aside class="rail">
-      <p class="rail__note"><span class="tick"></span>Slow to reply, but I do reply.</p>
-    </aside>
+</div><!-- /.measured -->
+</main>
+
+<!-- ───────────────────────── THE CLOSE ─────────────────────────
+     Night again, and the same curve much later: flat against the dashed
+     asymptote it is approaching and has not reached. The hero's uncertainty
+     band spans 25.4 units; by here it has closed, so there is no band to
+     draw. Outside <main> so the night bleeds the full width. -->
+<footer class="close" id="contact">
+  <svg class="close__curve" viewBox="0 0 1200 56" preserveAspectRatio="none" aria-hidden="true">
+    <!-- The value being estimated. Dashed, and never touched. -->
+    <path class="close__asym" vector-effect="non-scaling-stroke" d="M 0 40 L 1200 40"/>
+    <!-- y = 40 - 14e^(-0.0012x): the horizon's decay, sampled far enough along
+         that it has almost, but not quite, arrived. It descends onto its
+         asymptote the same way the hero's does, which is why the sign is
+         negative here — the curve falls toward the line, never up to it.
+         The decay constant is the one free parameter, and it is set by eye at
+         the right-hand edge: any faster and the last third of the curve lies
+         on the dashed line, which is the one thing it must not do. -->
+    <path class="close__line" vector-effect="non-scaling-stroke"
+          d="M 0 26 L 100 27.58 L 200 28.99 L 300 30.23 L 400 31.34 L 500 32.32
+             L 600 33.18 L 700 33.96 L 800 34.64 L 900 35.25 L 1000 35.78
+             L 1100 36.26 L 1200 36.68"/>
+  </svg>
+
+  <div class="spread sechead">
+    <div class="rail">
+      <!-- COPY -->
+      <p class="sechead__gloss">Slow to reply, but I do reply.</p>
+    </div>
+    <div class="col">
+      <h2 class="sechead__name">Contact</h2>
+    </div>
+  </div>
+
+  <div class="spread contact">
+    <div class="rail"></div>
     <div class="col">
       <p class="contact__lines">
         <a href="mailto:jing.xugenai@gmail.com">jing.xugenai@gmail.com</a><br>
@@ -1822,12 +1882,9 @@
       <p class="colophon">Set in Spectral and Archivo Narrow. The horizon is a convergence curve; it does not reach zero.</p>
     </div>
   </div>
-    </details>
-  </section>
-
-</main>
+</footer>
 
 <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
-<script src="main.js?v=35"></script>
+<script src="main.js?v=36"></script>
 </body>
 </html>

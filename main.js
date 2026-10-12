@@ -501,22 +501,76 @@
     if (el) spy.observe(el);
   });
 
-  const hero = document.getElementById('sky');
-  if (hero) {
-    new IntersectionObserver(
-      ([e]) => nav.classList.toggle('nav--onsky', e.intersectionRatio > 0.45),
-      { threshold: [0, 0.45, 1] }
-    ).observe(hero);
-  }
+  // Two readouts of where the page is, sharing one scroll listener.
+  //
+  // 1. The index flips to the sky palette over either night ground: the hero
+  //    at the top of the page, the close at the bottom. Asking whether the
+  //    ground itself is mostly on screen is the wrong question — it was
+  //    close enough for a 100svh hero, but the close is only a few hundred
+  //    pixels tall, so it is 45% visible long before it reaches the index,
+  //    and the list would go star-white over paper. What matters is what sits
+  //    behind the index, so that is what is measured: the list's own midpoint
+  //    against each ground's box. Exact in both layouts — the side rail at
+  //    50%, and the top bar on a phone.
+  //
+  // 2. The mark on the margin rule: how far through the paper the reader is.
+  //
+  // Both run straight off the scroll event rather than through a
+  // requestAnimationFrame. They are three rect reads, and coalescing them
+  // into a frame meant holding a 'queued' flag that latches forever the one
+  // time a frame is dropped — which is precisely how a readout fails
+  // silently. Writes are guarded instead: nothing is set unless the value it
+  // would be set to has actually changed, so a scroll that moves the page a
+  // pixel does no style work at all.
+  const grounds = [document.getElementById('sky'), document.querySelector('.close')].filter(Boolean);
+  const measured = document.querySelector('.measured');
+  let wasNight = null;
+  let wasIdx = null;
 
-  // A link to a section the reader has collapsed should open it, otherwise
-  // the jump lands on a closed header with nothing under it.
+  const readout = () => {
+    if (grounds.length) {
+      const n = nav.getBoundingClientRect();
+      const y = n.top + n.height / 2;
+      const onNight = grounds.some((g) => {
+        const r = g.getBoundingClientRect();
+        return r.top <= y && r.bottom >= y;
+      });
+      if (onNight !== wasNight) {
+        wasNight = onNight;
+        nav.classList.toggle('nav--onsky', onNight);
+      }
+    }
+
+    if (measured) {
+      const r = measured.getBoundingClientRect();
+      if (r.height > 0) {
+        // Against the middle of the window, so the mark reads against what is
+        // being looked at rather than the top edge of it.
+        const p = (innerHeight / 2 - r.top) / r.height;
+        const idx = Math.min(1, Math.max(0, p)).toFixed(3);
+        if (idx !== wasIdx) {
+          wasIdx = idx;
+          measured.style.setProperty('--idx', idx);
+        }
+      }
+    }
+  };
+
+  readout();
+  addEventListener('scroll', readout, { passive: true });
+  addEventListener('resize', readout);
+  // Opening a fold moves everything under it.
+  document.addEventListener('toggle', readout, true);
+
+  // A link to a block the reader has collapsed should open it, otherwise the
+  // jump lands on a closed header with nothing under it.
   const reveal = (id) => {
     const target = document.getElementById(id);
     if (!target) return null;
-    // Open the target's own disclosure and every one it sits inside, so a
-    // link to a nested project does not land on a closed section.
-    const own = target.querySelector('details');
+    // `:scope >` matters: sections are no longer folded, so an unscoped
+    // lookup from #projects would reach down and throw open ToolSelection's
+    // first sub-fold — a block the reader never asked for.
+    const own = target.querySelector(':scope > details');
     if (own) own.open = true;
     let up = target.closest('details');
     while (up) {
@@ -533,6 +587,7 @@
     if (t) requestAnimationFrame(() => t.scrollIntoView());
   }
 })();
+
 
 
 /* ═══════════════════════════════════════════════════════════
