@@ -13,6 +13,17 @@
   const ctx = canvas.getContext('2d', { alpha: false });
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  /* Every page but the home page carries a short strip of the same night
+     instead of the full hero. The shower has to be re-proportioned for it:
+     at hero settings a trail runs up to 440px through a band of about 170,
+     twenty-two of them at once, which reads as a storm in a letterbox
+     rather than as a sky glimpsed above the page. Fewer, shorter, slower. */
+  const BAND = hero.classList.contains('sky--band');
+  const TRAIL_LEN  = BAND ? 0.45 : 1;
+  const MAX_METEORS = BAND ? 8 : 22;
+  const SPAWN_MIN = BAND ? 420 : 110;
+  const SPAWN_MAX = BAND ? 900 : 420;
+
   const NIGHT = '#0D1526';
   const STAR  = '242, 239, 230';
   const TRAIL = '235, 180, 84';
@@ -205,7 +216,7 @@
         y: ty - dy * back,
         vx: dx * speed,
         vy: dy * speed,
-        len: rand(110, 260) * scale,
+        len: rand(110, 260) * scale * TRAIL_LEN,
         scale,
         age: 0,
         life: travel / rand(0.45, 0.62),
@@ -226,7 +237,7 @@
       x, y,
       vx: (dx * cj - dy * sj) * speed,
       vy: (dx * sj + dy * cj) * speed,
-      len: rand(110, 260) * scale,
+      len: rand(110, 260) * scale * TRAIL_LEN,
       scale,
       age: 0,
       life: rand(1900, 3200)
@@ -373,16 +384,16 @@
     drawStars(now);
 
     nextSpawn -= dt;
-    if (nextSpawn <= 0 && meteors.length < 22) {
+    if (nextSpawn <= 0 && meteors.length < MAX_METEORS) {
       meteors.push(spawnMeteor());
-      nextSpawn = rand(110, 420);
+      nextSpawn = rand(SPAWN_MIN, SPAWN_MAX);
     }
 
     // One meteor every few seconds is aimed at the card, so the firework is
     // something the sky reliably does rather than something you might catch.
     if (card) {
       nextCardHit -= dt;
-      if (nextCardHit <= 0 && meteors.length < 22) {
+      if (nextCardHit <= 0 && meteors.length < MAX_METEORS) {
         meteors.push(spawnMeteor(true));
         nextCardHit = rand(3400, 7200);
       }
@@ -438,10 +449,13 @@
     ctx.fillStyle = NIGHT;
     ctx.fillRect(0, 0, W, H);
     drawStars(0);
-    // Frozen streaks: the shower is still legible without motion.
-    [[0.82, 0.14, 1.4], [0.55, 0.28, 0.8], [0.93, 0.48, 1.1], [0.34, 0.52, 0.6],
-     [0.68, 0.62, 1.25], [0.2, 0.2, 0.9], [0.46, 0.08, 0.7]].forEach(([fx, fy, s]) => {
-      drawMeteor({ x: W * fx, y: H * fy, vx: -0.5, vy: 0.3, len: 190 * s, scale: s, age: 500, life: 2000 });
+    // Frozen streaks: the shower is still legible without motion. Seven of
+    // them crowd a band, so it keeps the first three — enough to read as a
+    // shower, few enough to stay a margin.
+    const frozen = [[0.82, 0.14, 1.4], [0.55, 0.28, 0.8], [0.93, 0.48, 1.1], [0.34, 0.52, 0.6],
+                    [0.68, 0.62, 1.25], [0.2, 0.2, 0.9], [0.46, 0.08, 0.7]];
+    (BAND ? frozen.slice(0, 3) : frozen).forEach(([fx, fy, s]) => {
+      drawMeteor({ x: W * fx, y: H * fy, vx: -0.5, vy: 0.3, len: 190 * s * TRAIL_LEN, scale: s, age: 500, life: 2000 });
     });
   }
 
@@ -483,21 +497,36 @@
   if (!nav) return;
 
   const links = Array.from(nav.querySelectorAll('a'));
-  const byId = new Map(links.map((a) => [a.getAttribute('href').slice(1), a]));
+
+  /* The index points at two kinds of thing now: other pages, and places on
+     this one. Only the second kind has an id to track, and the distinction
+     has to be made by asking rather than by assuming — `.slice(1)` on
+     "posts.html" yields the key "osts.html", which matches nothing and is
+     the kind of bug that leaves no trace. */
+  const frag = (a) => {
+    const href = a.getAttribute('href') || '';
+    return href.startsWith('#') ? href.slice(1) : null;
+  };
+  const inPage = links.filter((a) => frag(a));
+  const byId = new Map(inPage.map((a) => [frag(a), a]));
 
   const spy = new IntersectionObserver((entries) => {
     for (const e of entries) {
       if (!e.isIntersecting) continue;
-      links.forEach((a) => a.removeAttribute('aria-current'));
       const a = byId.get(e.target.id);
-      if (a) a.setAttribute('aria-current', 'true');
+      // Nothing is cleared without a replacement in hand. The page's own
+      // entry is marked at build time, and an intersecting section with no
+      // link of its own must not be able to wipe it.
+      if (!a) continue;
+      links.forEach((l) => l.removeAttribute('aria-current'));
+      a.setAttribute('aria-current', 'true');
     }
   }, { rootMargin: '-45% 0px -50% 0px' });
 
   // Only top-level entries drive the active marker; a nested project link
   // would fight its own section for it.
-  links.filter((a) => !a.classList.contains('nav__sub')).forEach((a) => {
-    const el = document.getElementById(a.getAttribute('href').slice(1));
+  inPage.filter((a) => !a.classList.contains('nav__sub')).forEach((a) => {
+    const el = document.getElementById(frag(a));
     if (el) spy.observe(el);
   });
 
@@ -526,6 +555,7 @@
   const measured = document.querySelector('.measured');
   let wasNight = null;
   let wasIdx = null;
+  let wasFlat = null;
 
   const readout = () => {
     if (grounds.length) {
@@ -543,7 +573,15 @@
 
     if (measured) {
       const r = measured.getBoundingClientRect();
-      if (r.height > 0) {
+      // A page shorter than the window never scrolls, so the fraction below
+      // saturates at 1 on the first read and the mark sits at the foot of the
+      // rule for good. There is no position to report, so none is shown.
+      const flat = r.height > 0 && r.height <= innerHeight;
+      if (flat !== wasFlat) {
+        wasFlat = flat;
+        measured.classList.toggle('measured--flat', flat);
+      }
+      if (r.height > 0 && !flat) {
         // Against the middle of the window, so the mark reads against what is
         // being looked at rather than the top edge of it.
         const p = (innerHeight / 2 - r.top) / r.height;
@@ -580,7 +618,10 @@
     return target;
   };
 
-  links.forEach((a) => a.addEventListener('click', () => reveal(a.getAttribute('href').slice(1))));
+  // Only the same-page links have anything to reveal; a link to another page
+  // is the browser's business, and asking for an id that lives over there
+  // would just find nothing.
+  inPage.forEach((a) => a.addEventListener('click', () => reveal(frag(a))));
 
   if (location.hash.length > 1) {
     const t = reveal(decodeURIComponent(location.hash.slice(1)));
@@ -678,12 +719,15 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
   );
 };
 
-// If Spotify's API never loads, fall back to a plain link.
+// If Spotify's API never loads, fall back to a plain link. Only the home page
+// carries the widget, so on every other page there is nothing here to fall
+// back from — and the card is asked for rather than assumed, since the two
+// elements travelling together is a property of the markup, not a guarantee.
 setTimeout(() => {
   const frame = document.getElementById('spotifyFrame');
-  if (frame && !frame.querySelector('iframe')) {
-    document.getElementById('player').classList.add('player--fallback');
-  }
+  if (!frame || frame.querySelector('iframe')) return;
+  const card = document.getElementById('player');
+  if (card) card.classList.add('player--fallback');
 }, 5000);
 
 
