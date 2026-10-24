@@ -1,0 +1,15 @@
+  <svg class="close__curve" viewBox="0 0 1200 56" preserveAspectRatio="none" aria-hidden="true">
+    <!-- The value being estimated. Dashed, and never touched. -->
+    <path class="close__asym" vector-effect="non-scaling-stroke" d="M 0 40 L 1200 40"/>
+    <!-- y = 40 - 14e^(-0.0012x): the horizon's decay, sampled far enough along
+         that it has almost, but not quite, arrived. It descends onto its
+         asymptote the same way the hero's does, which is why the sign is
+         negative here — the curve falls toward the line, never up to it.
+         The decay constant is the one free parameter, and it is set by eye at
+         the right-hand edge: any faster and the last third of the curve lies
+         on the dashed line, which is the one thing it must not do. -->
+    <path class="close__line" vector-effect="non-scaling-stroke"
+          d="M 0 26 L 100 27.58 L 200 28.99 L 300 30.23 L 400 31.34 L 500 32.32
+             L 600 33.18 L 700 33.96 L 800 34.64 L 900 35.25 L 1000 35.78
+             L 1100 36.26 L 1200 36.68"/>
+  </svg>

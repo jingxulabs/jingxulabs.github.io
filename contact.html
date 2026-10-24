@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact — Jing Xu</title>
+<meta name="description" content="Email, GitHub, Google Scholar and LinkedIn for Jing Xu, Ph.D.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="canonical" href="https://jingxulabs.github.io/contact.html">
+<link rel="stylesheet" href="styles.css?v=dcddd26c">
+</head>
+<body class="page--band">
+
+<nav class="nav" aria-label="Sections">
+  <a href="index.html">Overview</a>
+  <a href="experimentations.html">Experimentations</a>
+  <a href="experimentations.html#toolselection" class="nav__sub">ToolSelection</a>
+  <a href="appdev.html">APP Development</a>
+  <a href="appdev.html#humanizedai" class="nav__sub">HumanizedAI</a>
+  <a href="appdev.html#cabinet" class="nav__sub">Cabinet</a>
+  <a href="posts.html">Posts</a>
+  <a href="techjokes.html">Tech jokes</a>
+  <a href="#contact" aria-current="page">Contact</a>
+</nav>
+
+<!-- ───────────────────── SKY / band ─────────────────────
+     A strip of the hero's night, carrying the name back to it. -->
+<header class="sky sky--band" id="sky">
+  <canvas class="sky__canvas" id="starfield" aria-hidden="true"></canvas>
+
+  <div class="sky__inner sky__inner--band">
+    <p class="sky__name sky__name--small"><a href="index.html">Jing&nbsp;Xu<span class="sky__post">, Ph.D.</span></a></p>
+  </div>
+</header>
+
+<!-- ───────────────────────── THE CLOSE ─────────────────────────
+     Night again, and the same curve much later: flat against the dashed
+     asymptote it is approaching and has not reached. The hero's uncertainty
+     band spans 25.4 units; by here it has closed, so there is no band to
+     draw. Outside <main> so the night bleeds the full width. -->
+<footer class="close" id="contact">
+  <svg class="close__curve" viewBox="0 0 1200 56" preserveAspectRatio="none" aria-hidden="true">
+    <!-- The value being estimated. Dashed, and never touched. -->
+    <path class="close__asym" vector-effect="non-scaling-stroke" d="M 0 40 L 1200 40"/>
+    <!-- y = 40 - 14e^(-0.0012x): the horizon's decay, sampled far enough along
+         that it has almost, but not quite, arrived. It descends onto its
+         asymptote the same way the hero's does, which is why the sign is
+         negative here — the curve falls toward the line, never up to it.
+         The decay constant is the one free parameter, and it is set by eye at
+         the right-hand edge: any faster and the last third of the curve lies
+         on the dashed line, which is the one thing it must not do. -->
+    <path class="close__line" vector-effect="non-scaling-stroke"
+          d="M 0 26 L 100 27.58 L 200 28.99 L 300 30.23 L 400 31.34 L 500 32.32
+             L 600 33.18 L 700 33.96 L 800 34.64 L 900 35.25 L 1000 35.78
+             L 1100 36.26 L 1200 36.68"/>
+  </svg>
+
+  <div class="spread sechead">
+    <div class="rail">
+      <!-- COPY -->
+      <p class="sechead__gloss">Slow to reply, but I do reply.</p>
+    </div>
+    <div class="col">
+      <h1 class="sechead__name">Contact</h1>
+    </div>
+  </div>
+
+  <div class="spread contact">
+    <div class="rail"></div>
+    <div class="col">
+      <p class="contact__lines">
+        <a href="mailto:jing.xugenai@gmail.com">jing.xugenai@gmail.com</a><br>
+        <a href="https://github.com/jingxulabs">GitHub</a><br>
+        <a href="https://scholar.google.com/citations?user=7fLs9fwAAAAJ&amp;hl=en">Google Scholar</a><br>
+        <a href="https://www.linkedin.com/in/jing-xu-b5927143/">LinkedIn</a>
+      </p>
+      <p class="colophon">Set in Spectral and Archivo Narrow. The horizon is a convergence curve; it does not reach zero.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js?v=257628ee"></script>
+</body>
+</html>

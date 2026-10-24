@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APP Development — Jing Xu</title>
+<meta name="description" content="HumanizedAI and Cabinet: steering signals for generated prose, and a council of models answering as one.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D1526'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="canonical" href="https://jingxulabs.github.io/appdev.html">
+<link rel="stylesheet" href="styles.css?v=dcddd26c">
+</head>
+<body class="page--band">
+
+<nav class="nav" aria-label="Sections">
+  <a href="index.html">Overview</a>
+  <a href="experimentations.html">Experimentations</a>
+  <a href="experimentations.html#toolselection" class="nav__sub">ToolSelection</a>
+  <a href="#appdev" aria-current="page">APP Development</a>
+  <a href="#humanizedai" class="nav__sub">HumanizedAI</a>
+  <a href="#cabinet" class="nav__sub">Cabinet</a>
+  <a href="posts.html">Posts</a>
+  <a href="techjokes.html">Tech jokes</a>
+  <a href="contact.html">Contact</a>
+</nav>
+
+<!-- ───────────────────── SKY / band ─────────────────────
+     A strip of the hero's night, carrying the name back to it. -->
+<header class="sky sky--band" id="sky">
+  <canvas class="sky__canvas" id="starfield" aria-hidden="true"></canvas>
+
+  <div class="sky__inner sky__inner--band">
+    <p class="sky__name sky__name--small"><a href="index.html">Jing&nbsp;Xu<span class="sky__post">, Ph.D.</span></a></p>
+  </div>
+</header>
+
+<main>
+<div class="measured">
+  <!-- The instrument edge: one hairline down the length of the paper,
+       graduated at every section and project, carrying the reader's
+       position. Decorative to look at, but it is reporting where you are. -->
+  <div class="rule" aria-hidden="true"><i class="rule__idx"></i></div>
+
+  <!-- ───────────────────────── APP DEVELOPMENT ───────────────────────── -->
+  <section class="sec" id="appdev">
+    <div class="spread sechead">
+      <div class="rail">
+        <!-- COPY -->
+        <p class="sechead__count"><span class="num">2</span> projects</p>
+        <p class="sechead__gloss">Shipped, measured, weaknesses included.</p>
+      </div>
+      <div class="col">
+        <h1 class="sechead__name">APP Development</h1>
+      </div>
+    </div>
+
+      <div class="projects">
+
+    <!-- ══ PROJECT 1 : real ══ -->
+    <article class="spread project project--major" id="humanizedai">
+      <div class="col">
+        <h2 class="project__title">Improve human communication by humanizing AI-generated text</h2>
+        <p class="lede-para">Most AI humanizers try to change how text looks. HumanizedAI tries to measure why it is
+          tiring to read, rewrite those measured properties, and prove that the rewrite did not alter what the
+          document says.</p>
+      </div>
+
+      <div class="projfolds">
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">1</span><span class="sub__name">Repository</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p class="repo__link"><a href="https://github.com/jingxulabs/HumanizedAI">github.com/jingxulabs/HumanizedAI</a></p>
+            <p class="diag">Python, MIT licensed. The calibration ships prebuilt, so there is nothing to train
+              before a first run. A FastAPI web interface and a command line covering score, signals, features,
+              run, serve and calibrate. The rewriter and the judge run on different vendors' models by design.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">2</span><span class="sub__name">Project overview and summary</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">Problem.</span> Machine-written prose wears people out. Everything sounds the same,
+          nothing surprises, and attention goes. Communication nobody attends to has lost its purpose. So the target
+          is readability, not disguise: the tool ships no detector, never optimizes against one, and where reading
+          well and looking less machine-made pull apart it follows readability. It also won't make anything true,
+          since a faithful rewrite of a wrong original stays wrong.</p>
+
+            <p><span class="marker">Approach.</span> <span class="num">31</span> features are calibrated,
+          each scored by how cleanly it separates a labelled human corpus from an AI one.
+          <span class="num">20</span> of them separate the two well enough to be picked as steering signals. On a
+          given document a steering signal only becomes an instruction if it clears three filters
+          (separation <span class="num">≥ 0.65</span>, normalized gap <span class="num">≥ 0.15</span>, and
+          agreement on direction), and at most six are issued per rewrite, strongest discriminator first. The
+          rewriter then builds a ledger of the assertions in the source and writes fresh prose from that ledger
+          rather than editing sentences: the ledger is fixed, the prose is free. Seven deterministic gates can veto
+          any candidate; an LLM judge running on a different vendor's model advises but cannot.</p>
+          </div>
+          <figure class="plot">
+          <svg viewBox="0 0 612 152" role="img" aria-label="Rewrite depth by candidate type: verbatim copy 0.00, shallow rewrite 0.14, synonym pass 0.57, ledger-written 0.88.">
+            <g>
+              <text class="plot__lab" x="148" y="26" text-anchor="end">Verbatim copy</text>
+              <line class="plot__track" x1="166" y1="22" x2="536" y2="22"/>
+              <circle class="plot__knob" cx="166" cy="22" r="4"/>
+              <text class="plot__val" x="604" y="26" text-anchor="end">0.00</text>
+            </g>
+            <g>
+              <text class="plot__lab" x="148" y="60" text-anchor="end">Shallow rewrite</text>
+              <line class="plot__track" x1="166" y1="56" x2="536" y2="56"/>
+              <line class="plot__stem" x1="166" y1="56" x2="217.8" y2="56"/>
+              <circle class="plot__knob" cx="217.8" cy="56" r="4"/>
+              <text class="plot__val" x="604" y="60" text-anchor="end">0.14</text>
+            </g>
+            <g>
+              <text class="plot__lab" x="148" y="94" text-anchor="end">Synonym pass</text>
+              <line class="plot__track" x1="166" y1="90" x2="536" y2="90"/>
+              <line class="plot__stem" x1="166" y1="90" x2="376.9" y2="90"/>
+              <circle class="plot__knob" cx="376.9" cy="90" r="4"/>
+              <text class="plot__val" x="604" y="94" text-anchor="end">0.57</text>
+            </g>
+            <g>
+              <text class="plot__lab" x="148" y="128" text-anchor="end">Ledger-written</text>
+              <line class="plot__track" x1="166" y1="124" x2="536" y2="124"/>
+              <line class="plot__stem plot__stem--key" x1="166" y1="124" x2="491.6" y2="124"/>
+              <circle class="plot__knob plot__knob--key" cx="491.6" cy="124" r="4.5"/>
+              <text class="plot__val" x="604" y="128" text-anchor="end">0.88</text>
+            </g>
+          </svg>
+          <figcaption>Rewrite depth by candidate type. Writing from a ledger of assertions, rather than editing
+            the source sentence by sentence, is what moves it.</figcaption>
+        </figure>
+          <div class="sub__body">
+            <p><span class="marker">Result.</span> The human score of AI-generated text improves significantly after a
+          pass through the tool. The shallow-rewrite failure was the finding that mattered. Across
+          <span class="num">22</span> saved candidates the earlier pipeline returned text
+          <span class="num">88–96%</span> word-identical to its input, with verbatim spans up to
+          <span class="num">276</span> words, and not one gate ever rejected it. After the ledger change, on the
+          same document and model: word similarity <span class="num">0.90 → 0.61</span>, depth
+          <span class="num">0.14 → 0.58</span>, surviving sentences <span class="num">74% → 19%</span>, longest
+          copied span <span class="num">89 → 27</span> words, with literals and meaning still passing. Widening
+          the brief beyond the ten-feature starter set took execution from <span class="num">27%</span> to
+          <span class="num">59%</span>.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">The twenty steering signals</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+<p class="signals__intro">Calibration runs over <span class="num">248</span> human-written documents
+          and <span class="num">220</span> AI-written ones, computing all <span class="num">31</span> features
+          across both. The two corpora do different jobs. The human corpus defines the target range: for each
+          feature the calibration stores human percentiles (<span class="num">p10</span>,
+          <span class="num">p25</span>, <span class="num">p50</span>, <span class="num">p75</span>,
+          <span class="num">p90</span>). The AI corpus never defines that range. It establishes only how sharply a
+          feature discriminates between the two populations.</p>
+        <p class="signals__intro">Of those <span class="num">31</span> features,
+          <span class="num">20</span> separate human from machine writing well enough to steer a rewrite. Separation
+          is an AUC-like measure: <span class="num">0.50</span> means no useful discrimination,
+          <span class="num">1.00</span> means perfect separation. The system follows the calibrated direction rather
+          than intuition.</p>
+        <table class="sig">
+          <thead>
+            <tr><th scope="col">Signal</th><th scope="col">Separation</th><th scope="col">Humanize direction</th><th scope="col">Definition</th></tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th scope="row" class="sig__name">repetition</th>
+            <td class="sig__sep"><span class="num">0.98</span><span class="sig__bar" aria-hidden="true"><i style="width:96%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Reuse the same natural term instead of rotating synonyms.</td>
+            <td class="sig__def">Degree to which the same important words or lemmas are reused instead of repeatedly substituting synonyms. Human writing in this corpus reuses vocabulary more consistently.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">information_density</th>
+            <td class="sig__sep"><span class="num">0.97</span><span class="sig__bar" aria-hidden="true"><i style="width:94%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Loosen the prose with natural connective and function words.</td>
+            <td class="sig__def">Share of text made up of content-heavy words such as nouns, verbs, adjectives and adverbs. Very densely packed clauses are more machine-like in this corpus.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">vocabulary_complexity</th>
+            <td class="sig__sep"><span class="num">0.97</span><span class="sig__bar" aria-hidden="true"><i style="width:94%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Prefer everyday wording such as “use” over “utilize”, while preserving necessary technical terms.</td>
+            <td class="sig__def">Frequency of long or unusually complex words, implemented largely as the proportion of long words.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">pronoun_rate</th>
+            <td class="sig__sep"><span class="num">0.95</span><span class="sig__bar" aria-hidden="true"><i style="width:90%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Use it, they, this and so on rather than repeatedly restating full noun phrases.</td>
+            <td class="sig__def">Frequency of pronouns used to refer back to already-mentioned people, objects or concepts.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">abstraction_rate</th>
+            <td class="sig__sep"><span class="num">0.94</span><span class="sig__bar" aria-hidden="true"><i style="width:88%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Convert abstract nouns into direct verbs where possible.</td>
+            <td class="sig__def">Frequency of nominalized or abstract constructions such as -tion, -ment, -ness and similar noun-heavy phrasing.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">sentence_structure_diversity</th>
+            <td class="sig__sep"><span class="num">0.92</span><span class="sig__bar" aria-hidden="true"><i style="width:84%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Use a smaller number of natural sentence constructions more consistently.</td>
+            <td class="sig__def">Variety or entropy of syntactic sentence shapes, based on factors such as opening part of speech, clauses, verbs and subordination.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">first_person_rate</th>
+            <td class="sig__sep"><span class="num">0.92</span><span class="sig__bar" aria-hidden="true"><i style="width:84%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise where supported. Identify the observer or speaker when the source actually supports it. Never invent experiences.</td>
+            <td class="sig__def">Frequency of first-person forms such as I, me, my, we and our.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">formality</th>
+            <td class="sig__sep"><span class="num">0.87</span><span class="sig__bar" aria-hidden="true"><i style="width:74%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Use a more natural conversational register, except when the requested register is formal.</td>
+            <td class="sig__def">Composite measure of formal register, especially low contraction use plus formal or Latinate vocabulary.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">contraction_rate</th>
+            <td class="sig__sep"><span class="num">0.83</span><span class="sig__bar" aria-hidden="true"><i style="width:66%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Use contractions where natural.</td>
+            <td class="sig__def">Frequency of contractions such as it&#x27;s, doesn&#x27;t, I&#x27;ve and wasn&#x27;t.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">example_density</th>
+            <td class="sig__sep"><span class="num">0.81</span><span class="sig__bar" aria-hidden="true"><i style="width:62%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Keep useful examples but remove unnecessary labels announcing them.</td>
+            <td class="sig__def">Frequency of explicitly signposted examples using phrases such as “for example”, “for instance” and “such as”.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">sentence_length_variance</th>
+            <td class="sig__sep"><span class="num">0.80</span><span class="sig__bar" aria-hidden="true"><i style="width:60%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Mix short and longer sentences by splitting or merging existing content naturally.</td>
+            <td class="sig__def">Amount of variation in sentence lengths, typically normalized so it is not just a function of average length.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">cliche_rate</th>
+            <td class="sig__sep"><span class="num">0.78</span><span class="sig__bar" aria-hidden="true"><i style="width:56%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Replace stock phrases with the actual plain statement, or remove them when content-free.</td>
+            <td class="sig__def">Frequency of phrases from the repo&#x27;s curated machine-writing and AI-cliché inventory.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">transition_frequency</th>
+            <td class="sig__sep"><span class="num">0.72</span><span class="sig__bar" aria-hidden="true"><i style="width:44%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Rely more on natural idea flow. Use simple connectors such as “But” or “So” when needed.</td>
+            <td class="sig__def">Frequency of explicit discourse transitions such as “Moreover”, “Furthermore”, “Additionally” and “In conclusion”.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">specificity</th>
+            <td class="sig__sep"><span class="num">0.68</span><span class="sig__bar" aria-hidden="true"><i style="width:36%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower density, not facts. Retain every fact, but mention a specific once and refer back to it rather than restating it.</td>
+            <td class="sig__def">Density of named entities, dates, numbers, figures, products, organizations, places and other concrete specifics.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">fragment_frequency</th>
+            <td class="sig__sep"><span class="num">0.67</span><span class="sig__bar" aria-hidden="true"><i style="width:34%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise slightly. Allow occasional meaningful fragments based on existing content. Do not manufacture punchy filler.</td>
+            <td class="sig__def">Percentage or frequency of deliberate sentence fragments rather than fully finite clauses.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">em_dash_per_1k</th>
+            <td class="sig__sep"><span class="num">0.64</span><span class="sig__bar" aria-hidden="true"><i style="width:28%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Replace em dashes with commas, periods or parentheses as appropriate.</td>
+            <td class="sig__def">Number of em dashes per 1,000 words.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">paragraph_length_variance</th>
+            <td class="sig__sep"><span class="num">0.62</span><span class="sig__bar" aria-hidden="true"><i style="width:24%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower in the calibration. Move toward the human reference band rather than simply maximizing variation.</td>
+            <td class="sig__def">Degree to which paragraph sizes differ from one another.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">modal_usage</th>
+            <td class="sig__sep"><span class="num">0.57</span><span class="sig__bar" aria-hidden="true"><i style="width:14%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise according to calibration, while preserving the source&#x27;s actual degree of certainty.</td>
+            <td class="sig__def">Frequency of modal verbs such as may, might, could, would and should.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">symmetry</th>
+            <td class="sig__sep"><span class="num">0.56</span><span class="sig__bar" aria-hidden="true"><i style="width:12%"></i></span></td>
+            <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>Lower. Break mechanically balanced organization and allow ideas to receive unequal space.</td>
+            <td class="sig__def">Degree of artificial structural balance, such as First/Second/Third, equal-sized points, or adjacent sentences with strongly parallel structure.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="sig__name">directness</th>
+            <td class="sig__sep"><span class="num">0.50</span><span class="sig__bar" aria-hidden="true"><i style="width:0%"></i></span></td>
+            <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>Raise. Prefer clear actor and verb constructions and remove unsupported hedging, while retaining genuine qualifications.</td>
+            <td class="sig__def">Composite of active-voice usage and reduced unnecessary hedging or modality.</td>
+          </tr>
+          </tbody>
+        </table>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">Demo example</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+<p class="signals__intro">One document through the tool. The human writing score measures distance from the
+          human range across the <span class="num">20</span> calibrated signals, each weighted by how well it
+          separates human from machine writing. It is not the probability that a detector will be fooled, and a
+          higher score does not mean a detector will score the text any differently.</p>
+
+        <p class="score__title">Human writing score</p>
+        <div class="score">
+          <span class="score__cell"><span class="score__cap">before</span><span class="score__n score__n--before num">56</span></span>
+          <span class="score__cell"><span class="score__cap">after</span><span class="score__n num">82</span></span>
+          <span class="score__delta num">+26</span>
+        </div>
+
+        <div class="ba">
+          <div class="ba__pane">
+            <p class="ba__label">Original, <span class="num">94</span> words</p>
+            <p>AI slop is a slang term for low-quality, mass-produced content created with generative AI, such as
+              generic articles, repetitive images, fake-looking videos, spammy social posts, or text that sounds
+              fluent but says very little. The key difference between AI slop and ordinary &#8220;human crap&#8221;
+              is not that humans always make better content; people have always produced spam, clickbait, lazy
+              writing, misinformation, and bad art. The difference is scale and cost. A person might spend an hour
+              producing one bad article, while AI can generate hundreds or thousands of similarly bad pieces very
+              quickly and cheaply.</p>
+          </div>
+          <div class="ba__pane ba__pane--out">
+            <p class="ba__label">Rewrite, <span class="num">94</span> words, <span class="num">100%</span> of the original length</p>
+            <p>You&#8217;ve probably seen people call something &#8220;AI slop.&#8221; It&#8217;s slang for bad
+              content made in bulk with generative AI, generic articles, repetitive images, fake-looking videos,
+              spammy social posts, or writing that reads smoothly while saying almost nothing.</p>
+            <p>I think the point isn&#8217;t that humans are always better. People have always made &#8220;human
+              crap&#8221;: spam, clickbait, lazy writing, misinformation, and bad art.</p>
+            <p>What changes with AI is scale and cost. A person might burn an hour on one bad article; AI can spit
+              out hundreds or thousands of similarly bad pieces very quickly and cheaply.</p>
+          </div>
+        </div>
+        <p class="ba__foot">Accepted on iteration <span class="num">3</span>.
+          <span class="num">58%</span> of the brief carried out, <span class="num">60%</span> of the document
+          rewritten, <span class="num">4</span> additions marked as additions, <span class="num">19</span> gateway
+          calls.</p>
+
+        <h4 class="worked__head">Signals outside the human range</h4>
+        <p class="diag diag--tight"><span class="num">8</span> of the <span class="num">20</span> fell outside the
+          human band on this document. The other <span class="num">12</span> measured in range and were left alone.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Signal</th><th scope="col">Yours</th><th scope="col">Human range</th><th scope="col">Separation</th><th scope="col">Reading</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">content-word density</th>
+              <td class="sig__sep"><span class="num">0.673</span></td>
+              <td class="sig__def"><span class="num">0.458 to 0.518</span></td>
+              <td class="sig__sep"><span class="num">0.97</span></td>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">sentence-shape variety</th>
+              <td class="sig__sep"><span class="num">1.792</span></td>
+              <td class="sig__def"><span class="num">2.448 to 3.42</span></td>
+              <td class="sig__sep"><span class="num">0.92</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">word reuse</th>
+              <td class="sig__sep"><span class="num">0.274</span></td>
+              <td class="sig__def"><span class="num">0.303 to 0.359</span></td>
+              <td class="sig__sep"><span class="num">0.98</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">pronouns and back-reference</th>
+              <td class="sig__sep"><span class="num">7.143</span></td>
+              <td class="sig__def"><span class="num">9.584 to 15.422</span></td>
+              <td class="sig__sep"><span class="num">0.95</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">formality</th>
+              <td class="sig__sep"><span class="num">0</span></td>
+              <td class="sig__def"><span class="num">0.069 to 0.409</span></td>
+              <td class="sig__sep"><span class="num">0.87</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">density of named specifics</th>
+              <td class="sig__sep"><span class="num">6.122</span></td>
+              <td class="sig__def"><span class="num">1.488 to 4.574</span></td>
+              <td class="sig__sep"><span class="num">0.68</span></td>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">first-person voice</th>
+              <td class="sig__sep"><span class="num">1.02</span></td>
+              <td class="sig__def"><span class="num">1.836 to 5.851</span></td>
+              <td class="sig__sep"><span class="num">0.92</span></td>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">contractions</th>
+              <td class="sig__sep"><span class="num">3.061</span></td>
+              <td class="sig__def"><span class="num">0.686 to 2.759</span></td>
+              <td class="sig__sep"><span class="num">0.83</span></td>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 class="worked__head">What the rewriter was asked for</h4>
+        <p class="diag">It reads machine-written because it packs many categories into one long, evenly weighted
+          list without any concrete instance, source, or situational context that would anchor a human explanation.
+          The prose repeatedly uses abstract framing (&#8220;key difference,&#8221; &#8220;scale and cost&#8221;)
+          and balanced contrast structures that sound like a template for definition-writing rather than someone
+          speaking from experience. It also avoids first-person stance or reader-address, and relies on generic
+          quantifiers (&#8220;hundreds or thousands&#8221;) that feel padded rather than observed.</p>
+        <table class="sig sig--moves">
+          <thead><tr><th scope="col">Move</th><th scope="col">Signal</th><th scope="col">From</th><th scope="col">To</th><th scope="col">Separation</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+              <th scope="row" class="sig__name">word reuse</th>
+              <td class="sig__sep"><span class="num">0.276</span></td>
+              <td class="sig__sep"><span class="num">0.303</span></td>
+              <td class="sig__sep"><span class="num">0.98</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+              <th scope="row" class="sig__name">content-word density</th>
+              <td class="sig__sep"><span class="num">0.714</span></td>
+              <td class="sig__sep"><span class="num">0.518</span></td>
+              <td class="sig__sep"><span class="num">0.97</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+              <th scope="row" class="sig__name">long words</th>
+              <td class="sig__sep"><span class="num">15.306</span></td>
+              <td class="sig__sep"><span class="num">12.059</span></td>
+              <td class="sig__sep"><span class="num">0.97</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+              <th scope="row" class="sig__name">pronouns and back-reference</th>
+              <td class="sig__sep"><span class="num">1.02</span></td>
+              <td class="sig__sep"><span class="num">9.584</span></td>
+              <td class="sig__sep"><span class="num">0.95</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--down"><span class="sig__arrow" aria-hidden="true">&#8595;</span>lower</td>
+              <th scope="row" class="sig__name">abstract nouns</th>
+              <td class="sig__sep"><span class="num">4.082</span></td>
+              <td class="sig__sep"><span class="num">1.612</span></td>
+              <td class="sig__sep"><span class="num">0.94</span></td>
+            </tr>
+            <tr>
+              <td class="sig__dir sig__dir--up"><span class="sig__arrow" aria-hidden="true">&#8593;</span>raise</td>
+              <th scope="row" class="sig__name">first-person voice</th>
+              <td class="sig__sep"><span class="num">0</span></td>
+              <td class="sig__sep"><span class="num">1.836</span></td>
+              <td class="sig__sep"><span class="num">0.92</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 class="worked__head">Gates</h4>
+        <div class="sub__body">
+          <p class="diag">A gate is a pass or fail check that can reject a candidate rewrite outright. Gates veto;
+            the score only ranks whatever survived them. Four properties define one in this codebase.</p>
+          <ol class="gatedef">
+            <li><span class="next__t">It vetoes, it does not rank.</span> Gates run before ranking. A candidate that
+              fails one is discarded, no matter how well it scores.</li>
+            <li><span class="next__t">It tests an invariant, not a target.</span> Violating it means the rewrite is
+              wrong, a dropped figure or a third of the length gone, not merely less good. A missed style target
+              ranks a candidate instead of discarding it.</li>
+            <li><span class="next__t">It is deterministic and cheap.</span> No LLM calls, so every candidate gets
+              every gate.</li>
+            <li><span class="next__t">It has a tier.</span> <span class="id">literals</span> and
+              <span class="id">meaning</span> are integrity gates: they protect content a reader cannot check by
+              eye. The rest protect shape. When the pipeline has to ship the least-bad candidate, integrity
+              wins.</li>
+          </ol>
+          <p class="diag">The seven: <span class="id">length</span>, <span class="id">meaning</span>,
+            <span class="id">literals</span>, <span class="id">readability</span>, <span class="id">structure</span>,
+            <span class="id">divergence</span>, <span class="id">style</span>.</p>
+        </div>
+        <ul class="gates">
+          <li><span class="gate__name">length</span><span class="gate__val">94 vs 94 words, ratio 1.00, allowed 0.70 to 1.20</span></li>
+          <li><span class="gate__name">meaning</span><span class="gate__val">forward min 0.86, mean 0.90; reverse p10 0.85, mean 0.88; document 0.86</span></li>
+          <li><span class="gate__name">literals</span><span class="gate__val">all literals preserved</span></li>
+          <li><span class="gate__name">readability</span><span class="gate__val">grade 13.8 to 9.3 (allowed -6.0 to +2.0), ease 38.1 to 55.9</span></li>
+          <li><span class="gate__name">structure</span><span class="gate__val">1 to 3 paragraphs, allowed 1 to 3</span></li>
+          <li><span class="gate__name">divergence</span><span class="gate__val">depth 0.59; 58% of the wording and 25% of the sentences are the original&#x27;s; longest copied run 11 words</span></li>
+          <li><span class="gate__name">style</span><span class="gate__val">no marketing language; one advisory miss, 10.2 semicolons per 1000 words against a target of at most 3</span></li>
+          <li><span class="gate__name">critic and meaning audit</span><span class="gate__val">passed; four additions flagged to the reader as additions</span></li>
+        </ul>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">Applications of the tool</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>Elevate your social media, email, and digital communications
+          with messaging that feels more natural, engaging, and human. The tool helps you align your content with
+          proven human communication patterns, so your message connects more effectively with your audience.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Competitor analysis and next step</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>Measured against the humanizer tools already on GitHub, HumanizedAI is one of the more
+              technically ambitious designs in the category, particularly around verification and semantic
+              integrity. I do not see many that match its combination of corpus-derived steering, enforced rewrite
+              depth, deterministic integrity gates and a semantic audit.</p>
+            <p>The large existing projects still beat it today on adoption and convenience. The gap is not the
+              method. It is everything around the method, and that is the work:</p>
+            <ul class="next">
+              <li><span class="next__t">Maturity.</span> Several thresholds were tuned while watching a single
+                document fail, the control run over human fixtures is still outstanding, and negation remains
+                invisible to the meaning gate at <span class="num">0.995</span>.</li>
+              <li><span class="next__t">Installation.</span> Too much setup stands between a curious reader and a
+                first run.</li>
+              <li><span class="next__t">English only.</span> The feature set and the calibration both assume
+                English.</li>
+              <li><span class="next__t">Comparative evaluation.</span> No broad head-to-head against the tools it
+                claims to differ from, which is exactly the claim that most needs evidence.</li>
+              <li><span class="next__t">Distribution and interface.</span> The incumbents win on both, and adoption
+                turns on those rather than on method.</li>
+            </ul>
+          </div>
+        </details>
+
+      </div>
+    </article>
+
+    <!-- ══ PROJECT 2 : real ══ -->
+    <article class="spread project project--major" id="cabinet">
+      <div class="col">
+        <h2 class="project__title">Cabinet, your personal decision intelligence</h2>
+        <p class="lede-para">A private council for your life. Consequential decisions fail in ways a chat window
+          makes worse: one confident voice where there should be several, and no record of what you claimed.
+          Cabinet seats <span class="num">51</span> advisers across <span class="num">10</span> tables, and then
+          scores you against your own confidence. The model is interchangeable. The record is not.</p>
+      </div>
+
+      <div class="projfolds">
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">1</span><span class="sub__name">Build</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p class="diag">React and FastAPI, with three model providers behind one interface. A fully functional
+              offline mode means the product demonstrates with no credentials and no network, so nothing here
+              depends on a key being live.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">2</span><span class="sub__name">The problem</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">Problem.</span> Consequential decisions fail in three ways that conversational
+              AI makes worse, not better. One confident voice where there should be several. No memory of what you
+              claimed, so you never learn whether your <span class="num">80%</span> sure means anything. And an
+              answer to the question as posed rather than the one you are avoiding.</p>
+            <p><span class="marker">Position.</span> Cabinet treats this as a structural problem, not a model
+              problem. Every part of the system that matters is the part a better model would not fix.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">The design: a council that disagrees with itself</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>A standing council, seated across ten tables by domain. <span class="num">51</span> seats, and each
+              bench is deliberately composed to disagree with itself. A council that nods is a chat window in
+              costume.</p>
+            <p class="diag">The ten tables: <span class="id">Personal</span>, <span class="id">Finance</span>,
+              <span class="id">Career</span>, <span class="id">Education</span>, <span class="id">AI</span>,
+              <span class="id">Risk</span>, <span class="id">Health</span>, <span class="id">Mind</span>,
+              <span class="id">Family</span>, <span class="id">Leadership</span>.</p>
+          </div>
+        <figure class="flow">
+          <svg viewBox="0 0 612 172" role="img" aria-label="A round: a question fans out to five seats answering concurrently and in isolation, which converge into a synthesis, producing a decision with a confidence and a revisit date, which is later reviewed, and the scored outcome returns to the council as calibration.">
+            <!-- the question -->
+            <text class="flow__lab flow__lab--soft" x="32" y="82" text-anchor="middle">Question</text>
+            <!-- fan out to five isolated seats -->
+            <line class="flow__arrow" x1="66" y1="78" x2="92" y2="22"/>
+            <line class="flow__arrow" x1="66" y1="78" x2="92" y2="50"/>
+            <line class="flow__arrow" x1="66" y1="78" x2="92" y2="78"/>
+            <line class="flow__arrow" x1="66" y1="78" x2="92" y2="106"/>
+            <line class="flow__arrow" x1="66" y1="78" x2="92" y2="134"/>
+            <rect class="flow__box" x="92" y="14" width="86" height="16" rx="1"/>
+            <rect class="flow__box" x="92" y="42" width="86" height="16" rx="1"/>
+            <rect class="flow__box" x="92" y="70" width="86" height="16" rx="1"/>
+            <rect class="flow__box" x="92" y="98" width="86" height="16" rx="1"/>
+            <rect class="flow__box" x="92" y="126" width="86" height="16" rx="1"/>
+            <text class="flow__lab" x="135" y="26" text-anchor="middle">Seat</text>
+            <text class="flow__lab" x="135" y="54" text-anchor="middle">Seat</text>
+            <text class="flow__lab" x="135" y="82" text-anchor="middle">Seat</text>
+            <text class="flow__lab" x="135" y="110" text-anchor="middle">Seat</text>
+            <text class="flow__lab" x="135" y="138" text-anchor="middle">Seat</text>
+            <!-- converge into the synthesis -->
+            <line class="flow__arrow" x1="178" y1="22" x2="214" y2="78"/>
+            <line class="flow__arrow" x1="178" y1="50" x2="214" y2="78"/>
+            <line class="flow__arrow" x1="178" y1="78" x2="214" y2="78"/>
+            <line class="flow__arrow" x1="178" y1="106" x2="214" y2="78"/>
+            <line class="flow__arrow" x1="178" y1="134" x2="214" y2="78"/>
+            <polygon class="flow__head" points="220,78 215,75.4 215,80.6"/>
+            <rect class="flow__box" x="226" y="54" width="104" height="48" rx="1"/>
+            <text class="flow__lab" x="278" y="83" text-anchor="middle">Synthesis</text>
+            <line class="flow__arrow" x1="338" y1="78" x2="358" y2="78"/>
+            <polygon class="flow__head" points="358,78 353,75.4 353,80.6"/>
+            <!-- what the round produces -->
+            <text class="flow__lab flow__lab--soft" x="412" y="70" text-anchor="middle">Decision, confidence,</text>
+            <text class="flow__lab flow__lab--soft" x="412" y="86" text-anchor="middle">revisit date</text>
+            <line class="flow__arrow" x1="466" y1="78" x2="486" y2="78"/>
+            <polygon class="flow__head" points="486,78 481,75.4 481,80.6"/>
+            <rect class="flow__box" x="494" y="54" width="104" height="48" rx="1"/>
+            <text class="flow__lab" x="546" y="83" text-anchor="middle">Review</text>
+            <!-- the loop closes: the scored outcome returns as calibration -->
+            <line class="flow__arrow" x1="546" y1="102" x2="546" y2="160"/>
+            <line class="flow__arrow" x1="546" y1="160" x2="135" y2="160"/>
+            <line class="flow__arrow" x1="135" y1="160" x2="135" y2="148"/>
+            <polygon class="flow__head" points="135,142 132.4,147 137.6,147"/>
+            <text class="flow__lab flow__lab--soft" x="340" y="153" text-anchor="middle">outcome scored, calibration updated</text>
+          </svg>
+          <figcaption>A round. The five seats answer concurrently and in isolation, so the independence is real
+            rather than asserted; the return path at the bottom is the part that compounds.</figcaption>
+        </figure>
+          <div class="sub__body">
+            <p><span class="marker">The round.</span> Pose, fan out, synthesise, push back, decide, review. Five
+              seats answer the same question concurrently and in isolation; none sees another's answer. A synthesis
+              then names the agreement, the real fault line beneath the disagreement, what nobody raised, and what
+              you should resolve before deciding. You can press one adviser privately, put it to the whole table,
+              or re-run the round.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">Demo</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>Two screens from the running application. The first is the Leadership table being convened; the
+              second is a round in progress, with each seat answering under its own badge.</p>
+          </div>
+        <figure class="shot">
+          <a class="shot__view" href="media/cabinet-council.png">
+            <img src="media/cabinet-council.png" width="1816" height="815" loading="lazy" decoding="async"
+                 alt="Cabinet's opening screen, under the line &quot;A private council for your life. Your personal decision intelligence.&quot; A headline reads &quot;Important decisions deserve more than one perspective.&quot; On the right, ten domain tabs — Personal, Finance, Career, Education, AI, Risk, Health, Mind, Family, Leadership — with Leadership selected and subtitled &quot;execution, candour, and the deal&quot;, above a dark round table ringed by five seats: Ben Horowitz, Andy Grove, Jim Collins, Amy Edmondson and Chris Voss. Each name carries a line of credential beneath it. The table reads &quot;5 seats at this table.&quot;">
+            <span class="shot__zoom">Enlarge</span>
+          </a>
+          <figcaption>The Leadership table, convened. Each domain carries its own bench, every seat states who it
+            is and why it is at this table, and the seats are named because a seat you can rename is a seat you
+            can hold to account.</figcaption>
+        </figure>
+        <figure class="shot">
+          <a class="shot__view" href="media/cabinet-round.png">
+            <img src="media/cabinet-round.png" width="1807" height="817" loading="lazy" decoding="async"
+                 alt="A Cabinet round in progress. The question reads &quot;How do I know if I'm empowering my team or just slowly making myself irrelevant?&quot; A left rail lists the five advisers with their verdicts — Andy Grove, Amy Edmondson, Chris Voss and Ben Horowitz conditional, Jim Collins reframing the question. A right rail records the table as Leadership, opened 7 Oct 2026, stake high, cost if wrong costly, 5 of 5 seats in, above a &quot;Record the decision&quot; button. Andy Grove answers under his credential and a Simulated badge, headlined &quot;Empowerment is rising output without you, not absence of you.&quot;">
+            <span class="shot__zoom">Enlarge</span>
+          </a>
+          <figcaption>A round in progress. Every seat is badged <span class="id">Simulated</span> where no real
+            person stands behind it, one seat refuses the question as asked, and the decision is not closed until
+            it is recorded with a confidence.</figcaption>
+        </figure>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">The feedback loop, which is the actual product</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>Every decision is recorded with a verdict, a confidence number, and a date to revisit it. When that
+              date arrives you score the outcome, and the number moves.</p>
+            <p>Two rules are enforced in the system, not left to good intentions:</p>
+            <ul class="next">
+              <li><span class="next__t">Confidence is sealed.</span> Once an outcome is recorded, the confidence
+                you claimed cannot be amended.</li>
+              <li><span class="next__t">Entries are struck, not edited.</span> An entry can be struck off whole,
+                never quietly revised.</li>
+            </ul>
+            <p>Everything on the intelligence view is computed from the record, not asked of a model. A model can
+              tell you what to do; only your own history can tell you how much to trust yourself when you say
+              seventy per cent.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">AI and human seats, together</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>Every seat is AI-answered; what differs is whether a real person stands behind it. Simulated figures
+              are badged as simulated wherever they speak. Seats representing people in your life answer
+              immediately as an explicitly labelled stand-in, and are superseded the moment the real person
+              replies, by private link or by you recording what they told you. A third of the council sitting
+              silent is worse than an attributed guess.</p>
+            <p class="diag">This is the bridge: the council is useful on day one with nobody else's participation,
+              and becomes more truthful as they join.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">7</span><span class="sub__name">Position, and what is weak</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro">Four things already do part of this job. The column that separates them is the
+          last one, which is in each case a limit of structure rather than of effort or model quality.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Alternative</th><th scope="col">Strength</th><th scope="col">Structural limit</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">General AI assistant</th>
+              <td class="sig__def">Breadth, zero setup</td>
+              <td class="sig__def vd vd--dropped">One voice; nothing recorded; no calibration</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">Persona prompt packs</th>
+              <td class="sig__def">Instant personas</td>
+              <td class="sig__def vd vd--dropped">Personas in one context converge; no track record</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">Multi-agent frameworks</th>
+              <td class="sig__def">Genuine parallelism</td>
+              <td class="sig__def vd vd--mixed">Built for task completion, not for your judgement</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">Decision journals</th>
+              <td class="sig__def">An honest record</td>
+              <td class="sig__def vd vd--mixed">No counsel at all; high friction, so abandoned</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">Cabinet (this work)</th>
+              <td class="sig__def">Counsel and record together</td>
+              <td class="sig__def vd vd--held">The intersection. Counsel of the first, honesty of the last</td>
+            </tr>
+          </tbody>
+        </table>
+          <div class="sub__body">
+            <p class="diag">The defensible asset is the record. Any competitor can seat a better model tomorrow;
+              nobody can hand you two years of your own decisions with the confidence you claimed and the outcomes
+              scored against it. That is switching cost, and unlike a model it compounds.</p>
+            <p>Three strengths are structural rather than asserted: genuine independence between advisers;
+              calibration of the human rather than the model; and integrity defended at the system boundary.</p>
+            <p>Weaknesses, stated plainly:</p>
+            <ul class="next">
+              <li><span class="next__t">Single-user.</span> Without authentication yet.</li>
+              <li><span class="next__t">The loop is slow by nature.</span> The twentieth entry is where it begins
+                telling you things, so retention through the cold period is the central product risk.</li>
+              <li><span class="next__t">Outcomes are self-reported.</span> The scoring has no referee but you.</li>
+              <li><span class="next__t">Cost.</span> The default gateway supports no prompt caching, putting cost
+                per round at roughly <span class="num">5&times;</span> the design intent.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">8</span><span class="sub__name">Next steps</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <ul class="next">
+              <li><span class="next__t">Correctness.</span> Resolve one intermittent rendering defect in the
+                synthesis view, and introduce schema migrations before the first change that must preserve real
+                decisions.</li>
+              <li><span class="next__t">Highest leverage.</span> Per-domain calibration. <q>You are well calibrated
+                on Finance and badly overconfident on Career</q> is the most valuable sentence this product could
+                say, and the data to say it is already being recorded.</li>
+              <li><span class="next__t">Adoption.</span> Route questions to the right table automatically, and
+                drive reviews from outside the app. The loop dies if reviews do not happen.</li>
+              <li><span class="next__t">Scale.</span> A shared event bus to permit more than one worker,
+                authentication and multi-user, a cost model for the default provider, and an export path. The
+                record is the user's most valuable asset and currently has no way out.</li>
+            </ul>
+          </div>
+        </details>
+
+      </div>
+    </article>
+
+  </div>
+  </section>
+
+</div><!-- /.measured -->
+</main>
+
+<!-- ───────────────────────── THE CLOSE ─────────────────────────
+     Night again, and the same curve much later: flat against the dashed
+     asymptote it is approaching and has not reached. The hero's uncertainty
+     band spans 25.4 units; by here it has closed, so there is no band to
+     draw. Outside <main> so the night bleeds the full width. -->
+<footer class="close close--quiet">
+  <svg class="close__curve" viewBox="0 0 1200 56" preserveAspectRatio="none" aria-hidden="true">
+    <!-- The value being estimated. Dashed, and never touched. -->
+    <path class="close__asym" vector-effect="non-scaling-stroke" d="M 0 40 L 1200 40"/>
+    <!-- y = 40 - 14e^(-0.0012x): the horizon's decay, sampled far enough along
+         that it has almost, but not quite, arrived. It descends onto its
+         asymptote the same way the hero's does, which is why the sign is
+         negative here — the curve falls toward the line, never up to it.
+         The decay constant is the one free parameter, and it is set by eye at
+         the right-hand edge: any faster and the last third of the curve lies
+         on the dashed line, which is the one thing it must not do. -->
+    <path class="close__line" vector-effect="non-scaling-stroke"
+          d="M 0 26 L 100 27.58 L 200 28.99 L 300 30.23 L 400 31.34 L 500 32.32
+             L 600 33.18 L 700 33.96 L 800 34.64 L 900 35.25 L 1000 35.78
+             L 1100 36.26 L 1200 36.68"/>
+  </svg>
+
+  <div class="spread contact">
+    <div class="rail"></div>
+    <div class="col">
+      <p class="contact__lines">
+        <a href="mailto:jing.xugenai@gmail.com">jing.xugenai@gmail.com</a><br>
+        <a href="https://github.com/jingxulabs">GitHub</a><br>
+        <a href="https://scholar.google.com/citations?user=7fLs9fwAAAAJ&amp;hl=en">Google Scholar</a><br>
+        <a href="https://www.linkedin.com/in/jing-xu-b5927143/">LinkedIn</a>
+      </p>
+      <p class="colophon">Set in Spectral and Archivo Narrow. The horizon is a convergence curve; it does not reach zero.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js?v=257628ee"></script>
+</body>
+</html>

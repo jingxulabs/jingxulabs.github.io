@@ -1,0 +1,55 @@
+<!-- ───────────────────────── SKY / hero ───────────────────────── -->
+<header class="sky" id="sky">
+  <canvas class="sky__canvas" id="starfield" aria-hidden="true"></canvas>
+
+  <!-- The convergence curve is the horizon: sky above, paper below. -->
+  <svg class="sky__horizon" viewBox="0 0 1200 200" preserveAspectRatio="none" aria-hidden="true">
+    <!-- Exponential decay toward an asymptote it never reaches, with the
+         uncertainty band collapsing as the estimate settles. The band is an
+         error bar: it straddles the curve, half its spread either side, so
+         the two are read together as an estimate and its confidence. The
+         spread closes from 25.4 units at the left to 2.6 at the right, which
+         is what makes the line look like it is settling. -->
+    <defs>
+      <linearGradient id="bandFade" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0"    stop-color="#E8B45C" stop-opacity="0.30"/>
+        <stop offset="0.45" stop-color="#E0A644" stop-opacity="0.13"/>
+        <stop offset="1"    stop-color="#E0A644" stop-opacity="0.04"/>
+      </linearGradient>
+    </defs>
+    <path class="horizon__band"
+          d="M 0 11.6 L 50 33.2 L 100 51.7 L 150 67.6 L 200 81.3 L 300 103.2 L 400 119.3
+             L 500 131.3 L 600 140.1 L 700 146.6 L 800 151.4 L 900 155 L 1000 157.6
+             L 1100 159.6 L 1200 161
+             L 1200 166.2 L 1100 165.2 L 1000 163.8 L 900 162 L 800 159.6 L 700 156.2
+             L 600 151.7 L 500 145.5 L 400 137.3 L 300 126 L 200 110.9 L 150 101.4
+             L 100 90.3 L 50 77.4 L 0 62.4 Z"/>
+    <path class="horizon__curve" vector-effect="non-scaling-stroke"
+          d="M 0 37 L 50 55.3 L 100 71 L 150 84.5 L 200 96.1 L 300 114.6 L 400 128.3
+             L 500 138.4 L 600 145.9 L 700 151.4 L 800 155.5 L 900 158.5 L 1000 160.7
+             L 1100 162.4 L 1200 163.6"/>
+  </svg>
+
+  <div class="sky__inner">
+    <h1 class="sky__name">Jing&nbsp;Xu<span class="sky__post">, Ph.D.</span></h1>
+    <hr class="sky__rule">
+    <p class="sky__lede">Data, generative AI, machine learning.<br>
+      Capability is only possibility. Platforms, products
+      and returns are possibility held to account.</p>
+  </div>
+
+  <!-- Audio: Spotify's widget, shown as supplied. Their Widget Terms forbid
+       obscuring it or substituting controls, and require the cover art and
+       attribution, so we position and scale it but never restyle it.
+       Kept a sibling of .sky__inner, not a child: an out-of-flow child
+       leaves an empty strut line box in the hero, which pushes the name
+       up by a line. .player re-derives the inner's left edge in CSS. -->
+  <div class="player" id="player">
+    <div class="player__frame" id="spotifyFrame"><div id="spotifyMount"></div></div>
+    <!-- Shown only if Spotify's API never loads, so the corner is never empty. -->
+    <a class="player__fallback" href="https://open.spotify.com/track/3AJwUDP919kvQ9QcozQPxg"
+       target="_blank" rel="noopener">Yellow by Coldplay, on Spotify</a>
+    <p class="player__note">Loops. Full track if you're signed in to Spotify,
+      a 30 second preview if not.</p>
+  </div>
+</header>

@@ -56,7 +56,15 @@
 
 /* ─── reset ─── */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+/* The page is night at both ends and paper in between. Giving the root its
+   own background stops the body's paper propagating to the whole canvas, so
+   anything past the end of the body — a page shorter than the window, or an
+   overscroll at either edge — is night rather than a pale strip under the
+   close. On the one long page this never showed; six shorter ones do. */
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--night);
+}
 body {
   margin: 0;
   background: var(--bond);
