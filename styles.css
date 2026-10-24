@@ -155,7 +155,12 @@ html { scroll-behavior: smooth; }
   z-index: 10;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  /* Ranged left, so the list has one edge to read the hierarchy against. Set
+     flush right, a project's indent was measured from the ragged side and a
+     page and its projects shared no edge at all; the only thing telling them
+     apart was their size. The block still hangs in the right margin — it is
+     the text inside it that lines up, not the box. */
+  align-items: flex-start;
   gap: 0.15rem;
 }
 .nav a {
@@ -219,18 +224,20 @@ html { scroll-behavior: smooth; }
 .nav a[aria-current] { color: var(--ink); }
 .nav a[aria-current]::before { opacity: 1; }
 
-/* A project hangs under its section, set smaller and pulled in. */
+/* A project hangs under its section, set smaller and indented under it. The
+   indent is the hierarchy now, so it is measured from the left edge the whole
+   list shares — 1.25rem in, carrying its own shorter tick with it. */
 .nav a.nav__sub {
   font-size: 1rem;
   padding-top: 0.15rem;
   padding-bottom: 0.45rem;
   margin-top: -0.35rem;
-  padding-right: 0.9rem;
+  padding-left: 3.15rem;
   /* Subordinate to its section, but still a link you are meant to read:
      stepped down in size rather than faded towards the ground. */
   color: color-mix(in srgb, var(--graphite) 85%, var(--ink));
 }
-.nav a.nav__sub::before { width: 9px; }
+.nav a.nav__sub::before { width: 9px; left: 1.25rem; }
 .nav--onsky a.nav__sub { color: color-mix(in srgb, var(--graphite-sky) 80%, var(--star)); }
 
 /* Over the night hero the same list flips to the sky palette. */
@@ -1248,6 +1255,9 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
     transform: none;
     flex-direction: row;
     justify-content: center;
+    /* Laid out as a row, align-items is the vertical axis — the side rail's
+       ranged-left setting would hang the labels from the top of the bar. */
+    align-items: center;
     gap: 1.9rem;
     padding: 0.55rem 1rem;
     background: color-mix(in srgb, var(--bond) 90%, transparent);
