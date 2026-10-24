@@ -1313,8 +1313,13 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
   .joke__who { padding-top: 0; margin-bottom: 0.1rem; }
   .post__date { padding-top: 0; margin-bottom: 0.2rem; display: block; }
 
+  /* The rail folds under its column. Ordering the rail and the column alone
+     was not enough: any other child of a .spread keeps the initial order of 0
+     and so jumps ahead of both. A major project's .projfolds is exactly that,
+     which put eight shut folds above the title and lede introducing them on
+     every narrow screen. Everything in a spread is ordered, the rail last. */
+  .spread > * { order: 1; }
   .rail { order: 2; margin-top: 2rem; padding-left: 1rem; border-left: 1px solid var(--band); }
-  .col  { order: 1; }
   /* Set on .sky so .player follows the inner box in. */
   .sky { --inner-pad: 1.5rem; --inner-max: 40rem; }
   .sky__lede br { display: none; }
