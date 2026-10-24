@@ -131,7 +131,11 @@ a:hover { text-decoration-color: var(--indigo); }
    the same ochre tick the margin rail uses to mark a note. The left edge
    stays clear for the gloss rail. */
 html { scroll-behavior: smooth; }
-#overview, #projects, #humanizedai, #posts, #techjokes, #contact { scroll-margin-top: 2rem; }
+/* Every landing target clears the top of the window, matched by what a thing
+   *is* rather than by name: a hand-kept list of ids had already drifted —
+   #appdev, #toolselection and #cabinet were missing from it, which are
+   precisely the three a nav sub-item deep-links to. */
+.sec[id], .project[id], .close[id] { scroll-margin-top: 2rem; }
 
 .nav {
   position: fixed;
@@ -200,8 +204,12 @@ html { scroll-behavior: smooth; }
 
 .nav a:hover { color: var(--ink); }
 .nav a:hover::before { opacity: 0.45; }
-.nav a[aria-current="true"] { color: var(--ink); }
-.nav a[aria-current="true"]::before { opacity: 1; }
+/* Matched on the attribute's presence, not its value. The build bakes
+   `aria-current="page"` onto the entry for the page you are on, so the mark
+   survives with JS off; the scroll-spy writes `true` as you move within a
+   page. Neither needs to know about the other. */
+.nav a[aria-current] { color: var(--ink); }
+.nav a[aria-current]::before { opacity: 1; }
 
 /* A project hangs under its section, set smaller and pulled in. */
 .nav a.nav__sub {
@@ -220,7 +228,7 @@ html { scroll-behavior: smooth; }
 /* Over the night hero the same list flips to the sky palette. */
 .nav--onsky a { color: color-mix(in srgb, var(--graphite-sky) 55%, var(--star)); }
 .nav--onsky a:hover,
-.nav--onsky a[aria-current="true"] { color: var(--star); }
+.nav--onsky a[aria-current] { color: var(--star); }
 .nav--onsky a::before { background: var(--ochre-sky); }
 
 /* ═══════════════ THE MEASURED MARGIN ═══════════════
@@ -259,6 +267,12 @@ html { scroll-behavior: smooth; }
   top: calc(var(--idx, 0) * (100% - 52px));
   background: var(--indigo);
 }
+/* A page shorter than the window has no reading position to report: the
+   fraction saturates at 1 and the mark would sit at the foot of a stub
+   hairline, motionless, which reads as a broken instrument rather than an
+   honest one. The rule stays — it still graduates the section and its
+   projects — but the mark goes. Set by the readout in main.js. */
+.measured--flat .rule__idx { display: none; }
 
 /* ═══════════════ SECTION HEADS ═══════════════
    A section announces itself at display scale, with its contents measured
@@ -269,7 +283,12 @@ html { scroll-behavior: smooth; }
    No rule under the name and no eyebrow over it. The name is 3.6rem against
    a 1.1875rem body — that is the separation. */
 .sec { padding-top: clamp(4.25rem, 9.5vh, 7rem); }
-.sec:first-child { padding-top: clamp(3rem, 6vh, 4.25rem); }
+/* This was `.sec:first-child`, which never matched anything: `.rule` is
+   `.measured`'s first child, so no section ever is. What it meant to say is
+   that the first section on a page needs less air above it — true exactly
+   where a short night band stands in for the full hero, and not on the home
+   page, where a 100svh sky has already given the eye its rest. */
+.page--band .measured > .sec:first-of-type { padding-top: clamp(3rem, 6vh, 4.25rem); }
 
 .sechead {
   position: relative;
@@ -397,8 +416,9 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
   width: 100%;
   max-width: var(--inner-max);
   margin-inline: auto;
-  /* Clears the widget. Tracks .player's `bottom`: the +7cm here is the
-     same 7cm the widget was raised by. */
+  /* Holds the hero clear of the widget. The widget is raised 5cm, so this
+     7cm over-clears it on purpose: the name and lede keep the seat they
+     were given, and the gap down to the card simply opens up. */
   padding: 0 var(--inner-pad) calc(clamp(12rem, 28vh, 16rem) + 7cm);
 }
 .sky__name {
@@ -434,6 +454,46 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
   max-width: 38ch;
 }
 
+/* ─── the band ───
+   Every page but the home page opens on a short strip of the same night
+   rather than the full hero: the starfield continues, the name is set small
+   and is the way home, and the reading starts immediately under it. No
+   horizon and no player — both are the home page's, and both degrade by
+   design when absent (see main.js: an empty curve never collides, a missing
+   card is never aimed at). */
+.sky--band {
+  min-height: clamp(8.5rem, 18svh, 12rem);
+  /* The full hero seats its name on the horizon; a band has no horizon, so
+     the name floats in the middle of the strip instead. */
+  align-items: center;
+}
+/* Longhands, deliberately. `.sky__inner`'s own `padding` shorthand is set
+   further up this file but the 18rem index gutter is reserved at line 202 —
+   a shorthand here would land later at equal specificity and put the right
+   side back, running the name under the fixed index between 861 and 1319px.
+   The comment at 188-200 is about this exact hazard. */
+.sky__inner--band {
+  padding-top: clamp(1.5rem, 4vh, 2.5rem);
+  padding-bottom: clamp(1.5rem, 4vh, 2.5rem);
+}
+.sky__name--small {
+  font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--star);
+  margin: 0 0 0 -0.03em;
+}
+/* The name on an inner page is a link home, but it should read as the name,
+   not as a link: the ochre only arrives on hover. */
+.sky__name--small a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+.sky__name--small a:hover { color: var(--ochre-sky); }
+.sky__name--small .sky__post { font-size: 0.42em; }
+
 /* ─── player ───
    Spotify's widget is shown as supplied: positioned and uniformly scaled,
    never restyled, cropped or covered. Only the hairline and the note
@@ -444,9 +504,10 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
      left edge is that gutter plus its own padding — the line the J sits
      on. Re-derived rather than inherited, since .player is its sibling. */
   left: calc(max(0px, (100% - var(--inner-max)) / 2) + var(--inner-pad));
-  /* Raised 7cm off its original 2.25rem seat. The lede's clearance below
-     is raised by the same 7cm, or the widget rides up into the text. */
-  bottom: calc(2.25rem + 7cm);
+  /* Raised 5cm off its original 2.25rem seat — 2cm lower than it sat, which
+     spends most of the gap down to the horizon curve and leaves the rest.
+     Don't go past 5cm: the note beneath the card reaches the curve at ~6cm. */
+  bottom: calc(2.25rem + 5cm);
   z-index: 2;
   width: min(300px, calc(100% - 3rem));
 }
@@ -1153,6 +1214,11 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
   padding-top: 0;
   padding-bottom: clamp(5rem, 11vh, 8rem);
 }
+/* The close carries the same four links on every page, but only the Contact
+   page announces them with a heading. Without one the `padding-top: 0` above
+   has nothing to sit under, and the links come up against the curve — which
+   is up to 118px deep against a 112px top padding at the low end. */
+.close--quiet .contact { padding-top: clamp(1rem, 2.5vh, 2rem); }
 .contact__lines { line-height: 1.95; font-size: var(--t-m); }
 .colophon {
   font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
@@ -1185,12 +1251,14 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
   .nav a { padding: 0.4rem 0; font-size: 1rem; }
   .nav a.nav__sub { display: none; }   /* no room in the top bar */
   .nav a::before { display: none; }
-  .nav a[aria-current="true"] { text-decoration: underline; text-underline-offset: 0.3em; }
+  .nav a[aria-current] { text-decoration: underline; text-underline-offset: 0.3em; }
   .nav--onsky {
     background: color-mix(in srgb, var(--night) 84%, transparent);
     border-bottom-color: rgba(224, 166, 68, 0.2);
   }
-  #overview, #projects, #humanizedai, #posts, #techjokes, #contact { scroll-margin-top: 3.6rem; }
+  /* Clears the bar, not just the window edge — this is the rule that keeps a
+     deep link from landing underneath it. */
+  .sec[id], .project[id], .close[id] { scroll-margin-top: 3.6rem; }
 
   /* There is no rail to rule beside, so the instrument edge goes away
      entirely rather than standing in the text. Its graduations go with it. */
