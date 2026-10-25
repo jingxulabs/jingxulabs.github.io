@@ -5,10 +5,15 @@
 
 :root {
   /* One ink hue at two values, plus two accents with separate jobs. */
-  --night:        #0D1526;   /* hero ground — astronomical twilight   */
-  --night-zenith: #090E1E;   /* straight up, where the sky is deepest */
-  --night-mid:    #13203A;   /* two thirds down                       */
-  --night-haze:   #1E3152;   /* haze on the horizon — the light end    */
+  /* The night, darkest overhead to lightest on the horizon. None of the four
+     is near black on purpose: the first draft ran #090E1E to #1E3152, which
+     graded correctly and still read as a black rectangle, because the top
+     half of a 100svh hero never rose above a brightest channel of 40/255.
+     A night sky photographs blue; these are blue at every stop. */
+  --night-zenith: #152040;   /* straight up, where the sky is deepest  */
+  --night:        #1D2B54;   /* the mid stop, and the flat stand-in    */
+  --night-mid:    #283B64;   /* two thirds down                       */
+  --night-haze:   #375380;   /* haze on the horizon — the light end    */
   --bond:         #EDF0EF;   /* page ground — cool preprint paper     */
   --ink:          #18222E;   /* body text, the single rule            */
   --graphite:     #59666F;   /* margin rail only                      */
