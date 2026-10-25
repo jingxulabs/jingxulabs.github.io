@@ -24,7 +24,18 @@
   const SPAWN_MIN = BAND ? 420 : 110;
   const SPAWN_MAX = BAND ? 900 : 420;
 
-  const NIGHT = '#0D1526';
+  /* The ground the stars are drawn on. The canvas is opaque, so it covers
+     .sky's own background and has to repaint the graded night itself; the
+     four stops are read from styles.css rather than restated, so the two
+     cannot drift. Fallbacks are the values as written there. */
+  const css  = getComputedStyle(document.documentElement);
+  const tone = (name, fallback) => css.getPropertyValue(name).trim() || fallback;
+  const ZENITH = tone('--night-zenith', '#090E1E');
+  const NIGHT  = tone('--night',        '#0D1526');
+  const MID    = tone('--night-mid',    '#13203A');
+  const HAZE   = tone('--night-haze',   '#1E3152');
+  const GLOW   = '224, 166, 68';   // --ochre-sky, for the airglow
+
   const STAR  = '242, 239, 230';
   const TRAIL = '235, 180, 84';
   const HEAD  = '255, 246, 224';
@@ -60,8 +71,56 @@
   let W = 0, H = 0, stars = [], meteors = [], sparks = [], flashes = [];
   let raf = null, last = 0, nextSpawn = 700, onScreen = true, burstHold = 0;
   let nextCardHit = 2000;   // literal: rand() is not initialised yet here
+  let ground = null, glow = null;   // both in px, so both are built on resize
+  let glowCy = 0, glowR = 0;
 
   const rand = (a, b) => a + Math.random() * (b - a);
+
+  /* The airglow is a circle seen through a vertical squash, because a canvas
+     radial gradient is always round and the glow has to lie flat along the
+     horizon. Its centre is the bottom edge, so only the dome shows. */
+  const GLOW_SQUASH = 0.62;
+
+  function buildGround() {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    if (BAND) {
+      // The top of the sky only, and no glow: see --band-grad in styles.css.
+      g.addColorStop(0,   ZENITH);
+      g.addColorStop(0.6, NIGHT);
+      g.addColorStop(1,   MID);
+      ground = g;
+      glow = null;
+      return;
+    }
+    g.addColorStop(0,    ZENITH);
+    g.addColorStop(0.38, NIGHT);
+    g.addColorStop(0.72, MID);
+    g.addColorStop(1,    HAZE);
+    ground = g;
+
+    glowCy = H / GLOW_SQUASH;
+    glowR  = Math.max(W * 0.68, H * 0.5);
+    const a = ctx.createRadialGradient(W / 2, glowCy, 0, W / 2, glowCy, glowR);
+    a.addColorStop(0,    `rgba(${GLOW}, 0.11)`);
+    a.addColorStop(0.42, `rgba(${GLOW}, 0.045)`);
+    a.addColorStop(1,    `rgba(${GLOW}, 0)`);
+    glow = a;
+  }
+
+  /* Gradient coordinates are resolved under the transform in force when the
+     gradient is painted, which is why the glow is built in squashed space and
+     painted under the same squash. Only the dome is filled — past glowR from
+     the centre the gradient is transparent, and this runs every frame. */
+  function paintGround() {
+    ctx.fillStyle = ground;
+    ctx.fillRect(0, 0, W, H);
+    if (!glow) return;
+    ctx.save();
+    ctx.scale(1, GLOW_SQUASH);
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, Math.max(0, glowCy - glowR), W, Math.min(glowR, glowCy));
+    ctx.restore();
+  }
 
   function resize() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -72,6 +131,7 @@
     canvas.style.width  = W + 'px';
     canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    buildGround();
     seedStars();
     measureHorizon();
     measureCard();
@@ -379,8 +439,7 @@
     last = now;
     if (burstHold > 0) burstHold -= dt;
 
-    ctx.fillStyle = NIGHT;
-    ctx.fillRect(0, 0, W, H);
+    paintGround();
     drawStars(now);
 
     nextSpawn -= dt;
@@ -446,8 +505,7 @@
   }
 
   function drawStatic() {
-    ctx.fillStyle = NIGHT;
-    ctx.fillRect(0, 0, W, H);
+    paintGround();
     drawStars(0);
     // Frozen streaks: the shower is still legible without motion. Seven of
     // them crowd a band, so it keeps the first three — enough to read as a

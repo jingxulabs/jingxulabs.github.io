@@ -36,6 +36,13 @@ fragments are still answered, and exactly one page carries the Spotify widget.
 
 - Three registers: the night **sky** (hero or short band), the **paper** sheet
   (`main > .measured`, ruled down the left margin), and the night **close**.
+- The night is a gradient, not one colour: four stops in `:root`
+  (`--night-zenith` … `--night-haze`) and one gradient per night surface
+  (`--sky-grad`, `--band-grad`, `--close-grad`). The starfield canvas is
+  opaque and covers `.sky`'s background, so `main.js` reads those four
+  stops with `getComputedStyle` and rebuilds the sky's gradient itself —
+  **retune the night in `styles.css`; never hard-code a night colour in
+  `main.js`.**
 - The index (`nav.nav`) is a fixed vertical list on the right, becoming a top
   bar at ≤860px. The current page's entry is marked `aria-current="page"` at
   build time; `main.js`'s scroll-spy writes `true` within a page. CSS matches

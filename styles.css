@@ -6,6 +6,9 @@
 :root {
   /* One ink hue at two values, plus two accents with separate jobs. */
   --night:        #0D1526;   /* hero ground — astronomical twilight   */
+  --night-zenith: #090E1E;   /* straight up, where the sky is deepest */
+  --night-mid:    #13203A;   /* two thirds down                       */
+  --night-haze:   #1E3152;   /* haze on the horizon — the light end    */
   --bond:         #EDF0EF;   /* page ground — cool preprint paper     */
   --ink:          #18222E;   /* body text, the single rule            */
   --graphite:     #59666F;   /* margin rail only                      */
@@ -20,6 +23,48 @@
 
   --band:         rgba(156, 107, 47, 0.19);
   --band-sky:     rgba(224, 166, 68, 0.22);
+
+  /* The night is graded, not flat: deepest overhead and warming into a haze
+     where it meets the paper, which is what twilight does and what keeps a
+     dark ground from reading as a black rectangle. Three gradients follow,
+     one per night surface, and they share their stops so the surfaces agree
+     at the edges where they touch. main.js reads the four colours above and
+     rebuilds the first two inside the starfield canvas, which is opaque and
+     would otherwise cover them.
+
+     The full hero, which is the only surface with a horizon under it: */
+  --sky-grad: linear-gradient(to bottom,
+                var(--night-zenith)  0%,
+                var(--night)        38%,
+                var(--night-mid)    72%,
+                var(--night-haze)  100%);
+  /* Airglow on the horizon: the band's ochre at a tenth of its strength,
+     wide and flat, so the warm end of the sky sits under the warm curve. */
+  --sky-glow: radial-gradient(135% 62% at 50% 100%,
+                rgba(224, 166, 68, 0.11)  0%,
+                rgba(224, 166, 68, 0.045) 42%,
+                rgba(224, 166, 68, 0)     72%);
+  /* The band is the top of that sky, not all of it. Run the full range into
+     8-12rem and the strip flares at its foot: on a page whose paper is short
+     the band's haze meets the close's and the two read as one lit stripe
+     across the middle, with the close's curve drawn through the brightest
+     part of it. The band is a sky glimpsed above the page, so it keeps the
+     deep end and stops at the mid tone. It carries no airglow either —
+     the glow belongs to a horizon, and the band has none. */
+  --band-grad: linear-gradient(to bottom,
+                 var(--night-zenith)  0%,
+                 var(--night)        60%,
+                 var(--night-mid)   100%);
+  /* The close picks up where the band leaves off and keeps going down: it
+     opens on the mid tone and deepens to the zenith at the foot of the page.
+     It starts on the band's last stop on purpose — the Contact page is a
+     band and a close with no paper between them, so those two edges meet,
+     and any step there would draw a line across the page. The haze is not
+     used here: it is the horizon's, and the close has no horizon. */
+  --close-grad: linear-gradient(to top,
+                  var(--night-zenith)  0%,
+                  var(--night)        55%,
+                  var(--night-mid)   100%);
 
   /* 1.25 major third. Broken in exactly one place: the name.
      The top two steps exist so a section name can reach display scale: the
@@ -63,7 +108,10 @@
    close. On the one long page this never showed; six shorter ones do. */
 html {
   -webkit-text-size-adjust: 100%;
-  background: var(--night);
+  /* The zenith, not the mid tone: both night registers are deepest at the
+     end that faces away from the paper, which is the end an overscroll
+     reveals — the hero's top and the close's bottom. */
+  background: var(--night-zenith);
 }
 body {
   margin: 0;
@@ -391,7 +439,9 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
 .sky {
   position: relative;
   min-height: 100svh;
-  background: var(--night);
+  /* Seen only until the canvas paints, and for good if the script never
+     runs — so it is the same sky, written the CSS way. */
+  background: var(--sky-glow), var(--sky-grad);
   overflow: hidden;
   display: flex;
   align-items: flex-end;   /* the name sits on the horizon, sky above */
@@ -477,6 +527,7 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
    design when absent (see main.js: an empty curve never collides, a missing
    card is never aimed at). */
 .sky--band {
+  background: var(--band-grad);
   min-height: clamp(8.5rem, 18svh, 12rem);
   /* The full hero seats its name on the horizon; a band has no horizon, so
      the name floats in the middle of the strip instead. */
@@ -1185,7 +1236,7 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
    the text inside it still clears the fixed index. */
 .close {
   position: relative;
-  background: var(--night);
+  background: var(--close-grad);
   color: color-mix(in srgb, var(--star) 86%, var(--night));
   padding-top: clamp(7rem, 15vh, 10.5rem);
 }
