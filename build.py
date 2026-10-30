@@ -136,19 +136,21 @@ def render_nav(page):
 def render_hero(page):
     if page['hero'] == 'full':
         return read('_hero.html')
-    # The band: the same night and the same starfield, a short strip of it, and
-    # the name as the way home. No horizon and no player — both belong to the
-    # home page, and main.js degrades to no collision curve and no aimed meteor
-    # when they are absent.
+    # The band: the same night and the same starfield, a short strip of it,
+    # carrying the line that is also the way home. The name is not repeated
+    # here — the home page is one click away and says it at display size; the
+    # strip says what the pages under it are for instead. No horizon and no
+    # player — both belong to the home page, and main.js degrades to no
+    # collision curve and no aimed meteor when they are absent.
     return (
         '<!-- ───────────────────── SKY / band ─────────────────────\n'
-        '     A strip of the hero\'s night, carrying the name back to it. -->\n'
+        '     A strip of the hero\'s night, with the line home set in it. -->\n'
         '<header class="sky sky--band" id="sky">\n'
         '  <canvas class="sky__canvas" id="starfield" aria-hidden="true"></canvas>\n'
         '\n'
         '  <div class="sky__inner sky__inner--band">\n'
-        '    <p class="sky__name sky__name--small"><a href="index.html">Jing&nbsp;Xu'
-        '<span class="sky__post">, Ph.D.</span></a></p>\n'
+        '    <p class="sky__name sky__name--small">'
+        '<a href="index.html">It&rsquo;s time to build</a></p>\n'
         '  </div>\n'
         '</header>'
     )

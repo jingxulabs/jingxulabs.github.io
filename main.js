@@ -30,10 +30,10 @@
      cannot drift. Fallbacks are the values as written there. */
   const css  = getComputedStyle(document.documentElement);
   const tone = (name, fallback) => css.getPropertyValue(name).trim() || fallback;
-  const ZENITH = tone('--night-zenith', '#152040');
-  const NIGHT  = tone('--night',        '#1D2B54');
-  const MID    = tone('--night-mid',    '#283B64');
-  const HAZE   = tone('--night-haze',   '#375380');
+  const ZENITH = tone('--night-zenith', '#17295E');
+  const NIGHT  = tone('--night',        '#21376F');
+  const MID    = tone('--night-mid',    '#2C4578');
+  const HAZE   = tone('--night-haze',   '#3B5A93');
   const GLOW   = '224, 166, 68';   // --ochre-sky, for the airglow
 
   const STAR  = '242, 239, 230';

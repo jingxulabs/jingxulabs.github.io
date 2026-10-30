@@ -9,11 +9,19 @@
      is near black on purpose: the first draft ran #090E1E to #1E3152, which
      graded correctly and still read as a black rectangle, because the top
      half of a 100svh hero never rose above a brightest channel of 40/255.
-     A night sky photographs blue; these are blue at every stop. */
-  --night-zenith: #152040;   /* straight up, where the sky is deepest  */
-  --night:        #1D2B54;   /* the mid stop, and the flat stand-in    */
-  --night-mid:    #283B64;   /* two thirds down                       */
-  --night-haze:   #375380;   /* haze on the horizon — the light end    */
+     A night sky photographs blue; these are blue at every stop.
+
+     Lifted a second time, and saturated with it: the first lift fixed the
+     100svh hero but left the 8-12rem band, which only ever shows the top two
+     stops, still reading as a dark navy strip. Each stop gains ~6 points of
+     lightness and the deep end ~10 of saturation, so the band is blue rather
+     than nearly black. The ceiling is the close, not the band: --graphite-sky
+     sets the gloss and the rail note on --night-mid, so that stop cannot go
+     past 3:1 against it. It sits at 3.08. Check it before lifting again. */
+  --night-zenith: #17295E;   /* straight up, where the sky is deepest  */
+  --night:        #21376F;   /* the mid stop, and the flat stand-in    */
+  --night-mid:    #2C4578;   /* two thirds down                       */
+  --night-haze:   #3B5A93;   /* haze on the horizon — the light end    */
   --bond:         #EDF0EF;   /* page ground — cool preprint paper     */
   --ink:          #18222E;   /* body text, the single rule            */
   --graphite:     #59666F;   /* margin rail only                      */
