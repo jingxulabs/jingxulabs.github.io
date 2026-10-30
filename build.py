@@ -45,9 +45,11 @@ PAGES = [
         slug='experimentations', out='experimentations.html',
         label='Experimentations', id='projects', hero='band',
         title='Experimentations — Jing Xu',
-        description='Retrieval bottlenecks in tool selection, measured against a '
-                    'catalogue of 3,551 tools rather than ten.',
-        subs=[dict(label='ToolSelection', id='toolselection')],
+        description='Retrieval bottlenecks in tool selection against a catalogue '
+                    'of 3,551 tools, and what an agent loop costs against a fixed '
+                    'workflow on the same questions.',
+        subs=[dict(label='ToolSelection', id='toolselection'),
+              dict(label='AgentLoop vs Workflow', id='agentloop')],
     ),
     dict(
         slug='appdev', out='appdev.html',

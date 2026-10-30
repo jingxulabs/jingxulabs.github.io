@@ -29,7 +29,7 @@ content hash stamped by the build, so **do not bump it by hand**; `--check`
 fails if a committed page points at a stale hash.
 
 Run `python3 build.py --check` before committing. It proves every link
-resolves, every id is unique per page, all nine of the original single-page
+resolves, every id is unique per page, all ten of the original single-page
 fragments are still answered, and exactly one page carries the Spotify widget.
 
 ## Shape

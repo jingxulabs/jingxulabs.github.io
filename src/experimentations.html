@@ -757,6 +757,725 @@
       </div>
     </article>
 
+    <!-- ══ PROJECT 2 : real ══ -->
+    <article class="spread project project--major" id="agentloop">
+      <div class="col">
+        <h2 class="project__title">AgentLoop vs Workflow: What Adaptivity Costs, and the One Task It Buys</h2>
+        <p class="lede-para">Same model, same tools, same questions, paired question by question: only the control
+          flow differs. Accuracy came back a three-way tie and <span class="num">15</span> of
+          <span class="num">15</span> paired tests failed to reach significance. The fixed graph used
+          <span class="num">2.2×</span> fewer tokens for it. Then one task family separated them
+          <span class="num">13</span>–<span class="num">0</span>.</p>
+      </div>
+
+      <div class="projfolds">
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">1</span><span class="sub__name">Repository</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p class="repo__link">Local harness, not yet published.
+              <span class="id">AgentLoopVsWorkFlow</span></p>
+            <p class="prov" id="loop-prov" data-state="static">
+              <span class="prov__dot" aria-hidden="true"></span>
+              <span class="prov__txt">Unlike the section above, these figures are transcribed, not fetched: there
+                is no public repository to read them from yet. Every one comes from
+                <span class="id">results/summary.json</span> and <span class="id">results_chain/summary.json</span>
+                of a single live sweep, and the two traces in fold <span class="num">3</span> are quoted from
+                <span class="id">results/runs.json</span> unedited.</span></p>
+            <p><span class="marker">What runs offline.</span> The harness ships a deterministic mock backend and
+              <span class="num">33</span> tests that need no network and no credentials, so the control flow, the
+              fault injection and the token accounting can be verified without a key. The mock's
+              <em>answers</em> are stubs — it proves the mechanics, not the results.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">2</span><span class="sub__name">The difference, exactly</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">One edge.</span> Both architectures get the same model, the same two tools
+              (<span class="id">search</span> and <span class="id">lookup</span>) and the same prompt vocabulary.
+              The entire difference is one edge in the graph: the loop has an arrow that goes back. Everything
+              people attribute to “agents” — retrying, re-querying, deciding it has enough, running too long —
+              is a consequence of that arrow, and nothing else.</p>
+          </div>
+        <figure class="flow">
+          <svg viewBox="0 0 612 196" role="img" aria-label="Two control flows. The workflow is a straight line: decompose, retrieve hop one, retrieve hop two, synthesize, answer. The agent loop is thought, action, observation, finish-check, which either emits an answer or loops back to thought.">
+            <!-- the DAG -->
+            <text class="flow__lab flow__lab--soft" x="2" y="14" text-anchor="start">Fixed workflow — exactly 2 LLM calls, always</text>
+            <rect class="flow__box" x="2" y="26" width="104" height="40" rx="1"/>
+            <text class="flow__lab" x="54" y="51" text-anchor="middle">decompose</text>
+            <line class="flow__arrow" x1="106" y1="46" x2="126" y2="46"/>
+            <polygon class="flow__head" points="126,46 121,43.4 121,48.6"/>
+            <rect class="flow__box" x="134" y="26" width="116" height="40" rx="1"/>
+            <text class="flow__lab" x="192" y="51" text-anchor="middle">retrieve hop 1</text>
+            <line class="flow__arrow" x1="250" y1="46" x2="270" y2="46"/>
+            <polygon class="flow__head" points="270,46 265,43.4 265,48.6"/>
+            <rect class="flow__box" x="278" y="26" width="116" height="40" rx="1"/>
+            <text class="flow__lab" x="336" y="51" text-anchor="middle">retrieve hop 2</text>
+            <line class="flow__arrow" x1="394" y1="46" x2="414" y2="46"/>
+            <polygon class="flow__head" points="414,46 409,43.4 409,48.6"/>
+            <rect class="flow__box" x="422" y="26" width="104" height="40" rx="1"/>
+            <text class="flow__lab" x="474" y="51" text-anchor="middle">synthesize</text>
+            <line class="flow__arrow" x1="526" y1="46" x2="546" y2="46"/>
+            <polygon class="flow__head" points="546,46 541,43.4 541,48.6"/>
+            <text class="flow__lab flow__lab--soft" x="580" y="50" text-anchor="middle">answer</text>
+
+            <!-- the loop -->
+            <text class="flow__lab flow__lab--soft" x="2" y="112" text-anchor="start">Agent loop — 1 to max_steps + 1 LLM calls, decided at run time</text>
+            <rect class="flow__box" x="2" y="124" width="104" height="40" rx="1"/>
+            <text class="flow__lab" x="54" y="149" text-anchor="middle">Thought</text>
+            <line class="flow__arrow" x1="106" y1="144" x2="126" y2="144"/>
+            <polygon class="flow__head" points="126,144 121,141.4 121,146.6"/>
+            <rect class="flow__box" x="134" y="124" width="116" height="40" rx="1"/>
+            <text class="flow__lab" x="192" y="149" text-anchor="middle">Action</text>
+            <line class="flow__arrow" x1="250" y1="144" x2="270" y2="144"/>
+            <polygon class="flow__head" points="270,144 265,141.4 265,146.6"/>
+            <rect class="flow__box" x="278" y="124" width="116" height="40" rx="1"/>
+            <text class="flow__lab" x="336" y="149" text-anchor="middle">Observation</text>
+            <line class="flow__arrow" x1="394" y1="144" x2="414" y2="144"/>
+            <polygon class="flow__head" points="414,144 409,141.4 409,146.6"/>
+            <rect class="flow__box flow__box--key" x="422" y="124" width="104" height="40" rx="1"/>
+            <text class="flow__lab flow__lab--key" x="474" y="149" text-anchor="middle">finish?</text>
+            <line class="flow__arrow" x1="526" y1="144" x2="546" y2="144"/>
+            <polygon class="flow__head" points="546,144 541,141.4 541,146.6"/>
+            <text class="flow__lab flow__lab--soft" x="580" y="148" text-anchor="middle">answer</text>
+            <!-- the back edge: the whole of the difference -->
+            <path class="flow__arrow" fill="none" d="M 474 164 V 184 H 54 V 168"/>
+            <polygon class="flow__head" points="54,164 51.4,169 56.6,169"/>
+            <text class="flow__lab flow__lab--key" x="264" y="180" text-anchor="middle">no — go again</text>
+          </svg>
+          <figcaption>Same boxes, same tools, same model. The marked box and the edge under it are the whole of
+            the difference, and the whole of what the measurements below are measuring.</figcaption>
+        </figure>
+        <h4 class="worked__head">What that one edge changes</h4>
+        <div class="ba ba--spec">
+          <div class="ba__pane ba__pane--out">
+            <p class="ba__label">Fixed workflow (DAG)</p>
+            <dl class="spec">
+              <dt>Who chooses the next step</dt>
+              <dd>You do, at design time. The graph is written before the request arrives.</dd>
+              <dt>LLM calls per request</dt>
+              <dd>A constant. <span class="num">2</span> here, every time, measured
+                p95 <span class="num">2</span> and max <span class="num">2</span> over
+                <span class="num">100</span> runs.</dd>
+              <dt>Reacting to what it reads</dt>
+              <dd>It cannot. Both retrieval queries are written by the one
+                <span class="id">decompose</span> call, so hop <span class="num">2</span> is composed before
+                hop <span class="num">1</span>'s result exists.</dd>
+              <dt>Retry on a failed tool</dt>
+              <dd>No edge for it. A <span class="num">503</span> becomes a permanent hole in the synthesis
+                context.</dd>
+              <dt>Characteristic failure</dt>
+              <dd>The quiet one: answering confidently from a paragraph it had no way to know was wrong.
+                It always terminates — <span class="num">100%</span> clean here.</dd>
+              <dt>Cost distribution</dt>
+              <dd>Nearly a point mass. CV <span class="num">0.31</span>, p95 only
+                <span class="num">1.8×</span> the mean. You can put it in a capacity plan.</dd>
+            </dl>
+          </div>
+          <div class="ba__pane ba__pane--soft">
+            <p class="ba__label">Agent loop (ReAct)</p>
+            <dl class="spec">
+              <dt>Who chooses the next step</dt>
+              <dd>The model does, at run time, having read what came back.</dd>
+              <dt>LLM calls per request</dt>
+              <dd>A random variable. Mean <span class="num">3.05</span>, p95 <span class="num">6</span>, max
+                <span class="num">9</span> over the same <span class="num">100</span> runs.</dd>
+              <dt>Reacting to what it reads</dt>
+              <dd>That is the mechanism. Each query is written after the previous observation, which is what
+                makes an unknown number of hops reachable at all.</dd>
+              <dt>Retry on a failed tool</dt>
+              <dd>Free. A <span class="num">503</span> is just another observation, and “try again” is already
+                in its vocabulary.</dd>
+              <dt>Characteristic failure</dt>
+              <dd>The loud one: running to the step limit, or emitting an action the parser cannot read.
+                <span class="num">6%</span> of runs here did not end cleanly.</dd>
+              <dt>Cost distribution</dt>
+              <dd>A long right tail. CV <span class="num">0.81</span>, p95 <span class="num">3.0×</span> the mean.
+                The mean is not what you provision for.</dd>
+            </dl>
+          </div>
+        </div>
+          <div class="sub__body">
+            <p class="diag">Two systems with the same mean cost are not the same system to operate. That is the
+              line the accuracy table cannot show you, and it is the one that decides the architecture at
+              <span class="num">10</span>M requests a day.</p>
+            <p class="diag diag--tight"><span class="marker">A third arm, so it is not a strawman.</span> A
+              <span class="id">hybrid</span> — a classifier in front of a bounded loop — is what most production
+              systems actually converge on, so it is measured alongside. It is also the only arm that can lose to
+              <em>both</em> others, because a misroute means paying for the classification and then running the
+              wrong plan.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">Two traces, same tools, same model</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro">Both examples below are quoted from the run logs, not reconstructed. Each is one
+          question answered by both arms, with the same seed and the same retriever — the pairing is enforced in
+          the runner, so these are literally the same question put to two control flows.</p>
+        <h4 class="worked__head">Case A — a known 2-hop question. The workflow's case.</h4>
+        <p class="diag diag--tight"><span class="marker">Question.</span> “What pistol cartridge was the original
+          cartridge for the service pistol produced by a German arms manufacturer between
+          <span class="num">1896</span> and <span class="num">1937</span>?”
+          <span class="marker">Gold.</span> <span class="id">7.63×25mm Mauser</span>. Both arms answered
+          correctly.</p>
+        <div class="ba ba--spec">
+          <div class="ba__pane ba__pane--out">
+            <p class="ba__label">Workflow — 2 LLM calls, 642 tokens</p>
+            <dl class="spec">
+              <dt>decompose</dt>
+              <dd>Writes both queries at once, before seeing anything.</dd>
+              <dt>retrieve hop 1</dt>
+              <dd>→ <span class="id">Mauser C96</span>, <span class="id">Luger pistol</span></dd>
+              <dt>retrieve hop 2</dt>
+              <dd>“…original cartridge for the <ins class="docvar__add">Luger pistol (P08)</ins>” →
+                <span class="id">Luger pistol</span>, <span class="id">7.65×21mm Parabellum</span></dd>
+              <dt>synthesize</dt>
+              <dd><span class="id">7.63×25mm Mauser</span> ✓</dd>
+            </dl>
+          </div>
+          <div class="ba__pane ba__pane--soft">
+            <p class="ba__label">Agent loop — 4 LLM calls, 1,765 tokens</p>
+            <dl class="spec">
+              <dt>search</dt>
+              <dd>“German arms manufacturer … 1896 and 1937 original cartridge” →
+                the <span class="id">Mauser C96</span> paragraph</dd>
+              <dt>search</dt>
+              <dd>“Mauser C96 original cartridge” → the same paragraph again</dd>
+              <dt>lookup</dt>
+              <dd>“original cartridge” → <em>No mention found.</em> A wasted call.</dd>
+              <dt>finish</dt>
+              <dd><span class="id">7.63×25mm Mauser</span> ✓</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="sub__body">
+          <p>Same answer, <span class="num">2.7×</span> the tokens. Two details in that pair matter more than the
+            ratio.</p>
+          <p class="diag diag--tight"><span class="marker">The workflow was right for the wrong reason.</span>
+            Its hop-<span class="num">2</span> query went after the <em>Luger</em> — the wrong gun — because it
+            had to be written before hop <span class="num">1</span> came back. It still answered correctly,
+            because the Mauser paragraph was already in hop <span class="num">1</span>'s result and
+            <span class="id">synthesize</span> reads both. That is not bridging; that is lexical overlap
+            getting away with it, and it qualifies every HotpotQA number in fold
+            <span class="num">6</span>.</p>
+          <p class="diag"><span class="marker">The loop's extra calls bought nothing here.</span> Its second
+            search returned the paragraph it already had, and its <span class="id">lookup</span> found nothing.
+            On a question whose shape you already know, adaptivity is a tax: it is spent discovering a structure
+            you could have written down.</p>
+        </div>
+        <h4 class="worked__head">Case B — a chain of unknown depth. The loop's case.</h4>
+        <p class="diag diag--tight"><span class="marker">Question.</span> “Starting from the station
+          <span class="id">Mirmidel</span> and following each designated successor in turn until you reach the
+          terminal station, what is that terminal station's catalogue code?”
+          <span class="marker">Gold.</span> <span class="id">VM-1790</span>, four links away. The depth is not
+          stated in the question and cannot be inferred from it. Entity names are invented, so neither arm can
+          shortcut through memorised knowledge.</p>
+        <div class="ba ba--spec">
+          <div class="ba__pane ba__pane--out">
+            <p class="ba__label">Workflow — 2 LLM calls, 410 tokens, wrong</p>
+            <dl class="spec">
+              <dt>decompose</dt>
+              <dd>hop 1 = “Mirmidel … successor … terminal station”, hop 2 = “terminal station catalogue code”</dd>
+              <dt>retrieve hop 1</dt>
+              <dd>→ <span class="id">Mirmidel</span>, <span class="id">Mirrennor</span></dd>
+              <dt>retrieve hop 2</dt>
+              <dd>→ <span class="id">Ogamivik</span>, <span class="id">Ryntara</span> — decoy end paragraphs,
+                indistinguishable from the real one</dd>
+              <dt>synthesize</dt>
+              <dd><span class="id">Vexfora</span> ✗ — the <em>first</em> successor, and not a catalogue code at
+                all</dd>
+            </dl>
+          </div>
+          <div class="ba__pane ba__pane--soft">
+            <p class="ba__label">Agent loop — 6 LLM calls, 2,957 tokens, correct</p>
+            <dl class="spec">
+              <dt>search Mirmidel</dt>
+              <dd>“The designated successor of Mirmidel is <span class="id">Vexfora</span>.”</dd>
+              <dt>lookup Vexfora</dt>
+              <dd>confirms the link</dd>
+              <dt>search Vexfora</dt>
+              <dd>“… successor of Vexfora is <span class="id">Ulmnoys</span>.”</dd>
+              <dt>search Ulmnoys</dt>
+              <dd>“… successor of Ulmnoys is <span class="id">Ithhavik</span>.”</dd>
+              <dt>search Ithhavik</dt>
+              <dd>“The catalogue code of Ithhavik is <span class="id">VM-1790</span>.” No successor — the chain
+                ends here.</dd>
+              <dt>finish</dt>
+              <dd><span class="id">VM-1790</span> ✓</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="sub__body">
+          <p>This is the difference stated as plainly as it can be stated. Resolving depth <var>d</var> needs
+            <var>d</var>+<span class="num">1</span> retrievals, and <var>d</var> is invisible from the question.
+            The workflow performs exactly <span class="num">2</span>. <span class="num">4</span> links cannot be
+            traversed in <span class="num">2</span> retrievals, so its answer is whatever its second query
+            happened to land on — here, the name of the first successor.</p>
+          <p class="diag">No prompt and no model upgrade fixes that. Every other result on this page is a
+            quantity; this one is a capability the architecture does not have.</p>
+        </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">When to reach for which</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro">The two cases above generalise along one axis: <em>is the shape of the work
+          known before the request arrives?</em> If it is, writing it down is cheaper and more predictable than
+          paying a model to rediscover it. If it is not, no amount of prompt engineering substitutes for an edge
+          that goes back. The last column separates what this experiment measured from what it only argues.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Task shape</th><th scope="col">Worked example</th><th scope="col">Reach for</th><th scope="col">Evidence</th></tr></thead>
+          <tbody>
+            <tr class="sig__row--won">
+              <th scope="row" class="sig__name">Fixed number of steps, known in advance</th>
+              <td class="sig__def">Summarise a ticket, classify it, draft a reply. Three stages, always three.</td>
+              <td class="sig__def"><span class="id">workflow</span></td>
+              <td class="sig__def vd vd--held">Measured. Tie on accuracy, <span class="num">2.2×</span> fewer
+                tokens.</td>
+            </tr>
+            <tr class="sig__row--won">
+              <th scope="row" class="sig__name">Depth or breadth unknown until you look</th>
+              <td class="sig__def">Walk a chain of parent incidents to the root cause. Follow a reference
+                until it stops resolving.</td>
+              <td class="sig__def"><span class="id">agent loop</span></td>
+              <td class="sig__def vd vd--held">Measured. <span class="num">13</span>–<span class="num">0</span>
+                paired, p = <span class="num">0.0002</span>.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">Hard per-request cost ceiling</th>
+              <td class="sig__def">A chargeback budget of <span class="num">3</span> LLM calls per request, no
+                exceptions.</td>
+              <td class="sig__def"><span class="id">workflow</span></td>
+              <td class="sig__def vd vd--held">Measured. Under a <span class="num">3</span>-call cap the hybrid
+                fell to <span class="num">0.300</span>, the worst cell in the matrix.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">High volume, a capacity plan to write</th>
+              <td class="sig__def">Ten million requests a day, against a provisioned throughput.</td>
+              <td class="sig__def"><span class="id">workflow</span></td>
+              <td class="sig__def vd vd--held">Measured. Cost CV <span class="num">0.31</span> against
+                <span class="num">0.81</span>; p95 tail <span class="num">1.8×</span> against
+                <span class="num">3.0×</span>.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">Tools that fail transiently</th>
+              <td class="sig__def">Three partner APIs, any of which returns a <span class="num">503</span>
+                under load.</td>
+              <td class="sig__def"><span class="id">workflow</span> + an explicit retry edge</td>
+              <td class="sig__def vd vd--mixed">Falsified as stated. At <span class="num">30%</span> fault
+                injection the loop gained only <span class="num">0.05</span> EM, p = <span class="num">1.0</span>
+                — a retry edge is cheaper than a whole loop.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">Retrieval that silently returns the wrong thing</th>
+              <td class="sig__def">A search index that looks healthy and answers plausibly off-target.</td>
+              <td class="sig__def">neither, on this evidence</td>
+              <td class="sig__def vd vd--dropped">Falsified. The loop did <em>worse</em>
+                (<span class="num">0.400</span> against <span class="num">0.500</span>): the model mostly did
+                not notice, and paid to not notice.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">Mixed intake, shape varying per request</th>
+              <td class="sig__def">One queue carrying single lookups, comparisons and multi-hop questions.</td>
+              <td class="sig__def"><span class="id">router</span> + bounded loop</td>
+              <td class="sig__def vd vd--mixed">Measured, and cuts both ways. Best overall EM
+                (<span class="num">0.540</span>), but the router spends a call it cannot get back.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">Step-by-step auditability required</th>
+              <td class="sig__def">A regulated decision where every call has to be defensible in advance.</td>
+              <td class="sig__def"><span class="id">workflow</span></td>
+              <td class="sig__def vd vd--mixed">Argued, not measured. A DAG structurally cannot emit a malformed
+                action or fail to terminate; it did so <span class="num">0</span> times in
+                <span class="num">100</span>.</td>
+            </tr>
+          </tbody>
+        </table>
+          <div class="sub__body">
+            <p class="diag"><span class="marker">The default this suggests.</span> Start with the graph, because
+              it is cheaper, forecastable and auditable, and it ties on accuracy everywhere the shape is known.
+              Add the back edge where you can name the task that needs it — unknown depth is the clearest such
+              task, and the only one here that produced a significant result. “The model might do something
+              clever” is not a named task.</p>
+            <p class="diag diag--tight">Two of these rows are negative results against the hypotheses written
+              before the run, which is the format working rather than failing. The pre-registered expectation was
+              that flaky tools and misleading retrieval would both favour the loop. Neither did.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">Design</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">The arms.</span> Three, sharing one retriever, one prompt vocabulary and one
+              model. Nothing in the tool layer knows which arm is calling it, so only control flow differs.</p>
+            <ul class="gates">
+              <li><span class="gate__name">workflow</span><span class="gate__val"><span class="id">decompose →
+                retrieve(hop1) → retrieve(hop2) → synthesize</span>. Exactly <span class="num">2</span> LLM
+                calls.</span></li>
+              <li><span class="gate__name">react</span><span class="gate__val"><span class="id">Thought → Action →
+                Observation</span> until <span class="id">finish[…]</span>, capped at
+                <span class="id">max_steps</span>. <span class="num">1</span> to
+                <span class="id">max_steps</span>+<span class="num">1</span> calls.</span></li>
+              <li><span class="gate__name">hybrid</span><span class="gate__val"><span class="id">classify →
+                {single | comparison | bounded loop}</span>. <span class="num">2</span> to
+                <span class="id">max_steps</span>+<span class="num">2</span> calls. Present so the comparison is
+                not a strawman.</span></li>
+            </ul>
+            <p><span class="marker">The conditions are the experiment.</span> Accuracy on clean questions teaches
+              almost nothing — both architectures land in the same place. Each condition perturbs the environment
+              in a way the two should answer differently, and each one's hypothesis is written down in
+              <span class="id">conditions.py</span> <em>before</em> the run, so the result is allowed to
+              contradict it.</p>
+          </div>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Condition</th><th scope="col">Perturbation</th><th scope="col">What it probes</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">clean</th>
+              <td class="sig__def">none</td>
+              <td class="sig__def">The workflow's best case — graph shape matches task shape.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">flaky_tools</th>
+              <td class="sig__def"><span class="num">30%</span> of tool calls return a transient
+                <span class="num">503</span></td>
+              <td class="sig__def">Retry is free in a loop and absent in a DAG.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">hop_mismatch</th>
+              <td class="sig__def">comparison questions mixed in <span class="num">50</span>/<span class="num">50</span></td>
+              <td class="sig__def">The fixed <span class="num">2</span>-hop bet is the wrong bet.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">distractor_heavy</th>
+              <td class="sig__def">first retrieval forced to a distractor</td>
+              <td class="sig__def">Retrieval <em>looks</em> fine but isn't.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">budget_cap</th>
+              <td class="sig__def">hard ceiling of <span class="num">3</span> LLM calls</td>
+              <td class="sig__def">The loop's long tail gets truncated.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">chain_shallow</th>
+              <td class="sig__def">synthetic depth-<span class="num">1</span> successor chains</td>
+              <td class="sig__def">The control for <span class="id">chain_deep</span>.</td>
+            </tr>
+            <tr class="sig__row--won">
+              <th scope="row" class="sig__name">chain_deep</th>
+              <td class="sig__def">synthetic depth-<span class="num">3</span>-to-<span class="num">5</span> chains</td>
+              <td class="sig__def">The structural case — <span class="num">2</span> retrievals cannot traverse
+                <span class="num">4</span> links.</td>
+            </tr>
+          </tbody>
+        </table>
+        <h4 class="worked__head">Fairness invariants</h4>
+        <p class="diag diag--tight">The comparison is worthless if these break, so they are enforced in the
+          runner rather than left to convention.</p>
+        <ul class="next">
+          <li><span class="next__t">Paired questions.</span> Sampled once per
+            <span class="id">(condition, seed)</span> and reused across every arm, never resampled per arm. This
+            is what makes the McNemar test valid and is why the traces in fold <span class="num">3</span> are
+            genuinely the same question twice.</li>
+          <li><span class="next__t">Paired faults.</span> Each tool environment is seeded from
+            <span class="id">(question_id, seed)</span>, so an injected <span class="num">503</span> lands on the
+            same question for every arm.</li>
+          <li><span class="next__t">Metered tokens, not estimated.</span> The gateway's
+            <span class="id">/openai/v1/</span> route is used specifically because it is the only one that
+            returns a <span class="id">usage</span> block.</li>
+          <li><span class="next__t">A model-capability detail must never read as an architecture result.</span>
+            <span class="id">gpt-5.4-nano</span> rejects <span class="id">stop</span> with a
+            <span class="num">400</span>. Only the loop sends one, so that single rejection would have zeroed the
+            agent arm while the workflow arm ran fine. The client parses the rejected parameter out of the error,
+            drops it and retries.</li>
+        </ul>
+          <div class="sub__body">
+            <p class="diag">Dropping <span class="id">stop</span> has a consequence the loop has to handle:
+              without it the model can run on and write its own <span class="id">Observation:</span> line. The
+              loop truncates generations there, so it can never hallucinate evidence and “answer” without calling
+              a tool.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Results</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro"><span class="id">gpt-5.4-nano</span>, <span class="num">300</span> runs
+          (<span class="num">20</span> questions × <span class="num">5</span> conditions ×
+          <span class="num">3</span> arms), <span class="num">58</span> minutes wall clock. Rolled up across all
+          five conditions. <span class="marker">tail</span> is tokens p95 ÷ mean — how far the expensive runs sit
+          from the typical one. <span class="marker">CV</span> is the coefficient of variation of cost; lower is
+          more forecastable.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Arm</th><th scope="col">EM</th><th scope="col">F1</th><th scope="col">calls</th><th scope="col">calls p95</th><th scope="col">tokens</th><th scope="col">tail</th><th scope="col">CV</th><th scope="col">clean end</th></tr></thead>
+          <tbody>
+            <tr class="sig__row--won">
+              <th scope="row" class="sig__name">workflow</th>
+              <td class="sig__sep"><span class="num">0.520</span></td>
+              <td class="sig__sep"><span class="num">0.663</span></td>
+              <td class="sig__sep"><span class="num">2.00</span></td>
+              <td class="sig__sep"><span class="num">2</span></td>
+              <td class="sig__sep"><span class="num">635</span></td>
+              <td class="sig__sep"><span class="num">1.8×</span></td>
+              <td class="sig__sep"><span class="num">0.31</span></td>
+              <td class="sig__sep"><span class="num">100%</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">react</th>
+              <td class="sig__sep"><span class="num">0.520</span></td>
+              <td class="sig__sep"><span class="num">0.673</span></td>
+              <td class="sig__sep"><span class="num">3.05</span></td>
+              <td class="sig__sep"><span class="num">6</span></td>
+              <td class="sig__sep"><span class="num">1,382</span></td>
+              <td class="sig__sep"><span class="num">3.0×</span></td>
+              <td class="sig__sep"><span class="num">0.81</span></td>
+              <td class="sig__sep"><span class="num">94%</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">hybrid</th>
+              <td class="sig__sep"><span class="num">0.540</span></td>
+              <td class="sig__sep"><span class="num">0.677</span></td>
+              <td class="sig__sep"><span class="num">3.67</span></td>
+              <td class="sig__sep"><span class="num">7</span></td>
+              <td class="sig__sep"><span class="num">1,365</span></td>
+              <td class="sig__sep"><span class="num">3.3×</span></td>
+              <td class="sig__sep"><span class="num">0.93</span></td>
+              <td class="sig__sep"><span class="num">88%</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sub__body">
+          <p><span class="marker">How to read it.</span> Accuracy is a three-way tie
+            (<span class="num">0.520</span> / <span class="num">0.520</span> / <span class="num">0.540</span>) and
+            <em>none</em> of the <span class="num">15</span> paired head-to-head comparisons reached
+            significance — every exact-McNemar p ≥ <span class="num">0.25</span> at n =
+            <span class="num">20</span> per cell. The accuracy column does not discriminate between these
+            architectures on this benchmark. The cost columns do, and decisively.</p>
+        </div>
+        <p class="signals__intro">Per condition, exact-match. The pre-registered hypothesis for each is in fold
+          <span class="num">5</span>; two of the five were falsified.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Condition</th><th scope="col">workflow</th><th scope="col">react</th><th scope="col">hybrid</th><th scope="col">Hypothesis</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">clean</th>
+              <td class="sig__sep"><span class="num">0.500</span></td>
+              <td class="sig__sep"><span class="num">0.500</span></td>
+              <td class="sig__sep"><span class="num">0.550</span></td>
+              <td class="sig__def vd vd--held">Held. Tie on accuracy, workflow far cheaper.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">flaky_tools</th>
+              <td class="sig__sep"><span class="num">0.450</span></td>
+              <td class="sig__sep"><span class="num">0.500</span></td>
+              <td class="sig__sep"><span class="num">0.550</span></td>
+              <td class="sig__def vd vd--mixed">Weak. The gap was meant to open here; p = <span class="num">1.0</span>.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">hop_mismatch</th>
+              <td class="sig__sep"><span class="num">0.650</span></td>
+              <td class="sig__sep"><span class="num">0.750</span></td>
+              <td class="sig__sep"><span class="num">0.800</span></td>
+              <td class="sig__def vd vd--dropped">Falsified. Comparison questions were <em>easier</em> for every
+                arm, the fixed graph included.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">distractor_heavy</th>
+              <td class="sig__sep"><span class="num">0.500</span></td>
+              <td class="sig__sep"><span class="num">0.400</span></td>
+              <td class="sig__sep"><span class="num">0.500</span></td>
+              <td class="sig__def vd vd--dropped">Falsified. The loop did worse: adaptivity cost more and
+                delivered less.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">budget_cap</th>
+              <td class="sig__sep"><span class="num">0.500</span></td>
+              <td class="sig__sep"><span class="num">0.450</span></td>
+              <td class="sig__sep"><span class="num">0.300</span></td>
+              <td class="sig__def vd vd--held">Held, and on the hybrid hardest: the router eats one of only
+                <span class="num">3</span> permitted calls.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sub__body">
+          <p class="diag"><span class="marker">The biggest lever is not architectural.</span>
+            <span class="num">39%</span> of all wrong answers (<span class="num">55</span> of
+            <span class="num">142</span>) score F1 ≥ <span class="num">0.5</span> — the right entity with a
+            mis-scoped span: <span class="id">TD Bank</span> against <span class="id">TD Bank, N.A.</span>,
+            <span class="id">1,467</span> against <span class="id">1,467 rooms</span>. That is a prompt problem
+            shared by all three arms, and fixing the answer-span instruction would move more than any
+            architecture choice here.</p>
+          <p class="diag"><span class="marker">Latency is gateway tail, not architecture.</span> Over
+            <span class="num">872</span> live calls, per-call p50 was <span class="num">1.05</span>s and p90
+            <span class="num">1.41</span>s, but p99 was <span class="num">48.0</span>s —
+            <span class="num">6.7%</span> of calls hit a cliff, and it hits every arm equally. The workflow arm
+            shows a per-call p95 of <span class="num">47.3</span>s while making exactly
+            <span class="num">2</span> calls. The architecture-attributable part of latency is the number of
+            calls, nothing else; read <span class="id">llm_calls_mean</span> and reason from there.</p>
+          <p class="diag diag--tight"><span class="marker">Dollars are placeholders.</span> The gateway does not
+            publish per-token pricing, so every currency figure derives from a placeholder rate file. Token counts
+            are metered and real. Read the token columns.</p>
+        </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">7</span><span class="sub__name">The forced case: variable-depth chains</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro">HotpotQA is <span class="num">2</span>-hop by construction — the exact shape the
+          workflow hardcodes — so it cannot test whether a loop does something a fixed graph structurally
+          <em>cannot</em>. The chain task builds that case: successor chains of unknown depth, where resolving
+          depth <var>d</var> needs <var>d</var>+<span class="num">1</span> retrievals and <var>d</var> is
+          invisible from the question. Entity names are invented so no arm can shortcut through memorised
+          knowledge, and <span class="num">4</span> decoy chains make the end paragraphs indistinguishable, so
+          blind guessing floors at about <span class="num">20%</span>. Case B in fold
+          <span class="num">3</span> is one of these questions.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Arm</th><th scope="col">chain_shallow (depth 1)</th><th scope="col">chain_deep (depth 3–5)</th><th scope="col">calls (deep)</th><th scope="col">tokens (deep)</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">workflow</th>
+              <td class="sig__sep"><span class="num">0.467</span></td>
+              <td class="sig__sep"><span class="num">0.133</span></td>
+              <td class="sig__sep"><span class="num">2.00</span></td>
+              <td class="sig__sep"><span class="num">416</span></td>
+            </tr>
+            <tr class="sig__row--won">
+              <th scope="row" class="sig__name">react</th>
+              <td class="sig__sep"><span class="num">0.933</span></td>
+              <td class="sig__sep"><span class="num">1.000</span></td>
+              <td class="sig__sep"><span class="num">6.53</span></td>
+              <td class="sig__sep"><span class="num">3,528</span></td>
+            </tr>
+            <tr class="sig__row--won">
+              <th scope="row" class="sig__name">hybrid</th>
+              <td class="sig__sep"><span class="num">0.933</span></td>
+              <td class="sig__sep"><span class="num">1.000</span></td>
+              <td class="sig__sep"><span class="num">7.60</span></td>
+              <td class="sig__sep"><span class="num">3,704</span></td>
+            </tr>
+          </tbody>
+        </table>
+          <figure class="plot">
+          <svg viewBox="0 0 612 118" role="img" aria-label="Exact match on depth-3-to-5 chains: agent loop 1.000, hybrid 1.000, fixed workflow 0.133.">
+            <g>
+              <text class="plot__lab" x="148" y="26" text-anchor="end">Agent loop</text>
+              <line class="plot__track" x1="166" y1="22" x2="536" y2="22"/>
+              <line class="plot__stem plot__stem--key" x1="166" y1="22" x2="536" y2="22"/>
+              <circle class="plot__knob plot__knob--key" cx="536" cy="22" r="4.5"/>
+              <text class="plot__val" x="604" y="26" text-anchor="end">1.000</text>
+            </g>
+            <g>
+              <text class="plot__lab" x="148" y="60" text-anchor="end">Router + loop</text>
+              <line class="plot__track" x1="166" y1="56" x2="536" y2="56"/>
+              <line class="plot__stem plot__stem--key" x1="166" y1="56" x2="536" y2="56"/>
+              <circle class="plot__knob plot__knob--key" cx="536" cy="56" r="4.5"/>
+              <text class="plot__val" x="604" y="60" text-anchor="end">1.000</text>
+            </g>
+            <g>
+              <text class="plot__lab" x="148" y="94" text-anchor="end">Fixed workflow</text>
+              <line class="plot__track" x1="166" y1="90" x2="536" y2="90"/>
+              <line class="plot__stem" x1="166" y1="90" x2="215.3" y2="90"/>
+              <circle class="plot__knob" cx="215.3" cy="90" r="4"/>
+              <text class="plot__val" x="604" y="94" text-anchor="end">0.133</text>
+            </g>
+          </svg>
+          <figcaption>Exact match on depth-<span class="num">3</span>-to-<span class="num">5</span> chains,
+            <span class="num">15</span> paired questions. The workflow's <span class="num">0.133</span> sits below
+            the <span class="num">~20%</span> guessing floor: it retrieves end paragraphs and picks one.</figcaption>
+        </figure>
+          <div class="sub__body">
+            <p>This is the only place in the whole experiment where an accuracy difference is statistically
+              significant. On <span class="id">chain_deep</span> both loops beat the workflow
+              <span class="num">13</span>–<span class="num">0</span> on paired questions — exact McNemar
+              p = <span class="num">0.0002</span>, <span class="num">87%</span> disagreement. On
+              <span class="id">chain_shallow</span> the margin is <span class="num">7</span>–<span class="num">0</span>,
+              p = <span class="num">0.016</span>.</p>
+            <p class="diag">The control is what makes the deep result mean anything. If the workflow had failed
+              equally at depth <span class="num">1</span>, the task would simply be hard and depth would be
+              proving nothing. It scores <span class="num">0.467</span> shallow against
+              <span class="num">0.133</span> deep, so depth is the variable.</p>
+            <p><span class="marker">Caveat on how this was reached.</span> The first version of this task was
+              broken. The gold end paragraph contained wording the question also used and the decoys lacked, so
+              the retriever fetched the answer directly and the workflow scored <span class="num">1.000</span> on
+              depth-<span class="num">5</span> chains using <span class="num">360</span> tokens. The fix was to
+              make gold and decoy end paragraphs surface-identical, and a test now asserts that the gold end does
+              not outrank the decoy ends. A result that contradicts a structural argument is a reason to check the
+              task for leaks, not a reason to celebrate.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">8</span><span class="sub__name">Five insights, and what would change the answer</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <ul class="next">
+              <li><span class="next__t">Accuracy was the wrong column to look at.</span> Three architectures,
+                <span class="num">15</span> paired comparisons, not one significant. Had the experiment reported
+                EM alone it would have concluded “no difference” and been useless. The decision lives in cost
+                <em>variance</em>: CV <span class="num">0.31</span> against <span class="num">0.81</span>. One is
+                a point mass you can put in an SLA; the other has a tail the model chooses at run time.</li>
+              <li><span class="next__t">Adaptivity is a tax until you can name the task that needs it.</span>
+                On clean <span class="num">2</span>-hop questions the loop spent <span class="num">2.2×</span> the
+                tokens to rediscover a shape that was already written down. Case A in fold
+                <span class="num">3</span> shows the shape of that waste: a repeat search and a lookup that
+                found nothing.</li>
+              <li><span class="next__t">But when the task needs it, nothing substitutes.</span>
+                <span class="num">13</span>–<span class="num">0</span>, p = <span class="num">0.0002</span>. Two
+                retrievals cannot traverse four links, and no prompt or model upgrade changes that. The useful
+                question is never “loop or graph” in the abstract — it is whether the shape of the work is known
+                before the request arrives.</li>
+              <li><span class="next__t">Two of five pre-registered hypotheses were falsified, and that is the
+                format working.</span> Flaky tools were supposed to favour the loop and barely did; misleading
+                retrieval was supposed to favour it and it did <em>worse</em>, because noticing a plausible wrong
+                paragraph is a capability the model mostly lacks. Writing the hypothesis down before the run is
+                what makes a falsification visible instead of quietly rewritten.</li>
+              <li><span class="next__t">The biggest available win was in neither architecture.</span>
+                <span class="num">39%</span> of errors are the right entity with a mis-scoped span. A better
+                answer-span instruction, shared by all three arms, would move more than the architecture choice
+                being argued about.</li>
+            </ul>
+            <p class="diag"><span class="marker">The honest limitation.</span> The workflow arm emits both
+              retrieval queries from one <span class="id">decompose</span> call, so hop <span class="num">2</span>
+              is written before hop <span class="num">1</span> is read. That is a fixed DAG in its purest form,
+              and it is <em>weaker than a workflow a competent engineer would ship</em>. Read “workflow” here as
+              “cheapest possible fixed pipeline”, not “best fixed pipeline”.</p>
+            <p class="diag"><span class="marker">What would change the answer.</span> One fourth arm:
+              <span class="id">retrieve(hop1) → extract bridge entity → retrieve(hop2)</span>. One more LLM call,
+              genuine <span class="num">2</span>-hop capability, still fully deterministic and still a point mass
+              on cost. It would almost certainly erase the loop's only non-significant advantages on HotpotQA —
+              and it would still score the guessing floor on depth-<span class="num">4</span> chains, because the
+              structural argument does not care how good the fixed pipeline is, only that it is fixed.</p>
+            <p class="diag diag--tight"><span class="marker">What this is not.</span> n = <span class="num">20</span>
+              per cell with <span class="id">--repeats 1</span>. Every point estimate here is noisy, which is
+              precisely why the paired test is the thing reported and why only one result is claimed as a result.
+              Variance between identical runs is one of the quantities being measured; a single pass cannot
+              separate a real difference from sampling noise, and this page does not pretend otherwise.</p>
+          </div>
+        </details>
+
+      </div>
+    </article>
+
     <!-- ══ PROJECTS 3-4 : empty slots. Nothing here is a claim. ══ -->
     <article class="spread project project--stub">
       <aside class="rail">
