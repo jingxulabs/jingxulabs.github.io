@@ -152,7 +152,7 @@ def render_hero(page):
         '\n'
         '  <div class="sky__inner sky__inner--band">\n'
         '    <p class="sky__name sky__name--small">'
-        '<a href="index.html">It&rsquo;s time to build</a></p>\n'
+        '<a href="index.html">It&rsquo;s time to build!</a></p>\n'
         '  </div>\n'
         '</header>'
     )
