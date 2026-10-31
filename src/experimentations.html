@@ -1332,6 +1332,20 @@
             publish per-token pricing, so every currency figure derives from a placeholder rate file. Token counts
             are metered and real. Read the token columns.</p>
         </div>
+        <h4 class="worked__head">Replaying the runs</h4>
+        <p class="diag diag--tight">Everything above is a roll-up, and the traces underneath it are the
+          interesting part. The harness ships a dependency-free dashboard that replays them: thirteen panels,
+          including the cost–accuracy frontier, how runs ended, a head-to-head on identical questions, and a
+          trace explorer that steps through any single run the way fold <span class="num">3</span> does by hand.
+          It fetches <span class="id">results/*.json</span>, which a browser blocks from a
+          <span class="id">file://</span> origin, so it has to be served:</p>
+        <p class="repo__link"><span class="id">.venv/bin/python serve.py</span> &rarr;
+          <span class="id">http://localhost:8077/viewer/</span></p>
+        <div class="sub__body">
+          <p class="diag">That address is local to whoever runs it. The dashboard belongs to the harness, not to
+            this site, and there is nothing at it until the server is up — it is printed here because it is the
+            only way to read the per-run detail these tables average away.</p>
+        </div>
         </details>
 
         <details class="sub">
