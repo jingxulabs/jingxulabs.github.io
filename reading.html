@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2027 reading list — Jing Xu</title>
+<meta name="description" content="Five books for 2027: Christensen on disruption, Horowitz on culture, Bostrom on superintelligence, Dixon on the next internet and Silver on risk.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2321376F'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="canonical" href="https://jingxulabs.github.io/reading.html">
+<link rel="stylesheet" href="styles.css?v=8a9a2141">
+</head>
+<body class="page--band">
+
+<nav class="nav" aria-label="Sections">
+  <a href="index.html">Overview</a>
+  <a href="experimentations.html">Experimentations</a>
+  <a href="experimentations.html#toolselection" class="nav__sub">ToolSelection</a>
+  <a href="experimentations.html#agentloop" class="nav__sub">AgentLoop vs Workflow</a>
+  <a href="appdev.html">APP Development</a>
+  <a href="appdev.html#humanizedai" class="nav__sub">HumanizedAI</a>
+  <a href="appdev.html#cabinet" class="nav__sub">Cabinet</a>
+  <a href="posts.html">Posts</a>
+  <a href="#reading" aria-current="page">2027 reading list</a>
+  <a href="techjokes.html">Tech jokes</a>
+  <a href="contact.html">Contact</a>
+</nav>
+
+<!-- ───────────────────── SKY / band ─────────────────────
+     A strip of the hero's night, with the line home set in it. -->
+<header class="sky sky--band" id="sky">
+  <canvas class="sky__canvas" id="starfield" aria-hidden="true"></canvas>
+
+  <div class="sky__inner sky__inner--band">
+    <p class="sky__name sky__name--small"><a href="index.html">It&rsquo;s time to build!</a></p>
+  </div>
+</header>
+
+<main>
+<div class="measured">
+  <!-- The instrument edge: one hairline down the length of the paper,
+       graduated at every section and project, carrying the reader's
+       position. Decorative to look at, but it is reporting where you are. -->
+  <div class="rule" aria-hidden="true"><i class="rule__idx"></i></div>
+
+  <!-- ───────────────────────── READING ───────────────────────── -->
+  <section class="sec" id="reading">
+    <div class="spread sechead">
+      <div class="rail">
+        <!-- COPY -->
+        <p class="sechead__count"><span class="num">5</span> books</p>
+        <p class="sechead__gloss">What I mean to read next year.</p>
+      </div>
+      <div class="col">
+        <h1 class="sechead__name">2027 reading list</h1>
+      </div>
+    </div>
+
+      <div class="spread books-section">
+    <aside class="rail">
+      <p class="rail__note"><span class="tick"></span>Five books, in the order I mean to read them.</p>
+      <p class="rail__note"><span class="tick"></span>Each title links to its Open Library entry, which is also where the
+        covers are served from. Where Open Library has no scan, the plate is
+        drawn here instead.</p>
+    </aside>
+
+    <div class="col">
+      <ol class="books">
+        <li class="book">
+          <span class="book__cover">
+            <span class="book__plate" aria-hidden="true">
+              <span class="book__plate-t">The Innovator&rsquo;s Dilemma</span>
+              <span class="book__plate-a">Christensen</span>
+            </span>
+            <img src="https://covers.openlibrary.org/b/id/9274687-M.jpg" alt="" loading="lazy" width="180" height="270" onerror="this.hidden=true">
+          </span>
+          <div>
+            <a class="book__title" href="https://openlibrary.org/works/OL1999873W">The Innovator&rsquo;s Dilemma</a>
+            <p class="book__sub">When New Technologies Cause Great Firms to Fail</p>
+            <p class="book__by">Clayton M. Christensen <span class="book__yr num">1997</span></p>
+          </div>
+        </li>
+        <li class="book">
+          <span class="book__cover">
+            <span class="book__plate" aria-hidden="true">
+              <span class="book__plate-t">What You Do Is Who You Are</span>
+              <span class="book__plate-a">Horowitz</span>
+            </span>
+            <img src="https://covers.openlibrary.org/b/id/10330486-M.jpg" alt="" loading="lazy" width="180" height="270" onerror="this.hidden=true">
+          </span>
+          <div>
+            <a class="book__title" href="https://openlibrary.org/works/OL21164124W">What You Do Is Who You Are</a>
+            <p class="book__sub">How to Create Your Business Culture</p>
+            <p class="book__by">Ben Horowitz <span class="book__yr num">2019</span></p>
+          </div>
+        </li>
+        <li class="book">
+          <span class="book__cover">
+            <span class="book__plate" aria-hidden="true">
+              <span class="book__plate-t">Superintelligence</span>
+              <span class="book__plate-a">Bostrom</span>
+            </span>
+            <img src="https://covers.openlibrary.org/b/id/8039542-M.jpg" alt="" loading="lazy" width="180" height="270" onerror="this.hidden=true">
+          </span>
+          <div>
+            <a class="book__title" href="https://openlibrary.org/works/OL17319280W">Superintelligence</a>
+            <p class="book__sub">Paths, Dangers, Strategies</p>
+            <p class="book__by">Nick Bostrom <span class="book__yr num">2014</span></p>
+          </div>
+        </li>
+        <li class="book">
+          <span class="book__cover">
+            <!-- Open Library has no scan for this one, so the plate stands. -->
+            <span class="book__plate" aria-hidden="true">
+              <span class="book__plate-t">Read Write Own</span>
+              <span class="book__plate-a">Dixon</span>
+            </span>
+          </span>
+          <div>
+            <a class="book__title" href="https://openlibrary.org/works/OL37568701W">Read Write Own</a>
+            <p class="book__sub">Building the Next Era of the Internet</p>
+            <p class="book__by">Chris Dixon <span class="book__yr num">2024</span></p>
+          </div>
+        </li>
+        <li class="book">
+          <span class="book__cover">
+            <span class="book__plate" aria-hidden="true">
+              <span class="book__plate-t">On the Edge</span>
+              <span class="book__plate-a">Silver</span>
+            </span>
+            <img src="https://covers.openlibrary.org/b/id/14658251-M.jpg" alt="" loading="lazy" width="180" height="270" onerror="this.hidden=true">
+          </span>
+          <div>
+            <a class="book__title" href="https://openlibrary.org/works/OL37768334W">On the Edge</a>
+            <p class="book__sub">The Art of Risking Everything</p>
+            <p class="book__by">Nate Silver <span class="book__yr num">2024</span></p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+  </section>
+
+
+</div><!-- /.measured -->
+</main>
+
+<!-- ───────────────────────── THE CLOSE ─────────────────────────
+     Night again, and the same curve much later: flat against the dashed
+     asymptote it is approaching and has not reached. The hero's uncertainty
+     band spans 25.4 units; by here it has closed, so there is no band to
+     draw. Outside <main> so the night bleeds the full width. -->
+<footer class="close close--quiet">
+  <svg class="close__curve" viewBox="0 0 1200 56" preserveAspectRatio="none" aria-hidden="true">
+    <!-- The value being estimated. Dashed, and never touched. -->
+    <path class="close__asym" vector-effect="non-scaling-stroke" d="M 0 40 L 1200 40"/>
+    <!-- y = 40 - 14e^(-0.0012x): the horizon's decay, sampled far enough along
+         that it has almost, but not quite, arrived. It descends onto its
+         asymptote the same way the hero's does, which is why the sign is
+         negative here — the curve falls toward the line, never up to it.
+         The decay constant is the one free parameter, and it is set by eye at
+         the right-hand edge: any faster and the last third of the curve lies
+         on the dashed line, which is the one thing it must not do. -->
+    <path class="close__line" vector-effect="non-scaling-stroke"
+          d="M 0 26 L 100 27.58 L 200 28.99 L 300 30.23 L 400 31.34 L 500 32.32
+             L 600 33.18 L 700 33.96 L 800 34.64 L 900 35.25 L 1000 35.78
+             L 1100 36.26 L 1200 36.68"/>
+  </svg>
+
+  <div class="spread contact">
+    <div class="rail"></div>
+    <div class="col">
+      <p class="contact__lines">
+        <a href="mailto:jing.xugenai@gmail.com">jing.xugenai@gmail.com</a><br>
+        <a href="https://github.com/jingxulabs">GitHub</a><br>
+        <a href="https://scholar.google.com/citations?user=7fLs9fwAAAAJ&amp;hl=en">Google Scholar</a><br>
+        <a href="https://www.linkedin.com/in/jing-xu-b5927143/">LinkedIn</a>
+      </p>
+      <p class="colophon">Set in Spectral and Archivo Narrow. The horizon is a convergence curve; it does not reach zero.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js?v=da90fcbd"></script>
+</body>
+</html>

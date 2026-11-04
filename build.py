@@ -63,9 +63,17 @@ PAGES = [
     dict(
         slug='posts', out='posts.html', label='Posts', id='posts', hero='band',
         title='Posts — Jing Xu',
-        description='Notes on data, generative AI and machine learning, and the '
-                    'five books on the 2027 reading list.',
-        subs=[dict(label='2027 reading list', id='reading')],
+        description='Notes on data, generative AI and machine learning.',
+        subs=[],
+    ),
+    dict(
+        slug='reading', out='reading.html', label='2027 reading list',
+        id='reading', hero='band',
+        title='2027 reading list — Jing Xu',
+        description='Five books for 2027: Christensen on disruption, Horowitz on '
+                    'culture, Bostrom on superintelligence, Dixon on the next '
+                    'internet and Silver on risk.',
+        subs=[],
     ),
     dict(
         slug='techjokes', out='techjokes.html', label='Tech jokes', id='techjokes',

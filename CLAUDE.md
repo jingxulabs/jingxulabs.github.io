@@ -11,11 +11,11 @@ python3 build.py          render every page into the repo root
 python3 build.py --check   verify the rendered pages without writing
 ```
 
-Seven pages share one head, one index and one close, so those live once in
+Eight pages share one head, one index and one close, so those live once in
 `src/` and are stamped into each page by `build.py`. **Never edit
 `index.html`, `experimentations.html`, `appdev.html`, `posts.html`,
-`techjokes.html`, `contact.html` or `404.html` directly** — the next build
-overwrites them. Edit the partial and rebuild.
+`reading.html`, `techjokes.html`, `contact.html` or `404.html` directly** —
+the next build overwrites them. Edit the partial and rebuild.
 
 - `src/_layout.html` — the shell, with `{{...}}` slots
 - `src/_hero.html` — the home page's full sky; the short band is generated
@@ -29,8 +29,9 @@ content hash stamped by the build, so **do not bump it by hand**; `--check`
 fails if a committed page points at a stale hash.
 
 Run `python3 build.py --check` before committing. It proves every link
-resolves, every id is unique per page, all ten of the original single-page
-fragments are still answered, and exactly one page carries the Spotify widget.
+resolves, every id is unique per page, every fragment the original single
+page answered is still answered, and exactly one page carries the Spotify
+widget.
 
 ## Shape
 
