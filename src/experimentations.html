@@ -781,15 +781,22 @@
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
           <div class="sub__body">
-            <p class="repo__link">Local harness, not yet published.
-              <span class="id">AgentLoopVsWorkFlow</span></p>
+            <p class="repo__link"><a href="https://github.com/jingxulabs/AgentLoopVsWorkFlow">github.com/jingxulabs/AgentLoopVsWorkFlow</a></p>
             <p class="prov" id="loop-prov" data-state="static">
               <span class="prov__dot" aria-hidden="true"></span>
-              <span class="prov__txt">Unlike the section above, these figures are transcribed, not fetched: there
-                is no public repository to read them from yet. Every one comes from
+              <span class="prov__txt">Unlike the section above, these figures are transcribed rather than read
+                from the repository as the page loads — but every one of them is now checkable. They come from
                 <span class="id">results/summary.json</span> and <span class="id">results_chain/summary.json</span>
-                of a single live sweep, and the two traces in fold <span class="num">4</span> are quoted from
-                <span class="id">results/runs.json</span> unedited.</span></p>
+                of a single live sweep, both committed, and the traces in fold <span class="num">4</span> are
+                quoted from <span class="id">results/runs.json</span> unedited. Clone it and the numbers on this
+                page are in the clone.</span></p>
+            <p><span class="marker">What a clone gets, and what it does not.</span> Python, MIT licensed. The
+              committed results are deliberate — <span class="id">runs.json</span> and
+              <span class="id">summary.json</span> for both sweeps are in the repository so the dashboard in
+              fold <span class="num">7</span> works on a fresh clone, while the timestamped raw sweeps behind
+              them are not. The corpus is the one thing not vendored: HotpotQA is fetched on demand with
+              <span class="id">python -m harness.dataset download</span>, into its own directory and treated as
+              untrusted input.</p>
             <p><span class="marker">What runs offline.</span> The harness ships a deterministic mock backend and
               <span class="num">33</span> tests that need no network and no credentials, so the control flow, the
               fault injection and the token accounting can be verified without a key. The mock's
@@ -1517,8 +1524,9 @@
           interesting part. The harness ships a dependency-free dashboard that replays them: thirteen panels,
           including the cost–accuracy frontier, how runs ended, a head-to-head on identical questions, and a
           trace explorer that steps through any single run the way fold <span class="num">4</span> does by hand.
-          It fetches <span class="id">results/*.json</span>, which a browser blocks from a
-          <span class="id">file://</span> origin, so it has to be served:</p>
+          Both sweeps' results are committed, so a fresh clone has everything it replays and no run of your own
+          is needed. It fetches <span class="id">results/*.json</span>, which a browser blocks from a
+          <span class="id">file://</span> origin, so it does have to be served:</p>
         <p class="repo__link"><span class="id">.venv/bin/python serve.py</span> &rarr;
           <span class="id">http://localhost:8077/viewer/</span></p>
         <div class="sub__body">
