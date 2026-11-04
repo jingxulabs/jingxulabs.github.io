@@ -46,10 +46,12 @@ PAGES = [
         label='Experimentations', id='projects', hero='band',
         title='Experimentations — Jing Xu',
         description='Retrieval bottlenecks in tool selection against a catalogue '
-                    'of 3,551 tools, and what an agent loop costs against a fixed '
-                    'workflow on the same questions.',
+                    'of 3,551 tools, what an agent loop costs against a fixed '
+                    'workflow on the same questions, and a 4B decision model '
+                    'against GPT-5.2 on the same 32 decisions.',
         subs=[dict(label='ToolSelection', id='toolselection'),
-              dict(label='AgentLoop vs Workflow', id='agentloop')],
+              dict(label='AgentLoop vs Workflow', id='agentloop'),
+              dict(label='DecisionModels', id='decisionmodels')],
     ),
     dict(
         slug='appdev', out='appdev.html',

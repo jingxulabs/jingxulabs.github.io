@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Experimentations — Jing Xu</title>
-<meta name="description" content="Retrieval bottlenecks in tool selection against a catalogue of 3,551 tools, and what an agent loop costs against a fixed workflow on the same questions.">
+<meta name="description" content="Retrieval bottlenecks in tool selection against a catalogue of 3,551 tools, what an agent loop costs against a fixed workflow on the same questions, and a 4B decision model against GPT-5.2 on the same 32 decisions.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,6 +21,7 @@
   <a href="#projects" aria-current="page">Experimentations</a>
   <a href="#toolselection" class="nav__sub">ToolSelection</a>
   <a href="#agentloop" class="nav__sub">AgentLoop vs Workflow</a>
+  <a href="#decisionmodels" class="nav__sub">DecisionModels</a>
   <a href="appdev.html">APP Development</a>
   <a href="appdev.html#humanizedai" class="nav__sub">HumanizedAI</a>
   <a href="appdev.html#cabinet" class="nav__sub">Cabinet</a>
@@ -52,7 +53,7 @@
     <div class="spread sechead">
       <div class="rail">
         <!-- COPY -->
-        <p class="sechead__count"><span class="num">4</span> entries, <span class="num">2</span> written</p>
+        <p class="sechead__count"><span class="num">4</span> entries, <span class="num">3</span> written</p>
         <p class="sechead__gloss">Where agents fail at production scale.</p>
       </div>
       <div class="col">
@@ -1732,17 +1733,335 @@
       </div>
     </article>
 
-    <!-- ══ PROJECTS 3-4 : empty slots. Nothing here is a claim. ══ -->
-    <article class="spread project project--stub">
-      <aside class="rail">
-        <p class="rail__note"><span class="tick tick--stub"></span>Placeholder.</p>
-      </aside>
+    <!-- ══ PROJECT 3 : real ══ -->
+    <article class="spread project project--major" id="decisionmodels">
       <div class="col">
-        <h2 class="project__title">Third project</h2>
-        <p class="stub">Reserved, not yet written.</p>
+        <h2 class="project__title">DecisionModels: A 4B Scorer Against GPT-5.2, and What 32 Cells Can Actually Settle</h2>
+        <p class="lede-para">Eight companies, four investment policies, the same
+          <span class="num">32</span> decisions put to a local <span class="num">4</span>B decision model, to
+          <span class="id">gpt-5.2</span>, and to a deterministic rule engine. The headline agreement is
+          <span class="num">81</span>–<span class="num">88%</span> and it is close to meaningless:
+          <span class="num">20</span> of the <span class="num">32</span> cells are arithmetic, and a model that
+          only ever said <span class="id">AVOID</span> would score <span class="num">62%</span>. Twelve cells
+          test judgement. What separates the arms is not on the accuracy line.</p>
+      </div>
+
+      <div class="projfolds">
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">1</span><span class="sub__name">Repository</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p class="repo__link">Local, not yet published. <span class="id">DecisionModel/kev_arena</span></p>
+            <p class="prov" data-state="static">
+              <span class="prov__dot" aria-hidden="true"></span>
+              <span class="prov__txt">These figures are transcribed, not fetched. Every one comes from
+                <span class="id">kev_results.json</span> and <span class="id">gpt_results.json</span> of a
+                single pass over the fixture set, read back by <span class="id">compare3.py</span> and
+                <span class="id">analyze_kev.py</span>.</span></p>
+            <p><span class="marker">What is vendored, and whose it is.</span> The model is not mine.
+              <a href="https://github.com/jaredpalmer/kev">Kev</a> is an open-source family of small decision
+              models — Apache-2.0, built on Qwen3.5 and Qwen3.8, with an API matching TypeSafe's System One, the
+              same System One the section above proposes for tool selection. I vendored it and wrote the arena
+              around it: the fixtures, the policies, the rule engine and the three-way comparison are the
+              contribution here, not the weights.</p>
+            <p><span class="marker">What runs without a model.</span>
+              <span class="id">test_harness.py</span> tests the <em>decision system</em> rather than any
+              arm of it — monotonicity, boundary fragility, weight sensitivity, dimension dominance and whether
+              the fixtures can detect a bad model at all. It needs no endpoint and no credentials, and it is
+              what fold <span class="num">4</span>'s floor comes from. A separate
+              <span class="id">arena.html</span> reads precomputed verdicts and opens over
+              <span class="id">file://</span> with no server, because the verdicts are generated ahead of time
+              into <span class="id">verdicts.js</span>.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">2</span><span class="sub__name">The difference, exactly</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">A decision model is not a small chat model.</span> Kev does not generate
+              text and is not asked to. It takes the state — here, one company's fundamentals as a document —
+              and scores <em>supplied options</em> in a single prefill-only pass, returning a calibrated
+              probability over them. Each policy is a typed choice question over
+              <span class="id">{BUY, HOLD, AVOID}</span>, and the eight questions asked of one company share
+              that company's prefill and cannot read each other.</p>
+            <p class="diag"><span class="marker">The model never divides anything.</span> Every ratio, every
+              percentile and every bucket is computed in Python before the model is called, and what reaches it
+              is a document of already-scored dimensions. That is deliberate: a measurement of policy
+              application should not be contaminated by whether a <span class="num">4</span>B model can do
+              arithmetic on <span class="id">net_debt_ebitda</span>. It also means a failure here is a judgement
+              failure, not a calculator failure.</p>
+          </div>
+        <h4 class="worked__head">What each arm is actually asked</h4>
+        <div class="ba ba--spec">
+          <div class="ba__pane ba__pane--out">
+            <p class="ba__label">Kev-4B — scored, calibrated, local</p>
+            <dl class="spec">
+              <dt>Input</dt>
+              <dd>The company document, prefilled once per company.</dd>
+              <dt>Question</dt>
+              <dd>A typed choice over <span class="id">{BUY, HOLD, AVOID}</span>, one per policy.</dd>
+              <dt>Output</dt>
+              <dd>A probability from a trained pointer head, at the checkpoint's fitted temperature
+                <span class="id">T = 2.41</span>.</dd>
+            </dl>
+          </div>
+          <div class="ba__pane ba__pane--soft">
+            <p class="ba__label">GPT-5.2 — generated, self-reported, gateway</p>
+            <dl class="spec">
+              <dt>Input</dt>
+              <dd>The same document and the same policy, as a prompt.</dd>
+              <dt>Question</dt>
+              <dd>Write the action, and write a confidence number for it.</dd>
+              <dt>Output</dt>
+              <dd>Text, parsed. The confidence is a number the model chose to write — which is not the same
+                quantity as a calibrated probability, however similar it looks in a column.</dd>
+            </dl>
+          </div>
+        </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">Data</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro">Eight fictional companies against four policies, frozen at
+          <span class="id">2026-06-30</span>. Fictional on purpose, and the fixture file says why:
+          “<ins class="docvar__add">it avoids putting invented numbers next to real tickers, and
+          policy-application is what we're testing, not recall</ins>.” Each company carries
+          <span class="num">22</span> fundamentals — <span class="id">pe_pct_sector</span>,
+          <span class="id">fcf_yield</span>, <span class="id">rev_cagr_3y</span>,
+          <span class="id">net_debt_ebitda</span>, <span class="id">roic</span>,
+          <span class="id">beta</span> and the rest — chosen so that each one sits somewhere different against
+          the four policies' ceilings.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Company</th><th scope="col">Sector</th><th scope="col">The archetype it exists to be</th></tr></thead>
+          <tbody>
+            <tr><th scope="row" class="sig__name">NORTHWIND SOFTWARE</th><td class="sig__def">Software</td><td class="sig__def">Expensive hypergrowth — passes a growth floor, fails everything priced.</td></tr>
+            <tr><th scope="row" class="sig__name">MERIDIAN LOGISTICS</th><td class="sig__def">Industrials</td><td class="sig__def">Cheap and levered: sits astride three different ceilings at once.</td></tr>
+            <tr><th scope="row" class="sig__name">CALDERA MINING</th><td class="sig__def">Materials</td><td class="sig__def">Deep cyclical value.</td></tr>
+            <tr><th scope="row" class="sig__name">BRIGHTPATH HEALTH</th><td class="sig__def">Healthcare</td><td class="sig__def">Quality compounder — and the most fragile company in the set.</td></tr>
+            <tr><th scope="row" class="sig__name">ATLAS GRID UTILITIES</th><td class="sig__def">Utilities</td><td class="sig__def">Defensive income. Its leverage lands at <span class="num">2.6</span> against a <span class="num">2.5</span> ceiling.</td></tr>
+            <tr><th scope="row" class="sig__name">VERTEX BIOLOGICS</th><td class="sig__def">Biotech</td><td class="sig__def">Pre-revenue burn — fails all four policies, and should.</td></tr>
+            <tr><th scope="row" class="sig__name">HARBOR RETAIL GROUP</th><td class="sig__def">Retail</td><td class="sig__def">A possible value trap: cheap for a reason, or cheap.</td></tr>
+            <tr><th scope="row" class="sig__name">KESTREL SEMICONDUCTOR</th><td class="sig__def">Semiconductors</td><td class="sig__def">Quality growth, priced for it.</td></tr>
+          </tbody>
+        </table>
+        <div class="sub__body">
+          <p><span class="marker">The four policies.</span> Each weights the same five dimensions —
+            valuation, growth, balance sheet, profitability, market context — and each adds hard constraints
+            that override the weighted score entirely. <span class="id">DEEP_VALUE</span> puts
+            <span class="num">0.45</span> on valuation and refuses leverage over <span class="num">3.0×</span>.
+            <span class="id">GROWTH_MOMENTUM</span> puts <span class="num">0.50</span> on growth and sets a
+            <span class="num">10%</span> CAGR floor. <span class="id">QUALITY_COMPOUNDER</span> puts
+            <span class="num">0.45</span> on profitability behind a <span class="num">12%</span> ROIC floor.
+            <span class="id">CAPITAL_PRESERVATION</span> is the strictest: three hard constraints, and
+            <span class="num">0.30</span> on market context. The policies are not variations in tone. They
+            disagree with each other about the same company on purpose.</p>
+        </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">Design</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">Two kinds of cell, and only one of them is a test.</span> Of the
+              <span class="num">32</span> company-policy cells, <span class="num">20</span> breach a stated hard
+              constraint. In those, <span class="id">AVOID</span> is not an opinion — the policy says so in
+              advance and the arithmetic is unambiguous, which makes them objective ground truth and makes
+              getting them right unremarkable. The remaining <span class="num">12</span> are judgement cells.
+              Those are the only ones where a model can be interestingly right or wrong.</p>
+            <p class="diag"><span class="marker">The floor, measured before any model ran.</span>
+              <span class="id">test_harness.py</span> asks whether the fixtures could detect a bad model at
+              all, by scoring three constant strategies against the rule engine. Always-<span class="id">AVOID</span>
+              scores <span class="num">62%</span>. Always-<span class="id">HOLD</span> and
+              always-<span class="id">BUY</span> score <span class="num">19%</span> each. So
+              <span class="num">62%</span> is the number any arm has to clear before its agreement means
+              anything, and it is uncomfortably close to the headline results.</p>
+            <p class="diag"><span class="marker">What the same harness says about the rule engine itself.</span>
+              Raising debt from <span class="num">0</span> to <span class="num">6×</span> never improves a
+              verdict under any of the four policies, so the engine is monotonic where it should be. Perturbing
+              the policy weights by ±<span class="num">20%</span> over <span class="num">300</span> trials flips
+              at most <span class="num">0.9%</span> of verdicts, so the weights are not load-bearing to the
+              decimal. But <span class="num">3</span> of the <span class="num">12</span> judgement cells sit
+              within <span class="num">0.15</span> of a verdict boundary — which matters later, because a
+              disagreement at a boundary is not the same finding as a disagreement in the middle of a range.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">Results</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro">One pass over all <span class="num">32</span> cells per arm. The first table
+          is the arithmetic half and is close to a formality; the second is the half that tests anything.
+          <span class="marker">Over-rejection</span> counts clean cells an arm refused anyway — the cost of
+          caution, paid in opportunities rather than in errors.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Arm</th><th scope="col">AVOID on breach</th><th scope="col">Over-rejection</th><th scope="col">Policy sensitivity</th><th scope="col">Cost</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">kev-4b
+                <span class="sig__gloss">local, <span class="num">4</span>B params</span></th>
+              <td class="sig__sep"><span class="num">19/20</span></td>
+              <td class="sig__sep"><span class="num">3/12</span></td>
+              <td class="sig__sep"><span class="num">62%</span></td>
+              <td class="sig__def"><span class="num">3.88</span>s per company, eight questions on one prefill. $<span class="num">0</span>.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">gpt-5.2
+                <span class="sig__gloss">gateway</span></th>
+              <td class="sig__sep"><span class="num">20/20</span></td>
+              <td class="sig__sep"><span class="num">1/12</span></td>
+              <td class="sig__sep"><span class="num">88%</span></td>
+              <td class="sig__def"><span class="num">1.559</span>s per decision, <span class="num">14,268</span> in / <span class="num">2,225</span> out tokens.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">rule engine
+                <span class="sig__gloss">deterministic — the reference, not a contender</span></th>
+              <td class="sig__sep"><span class="num">20/20</span></td>
+              <td class="sig__sep"><span class="num">0/12</span></td>
+              <td class="sig__sep"><span class="num">88%</span></td>
+              <td class="sig__def">~<span class="num">0</span>s. $<span class="num">0</span>. It is the thing being agreed with, not an arm that can win.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sub__body">
+          <p><span class="marker">The one miss, and where it was.</span> Kev returned
+            <span class="id">HOLD</span> at <span class="num">0.24</span> on
+            <span class="id">ATLAS GRID UTILITIES</span> under <span class="id">CAPITAL_PRESERVATION</span>,
+            where leverage is <span class="num">2.6×</span> against a <span class="num">2.5×</span> ceiling. It
+            is the narrowest breach in the set, and it came back at the lowest confidence of any breach cell —
+            so the model was not confidently wrong, it was unconfidently wrong at a boundary. That is the better
+            of the two failure modes, and it is still a miss on a cell that was arithmetic.</p>
+        </div>
+        <p class="signals__intro">Agreement, split by which half of the set it is measured on. The right-hand
+          column is the one to read: on the arithmetic cells all three arms are near-identical by construction,
+          so a single number over all <span class="num">32</span> mostly reports how many breach cells there
+          were.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Pair</th><th scope="col">All 32 cells</th><th scope="col">The 12 judgement cells</th><th scope="col">Reading</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">kev-4b vs gpt-5.2</th>
+              <td class="sig__sep"><span class="num">84%</span></td>
+              <td class="sig__sep"><span class="num">67%</span></td>
+              <td class="sig__def vd vd--mixed">Eight of twelve. Two small models of the same policy, disagreeing a third of the time.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">kev-4b vs rules</th>
+              <td class="sig__sep"><span class="num">81%</span></td>
+              <td class="sig__sep"><span class="num">58%</span></td>
+              <td class="sig__def vd vd--dropped">Seven of twelve, against a <span class="num">50%</span> coin on these cells. At n = <span class="num">12</span> this settles nothing.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">gpt-5.2 vs rules</th>
+              <td class="sig__sep"><span class="num">88%</span></td>
+              <td class="sig__sep"><span class="num">67%</span></td>
+              <td class="sig__def vd vd--mixed">Also eight of twelve. The frontier model is not notably closer to the policy than the <span class="num">4</span>B.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sub__body">
+          <p class="diag"><span class="marker">Agreement with the rule engine is not correctness.</span> On the
+            breach cells the engine is ground truth, because the policy wrote the constraint down. On the
+            judgement cells it is just a fourth opinion — a weighted sum someone chose the weights for. An arm
+            that disagrees with it there has not been shown to be wrong, and the column should be read as
+            distance from a reference, never as a score.</p>
+        </div>
+        <p class="signals__intro">Confidence. Both arms emit a number between <span class="num">0</span> and
+          <span class="num">1</span> and the two numbers are not the same quantity — Kev's is a trained pointer
+          head at a fitted temperature, GPT's is a figure it was asked to write. The separation between the two
+          kinds of cell is comparable; the absolute values are not.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Arm</th><th scope="col">On breach cells</th><th scope="col">On judgement cells</th><th scope="col">Separation</th><th scope="col">Range used</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">kev-4b
+                <span class="sig__gloss">trained, calibrated at <span class="id">T = 2.41</span></span></th>
+              <td class="sig__sep"><span class="num">0.656</span></td>
+              <td class="sig__sep"><span class="num">0.305</span></td>
+              <td class="sig__sep"><span class="num">+0.352</span></td>
+              <td class="sig__sep"><span class="num">0.10</span>–<span class="num">0.95</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">gpt-5.2
+                <span class="sig__gloss">self-reported</span></th>
+              <td class="sig__sep"><span class="num">0.934</span></td>
+              <td class="sig__sep"><span class="num">0.713</span></td>
+              <td class="sig__sep"><span class="num">+0.221</span></td>
+              <td class="sig__sep"><span class="num">0.62</span>–<span class="num">0.99</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sub__body">
+          <p><span class="marker">How to read it.</span> Kev is <em>more</em> separated and uses the whole
+            interval: it goes down to <span class="num">0.10</span> when a call is genuinely close, and its four
+            cells above <span class="num">0.90</span> contradict the rules zero times. GPT never emits anything
+            below <span class="num">0.62</span> — on the hardest judgement cell in the set it still reports
+            <span class="num">0.66</span>. Both orderings are useful; only one of them has a usable threshold.
+            This is the only column in the whole comparison where the small local model is clearly ahead, and it
+            is a property of how it was trained rather than of its size.</p>
+        </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Insights, and what would change the answer</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <ul class="next">
+              <li><span class="next__t">The benchmark mostly measures arithmetic.</span>
+                <span class="num">20</span> of <span class="num">32</span> cells are settled by a constraint
+                written down in advance, and a constant <span class="id">AVOID</span> scores
+                <span class="num">62%</span>. An <span class="num">81%</span> headline is
+                <span class="num">19</span> points over a model that does not read anything. Report the
+                judgement subset or report nothing.</li>
+              <li><span class="next__t">Twelve cells cannot settle a comparison.</span> The judgement-cell
+                numbers — <span class="num">58%</span>, <span class="num">67%</span>,
+                <span class="num">67%</span> — are three or four cells apart from each other. Nothing here
+                distinguishes a <span class="num">4</span>B from a frontier model on policy application, and
+                the honest claim is that the instrument is too small, not that the models are equal.</li>
+              <li><span class="next__t">Some of the disagreement is boundary noise.</span>
+                <span class="num">3</span> of the <span class="num">12</span> judgement cells sit within
+                <span class="num">0.15</span> of a verdict boundary, and Kev's single hard-constraint miss was a
+                <span class="num">2.6</span> against a <span class="num">2.5</span> ceiling. A cell that flips
+                under a rounding error is not evidence about a model.</li>
+              <li><span class="next__t">Calibration is the real difference, and it is not on the accuracy line.</span>
+                A trained probability that spans <span class="num">0.10</span>–<span class="num">0.95</span> and
+                never contradicts the rules above <span class="num">0.90</span> can carry a routing threshold.
+                A self-reported number floored at <span class="num">0.62</span> cannot, whatever its accuracy.
+                If one of these arms goes into a system that escalates its uncertain calls, that is the column
+                that decides, not agreement.</li>
+              <li><span class="next__t">Where the 4B is actually behind is policy-following.</span> It changes
+                its verdict across the four policies for <span class="num">5</span> of
+                <span class="num">8</span> companies against <span class="num">7</span> of
+                <span class="num">8</span> for both other arms, and it names the same binding dimension as the
+                rule engine only <span class="num">18</span> of <span class="num">32</span> times. It is
+                reaching similar answers while reading the policy less closely — which is the failure that
+                scales badly when the policies multiply.</li>
+              <li><span class="next__t">What would change the answer.</span> More judgement cells, by
+                constructing fixtures that breach nothing — the set is currently
+                <span class="num">62%</span> breach by accident of design. Real frozen fundamentals in place of
+                archetypes, to test recall and application together rather than application alone. And a
+                reference that is not the rule engine, because agreeing with a weighted sum is not the same as
+                being right.</li>
+            </ul>
+          </div>
+        </details>
       </div>
     </article>
 
+    <!-- ══ PROJECT 4 : empty slot. Nothing here is a claim. ══ -->
     <article class="spread project project--stub">
       <aside class="rail">
         <p class="rail__note"><span class="tick tick--stub"></span>Placeholder.</p>
