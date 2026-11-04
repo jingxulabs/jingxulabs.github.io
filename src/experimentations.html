@@ -926,7 +926,15 @@
           cartridge for the service pistol produced by a German arms manufacturer between
           <span class="num">1896</span> and <span class="num">1937</span>?”
           <span class="marker">Gold.</span> <span class="id">7.63×25mm Mauser</span>. Both arms answered
-          correctly.</p>
+          correctly. Neither one read the sentence that says so.</p>
+        <p class="diag diag--tight"><span class="marker">Where the answer actually is.</span> HotpotQA names the
+          two paragraphs a reader needs. <span class="id">Mauser C96</span> identifies the gun — “a semi-automatic
+          pistol that was originally produced by German arms manufacturer Mauser from
+          <span class="num">1896</span> to <span class="num">1937</span>” — and says nothing about ammunition. The
+          cartridge is in a <em>second</em> paragraph, the one titled <span class="id">7.63×25mm Mauser</span>:
+          “<ins class="docvar__add">The 7.63×25mm Mauser (.30 Mauser Automatic) round was the original cartridge
+          for the Mauser C96 service pistol.</ins>” That is the bridge — gun first, then its cartridge — and it is
+          the paragraph to watch for in both traces below.</p>
         <div class="ba ba--spec">
           <div class="ba__pane ba__pane--out">
             <p class="ba__label">Workflow — 2 LLM calls, 642 tokens</p>
@@ -938,8 +946,15 @@
               <dt>retrieve hop 2</dt>
               <dd>“…original cartridge for the <ins class="docvar__add">Luger pistol (P08)</ins>” →
                 <span class="id">Luger pistol</span>, <span class="id">7.65×21mm Parabellum</span></dd>
+              <dt>what synthesize was given</dt>
+              <dd>Three paragraphs — <span class="id">Mauser C96</span>, <span class="id">Luger pistol</span>,
+                <span class="id">7.65×21mm Parabellum</span>. The gold paragraph is not among them. The string
+                <span class="id">7.63×25mm Mauser</span> does not occur in the context, and neither does the
+                phrase “original cartridge”.</dd>
               <dt>synthesize</dt>
-              <dd><span class="id">7.63×25mm Mauser</span> ✓</dd>
+              <dd><span class="id">7.63×25mm Mauser</span> ✓ — from the model's own knowledge of the C96. The
+                node's prompt ends “if the paragraphs do not contain the answer, reply with your single best
+                guess anyway”, and that is the branch it took.</dd>
             </dl>
           </div>
           <div class="ba__pane ba__pane--soft">
@@ -947,30 +962,47 @@
             <dl class="spec">
               <dt>search</dt>
               <dd>“German arms manufacturer … 1896 and 1937 original cartridge” →
-                the <span class="id">Mauser C96</span> paragraph</dd>
+                the <span class="id">Mauser C96</span> paragraph — the right gun, no cartridge</dd>
               <dt>search</dt>
-              <dd>“Mauser C96 original cartridge” → the same paragraph again</dd>
+              <dd>“Mauser C96 original cartridge” → the same paragraph again, but this time the trailer reads
+                <ins class="docvar__add">(Similar results: 7.63×25mm Mauser, …)</ins> — the gold paragraph,
+                ranked first, one <span class="id">search</span> away</dd>
               <dt>lookup</dt>
-              <dd>“original cartridge” → <em>No mention found.</em> A wasted call.</dd>
+              <dd>“original cartridge” → <em>No mention found</em> — correctly, since it is looking inside
+                <span class="id">Mauser C96</span>, which does not discuss ammunition</dd>
               <dt>finish</dt>
-              <dd><span class="id">7.63×25mm Mauser</span> ✓</dd>
+              <dd><span class="id">7.63×25mm Mauser</span> ✓ — without opening the paragraph it had just been
+                handed the title of</dd>
             </dl>
           </div>
         </div>
         <div class="sub__body">
-          <p>Same answer, <span class="num">2.7×</span> the tokens. Two details in that pair matter more than the
-            ratio.</p>
+          <p>Same answer, <span class="num">2.7×</span> the tokens, and neither arm grounded it. Three details in
+            that pair matter more than the ratio.</p>
           <p class="diag diag--tight"><span class="marker">The workflow was right for the wrong reason.</span>
             Its hop-<span class="num">2</span> query went after the <em>Luger</em> — the wrong gun — because it
-            had to be written before hop <span class="num">1</span> came back. It still answered correctly,
-            because the Mauser paragraph was already in hop <span class="num">1</span>'s result and
-            <span class="id">synthesize</span> reads both. That is not bridging; that is lexical overlap
-            getting away with it, and it qualifies every HotpotQA number in fold
-            <span class="num">6</span>.</p>
-          <p class="diag"><span class="marker">The loop's extra calls bought nothing here.</span> Its second
-            search returned the paragraph it already had, and its <span class="id">lookup</span> found nothing.
-            On a question whose shape you already know, adaptivity is a tax: it is spent discovering a structure
-            you could have written down.</p>
+            had to be written before hop <span class="num">1</span> came back. So the evidence was never
+            retrieved at all, and the correct answer came out of the model's prior, not out of the context. The
+            trace shows a clean <span class="num">4</span>-node run and the scorer records
+            <span class="id">EM&nbsp;1.0</span>; nothing in either surface records that the pipeline missed. That
+            is the failure mode of a fixed graph in one frame — not wrong, and not detectably right.</p>
+          <p class="diag diag--tight"><span class="marker">The loop found the evidence and declined to read
+            it.</span> Its second search put <span class="id">7.63×25mm Mauser</span> at the top of the similar
+            results, which is exactly the pointer the architecture exists to follow. It finished instead. Its own
+            prompt tells it to — “call <span class="id">finish</span> as soon as you can answer; do not keep
+            searching to confirm an answer you already have” — so this is a prompt choice showing up in a trace,
+            not a property of agent loops. It is still the honest reading of this run: the extra calls bought a
+            pointer the loop then spent nothing on.</p>
+          <p class="diag"><span class="marker">What this costs the HotpotQA numbers.</span> On the
+            <span class="id">clean</span> condition, of the answers each arm got right, the gold string was
+            present in retrieved paragraph text for <span class="num">9</span> of
+            <span class="num">10</span> (workflow) but only <span class="num">6</span> of
+            <span class="num">10</span> (loop) and <span class="num">5</span> of <span class="num">11</span>
+            (hybrid) — the rest were answered from a title in a similar-results list, or from nothing retrieved at
+            all. The loop is <em>more</em> exposed here than the workflow, because it chooses when to stop while
+            the workflow always stuffs four paragraphs in. Treat fold <span class="num">6</span>'s HotpotQA
+            accuracies as upper bounds on retrieval-grounded answering, and read the invented-entity chains in
+            fold <span class="num">7</span> as the arm comparison that memorisation cannot reach.</p>
         </div>
         <h4 class="worked__head">Case B — a chain of unknown depth. The loop's case.</h4>
         <p class="diag diag--tight"><span class="marker">Question.</span> “Starting from the station
@@ -1219,9 +1251,15 @@
         <p class="signals__intro"><span class="id">gpt-5.4-nano</span>, <span class="num">300</span> runs
           (<span class="num">20</span> questions × <span class="num">5</span> conditions ×
           <span class="num">3</span> arms), <span class="num">58</span> minutes wall clock. Rolled up across all
-          five conditions. <span class="marker">tail</span> is tokens p95 ÷ mean — how far the expensive runs sit
-          from the typical one. <span class="marker">CV</span> is the coefficient of variation of cost; lower is
-          more forecastable.</p>
+          five conditions. <span class="marker">EM</span> and <span class="marker">F1</span> are HotpotQA's own
+          two scores, each read against the same gold answer once both strings have been lowercased and
+          stripped of punctuation and articles. EM is exact match, and it is all-or-nothing: for Case A in
+          fold <span class="num">3</span>, <span class="id">7.63×25mm Mauser</span> scores and
+          <span class="id">the 7.63 mm Mauser round</span> does not. F1 is the token overlap between the two,
+          so a near miss earns part of a point; the pair read together separates an arm that is wrong from one
+          that is merely wordy. <span class="marker">tail</span> is tokens p95 ÷ mean — how far the expensive
+          runs sit from the typical one. <span class="marker">CV</span> is the coefficient of variation of
+          cost; lower is more forecastable.</p>
         <table class="sig sig--meas">
           <thead><tr><th scope="col">Arm</th><th scope="col">EM</th><th scope="col">F1</th><th scope="col">calls</th><th scope="col">calls p95</th><th scope="col">tokens</th><th scope="col">tail</th><th scope="col">CV</th><th scope="col">clean end</th></tr></thead>
           <tbody>
