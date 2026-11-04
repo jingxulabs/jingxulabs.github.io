@@ -1110,6 +1110,10 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
 .yes { font-family: Spectral, Georgia, serif; font-size: var(--t-base); color: var(--ink); }
 
 .ba--spec { margin-bottom: 2.1rem; }
+/* A pane standing on its own rather than in a .ba pair: the third worked
+   example in Data has no counterpart to sit beside, and its corpus quote
+   needs the full measure anyway. */
+.ba__pane--solo { margin-bottom: 2.1rem; }
 .spec { margin: 1rem 0 0; }
 .spec dt {
   font-family: "Archivo Narrow", "Arial Narrow", sans-serif;

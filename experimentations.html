@@ -12,7 +12,7 @@
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2321376F'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="canonical" href="https://jingxulabs.github.io/experimentations.html">
-<link rel="stylesheet" href="styles.css?v=82e629ed">
+<link rel="stylesheet" href="styles.css?v=f00354cb">
 </head>
 <body class="page--band">
 
@@ -104,8 +104,8 @@
                 <span class="num">25</span>. Dense embedding search. The final retriever is the
                 <span class="id">gte-large</span> embedding model over v3 document text.</span></li>
               <li><span class="gate__name">selector</span><span class="gate__val">Shortlist to a single call:
-                <span class="num">25</span> candidates to <span class="num">1</span>. An LLM reading the
-                candidates.</span></li>
+                <span class="num">25</span> candidates to <span class="num">1</span>. A large language model
+                (LLM) reading the candidates.</span></li>
               <li><span class="gate__name">reranker</span><span class="gate__val"><em>Not in this pipeline.</em> A
                 cross-encoder stage between the two was measured on its own over a depth-<span class="num">100</span>
                 window and never composed in, so every number below is two-stage. See fold
@@ -250,7 +250,7 @@
           <tbody>
             <tr>
               <th scope="row" class="sig__sep"><span class="num">0</span></th>
-              <td class="sig__def">Random, or BM25 over descriptions</td>
+              <td class="sig__def">Random, or BM25 — lexical keyword scoring — over descriptions</td>
               <td class="sig__def">The floor.</td>
             </tr>
             <tr>
@@ -270,17 +270,17 @@
             </tr>
             <tr>
               <th scope="row" class="sig__sep"><span class="num">4</span></th>
-              <td class="sig__def">+ SFT on intent → call pairs</td>
+              <td class="sig__def">+ SFT (supervised fine-tuning) on intent → call pairs</td>
               <td class="sig__def">What does supervised fitting buy?</td>
             </tr>
             <tr>
               <th scope="row" class="sig__sep"><span class="num">5</span></th>
-              <td class="sig__def">+ GRPO over shortlists</td>
-              <td class="sig__def">What does RL add beyond SFT?</td>
+              <td class="sig__def">+ GRPO (group-relative policy optimisation) over shortlists</td>
+              <td class="sig__def">What does RL — reinforcement learning — add beyond SFT?</td>
             </tr>
             <tr>
               <th scope="row" class="sig__sep"><span class="num">5</span>-alt</th>
-              <td class="sig__def">+ DPO on preference pairs</td>
+              <td class="sig__def">+ DPO (direct preference optimisation) on preference pairs</td>
               <td class="sig__def">Half the benefit for a tenth of the effort?</td>
             </tr>
             <tr>
@@ -323,7 +323,13 @@
           <span class="id">+ fusion</span> marking work that sits inside an arm rather than being one. Everything
           that worked, and everything measured, happens inside arm <span class="num">3</span>, the retrieval stage,
           because the stop rule closed arms <span class="num">4</span> and <span class="num">5</span> before they
-          were built.</p>
+          were built. Two retrieval measures appear below. <span class="marker">R@K</span> is recall at
+          <var>K</var>: the share of queries whose gold tool is somewhere in the top <var>K</var> the
+          retriever returns, so R@<span class="num">1</span> is "ranked it first" and
+          R@<span class="num">25</span> is "got it into the shortlist at all".
+          <span class="marker">MRR</span> is mean reciprocal rank — <span class="num">1</span> when the gold
+          tool is first, <span class="num">0.5</span> when it is second, <span class="num">0.33</span> third —
+          so unlike recall it registers a rank improving inside the shortlist.</p>
         <table class="sig sig--meas">
           <thead><tr><th scope="col">Intervention</th><th scope="col">Arm</th><th scope="col">Effect</th><th scope="col">Verdict</th></tr></thead>
           <tbody>
@@ -831,7 +837,7 @@
               <span class="prov__txt">Unlike the section above, these figures are transcribed, not fetched: there
                 is no public repository to read them from yet. Every one comes from
                 <span class="id">results/summary.json</span> and <span class="id">results_chain/summary.json</span>
-                of a single live sweep, and the two traces in fold <span class="num">3</span> are quoted from
+                of a single live sweep, and the two traces in fold <span class="num">4</span> are quoted from
                 <span class="id">results/runs.json</span> unedited.</span></p>
             <p><span class="marker">What runs offline.</span> The harness ships a deterministic mock backend and
               <span class="num">33</span> tests that need no network and no credentials, so the control flow, the
@@ -904,13 +910,14 @@
         <h4 class="worked__head">What that one edge changes</h4>
         <div class="ba ba--spec">
           <div class="ba__pane ba__pane--out">
-            <p class="ba__label">Fixed workflow (DAG)</p>
+            <p class="ba__label">Fixed workflow (DAG — a directed acyclic graph: every edge goes forward)</p>
             <dl class="spec">
               <dt>Who chooses the next step</dt>
               <dd>You do, at design time. The graph is written before the request arrives.</dd>
               <dt>LLM calls per request</dt>
               <dd>A constant. <span class="num">2</span> here, every time, measured
-                p95 <span class="num">2</span> and max <span class="num">2</span> over
+                p95 — the <span class="num">95</span>th percentile, the value only one run in twenty exceeds —
+                of <span class="num">2</span>, and max <span class="num">2</span>, over
                 <span class="num">100</span> runs.</dd>
               <dt>Reacting to what it reads</dt>
               <dd>It cannot. Both retrieval queries are written by the one
@@ -923,8 +930,9 @@
               <dd>The quiet one: answering confidently from a paragraph it had no way to know was wrong.
                 It always terminates — <span class="num">100%</span> clean here.</dd>
               <dt>Cost distribution</dt>
-              <dd>Nearly a point mass. CV <span class="num">0.31</span>, p95 only
-                <span class="num">1.8×</span> the mean. You can put it in a capacity plan.</dd>
+              <dd>Nearly a point mass. CV — the coefficient of variation, the spread of cost over its own
+                mean, so a unitless number comparable between arms — is <span class="num">0.31</span>, and p95
+                only <span class="num">1.8×</span> the mean. You can put it in a capacity plan.</dd>
             </dl>
           </div>
           <div class="ba__pane ba__pane--soft">
@@ -964,7 +972,117 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">Two traces, same tools, same model</span></span>
+            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">Data</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro">Two sources, answering two different questions. HotpotQA supplies real
+          multi-hop questions over real paragraphs, which is what makes the main sweep comparable to published
+          work — and it is <span class="num">2</span>-hop by construction, so it cannot test a depth the
+          workflow has not already hardcoded. The synthetic chains exist for that and nothing else.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Source</th><th scope="col">Size</th><th scope="col">Role</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">HotpotQA dev, distractor setting
+                <span class="sig__gloss">the five main conditions</span></th>
+              <td class="sig__def"><span class="num">7,405</span> questions, every one labelled
+                <span class="id">hard</span></td>
+              <td class="sig__def"><span class="num">5,918</span> bridge and <span class="num">1,487</span>
+                comparison. Each question ships <span class="num">10</span> paragraphs — the
+                <span class="num">2</span> a reader needs and <span class="num">8</span> distractors — so
+                retrieval has somewhere to go wrong without the question becoming unanswerable.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">successor chains
+                <span class="sig__gloss">fold <span class="num">8</span> only</span></th>
+              <td class="sig__def"><span class="num">15</span> shallow and <span class="num">15</span> deep</td>
+              <td class="sig__def">Written for this experiment. Stations, successors and catalogue codes are
+                invented, so no arm can shortcut through what the model already knows, and depth becomes a dial
+                rather than a property of the corpus.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sub__body">
+          <p><span class="marker">What the sweep actually draws.</span> <span class="num">20</span> questions
+            per condition, all at HotpotQA's <span class="id">hard</span> level, and the same
+            <span class="num">20</span> put to all three arms. Four of the five conditions draw
+            <span class="num">20</span> bridge questions. <span class="id">hop_mismatch</span> is the exception,
+            and that is the whole of its point: <span class="num">10</span> bridge and
+            <span class="num">10</span> comparison, so half its questions do not have the shape the fixed graph
+            is built around.</p>
+        </div>
+        <h4 class="worked__head">One question of each shape, as the harness received it</h4>
+        <p class="diag diag--tight">Quoted from <span class="id">results/runs.json</span> and
+          <span class="id">results_chain/runs.json</span>. The two HotpotQA questions carry the dataset's own
+          spelling and grammar, reproduced here unaltered — the arms were given them exactly this way.</p>
+        <div class="ba ba--spec">
+          <div class="ba__pane ba__pane--out">
+            <p class="ba__label">HotpotQA bridge — the shape the workflow is built for</p>
+            <dl class="spec">
+              <dt>Question</dt>
+              <dd>“What podcast was the cheif executive officer of Nerdist Industries a guest on?”</dd>
+              <dt>The bridge</dt>
+              <dd><span class="id">Nerdist Industries</span> → its chief executive,
+                <span class="id">Chris Hardwick</span> → the podcast he appeared on. Hop
+                <span class="num">2</span> is unanswerable until hop <span class="num">1</span> returns a name.</dd>
+              <dt>Gold paragraphs</dt>
+              <dd><span class="id">Chris Hardwick</span>, <span class="id">Comedy Film Nerds</span></dd>
+              <dt>The other eight</dt>
+              <dd>Distractors, and not gentle ones: <span class="id">The Nerdist Podcast</span>,
+                <span class="id">Nerdist News</span>, <span class="id">Nerdist Industries</span> all match the
+                question's wording better than the paragraph that answers it.</dd>
+              <dt>Gold answer</dt>
+              <dd><span class="id">Comedy Film Nerds</span></dd>
+            </dl>
+          </div>
+          <div class="ba__pane ba__pane--soft">
+            <p class="ba__label">HotpotQA comparison — the shape it is not</p>
+            <dl class="spec">
+              <dt>Question</dt>
+              <dd>“Where Ken Kwapis and John Woo both working on films in the 1980's?”</dd>
+              <dt>The structure</dt>
+              <dd>Two independent lookups and no bridge at all. Nothing in the first answer tells you what to ask
+                second, so the <em>second</em> query could have been written up front — which is the one case
+                where writing both queries blind costs nothing.</dd>
+              <dt>Gold paragraphs</dt>
+              <dd><span class="id">Ken Kwapis</span>, <span class="id">John Woo</span></dd>
+              <dt>Gold answer</dt>
+              <dd><span class="id">yes</span></dd>
+              <dt>Why it is a condition</dt>
+              <dd>These are mixed in at <span class="num">50</span>/<span class="num">50</span> under
+                <span class="id">hop_mismatch</span>, to see what a fixed <span class="num">2</span>-hop graph
+                does when the question is not <span class="num">2</span>-hop. Fold
+                <span class="num">7</span> has the answer, and it was not the predicted one.</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="ba__pane ba__pane--out ba__pane--solo">
+          <p class="ba__label">Successor chain, depth <span class="num">3</span> — invented, so memory cannot help</p>
+          <dl class="spec">
+            <dt>Question</dt>
+            <dd>“Starting from the station <span class="id">Vexmidor</span> and following each designated
+              successor in turn until you reach the terminal station, what is that terminal station's catalogue
+              code?”</dd>
+            <dt>The corpus, verbatim</dt>
+            <dd>“<ins class="docvar__add">Vexmidor is an orbital research station in the Tessaly register. The
+              designated successor of Vexmidor is Kesmira.</ins>” → “…the designated successor of
+              <span class="id">Kesmira</span> is <span class="id">Ogakerwen</span>” → “…the designated successor
+              of <span class="id">Ogakerwen</span> is <span class="id">Norzenor</span>” →
+              “<ins class="docvar__add">The catalogue code of Norzenor is VL-3200.</ins>”</dd>
+            <dt>Gold answer</dt>
+            <dd><span class="id">VL-3200</span>, four retrievals from the station the question names</dd>
+            <dt>Why it separates the arms</dt>
+            <dd>The depth is not in the question and cannot be inferred from it. Two retrievals reach
+              <span class="id">Ogakerwen</span> and stop, one link short, with no signal that anything is
+              missing. Every station's paragraph also trails a similar-results list of decoy stations, so the
+              end of the chain does not look different from the middle of one.</dd>
+          </dl>
+        </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">Two traces, same tools, same model</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
         <p class="signals__intro">Both examples below are quoted from the run logs, not reconstructed. Each is one
@@ -1032,8 +1150,9 @@
             Its hop-<span class="num">2</span> query went after the <em>Luger</em> — the wrong gun — because it
             had to be written before hop <span class="num">1</span> came back. So the evidence was never
             retrieved at all, and the correct answer came out of the model's prior, not out of the context. The
-            trace shows a clean <span class="num">4</span>-node run and the scorer records
-            <span class="id">EM&nbsp;1.0</span>; nothing in either surface records that the pipeline missed. That
+            trace shows a clean <span class="num">4</span>-node run and the scorer records an exact match —
+            EM, the all-or-nothing accuracy measure fold <span class="num">7</span> reports — of
+            <span class="num">1.0</span>; nothing in either surface records that the pipeline missed. That
             is the failure mode of a fixed graph in one frame — not wrong, and not detectably right.</p>
           <p class="diag diag--tight"><span class="marker">The loop found the evidence and declined to read
             it.</span> Its second search put <span class="id">7.63×25mm Mauser</span> at the top of the similar
@@ -1049,9 +1168,9 @@
             <span class="num">10</span> (loop) and <span class="num">5</span> of <span class="num">11</span>
             (hybrid) — the rest were answered from a title in a similar-results list, or from nothing retrieved at
             all. The loop is <em>more</em> exposed here than the workflow, because it chooses when to stop while
-            the workflow always stuffs four paragraphs in. Treat fold <span class="num">6</span>'s HotpotQA
+            the workflow always stuffs four paragraphs in. Treat fold <span class="num">7</span>'s HotpotQA
             accuracies as upper bounds on retrieval-grounded answering, and read the invented-entity chains in
-            fold <span class="num">7</span> as the arm comparison that memorisation cannot reach.</p>
+            fold <span class="num">8</span> as the arm comparison that memorisation cannot reach.</p>
         </div>
         <h4 class="worked__head">Case B — a chain of unknown depth. The loop's case.</h4>
         <p class="diag diag--tight"><span class="marker">Question.</span> “Starting from the station
@@ -1108,7 +1227,7 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">When to reach for which</span></span>
+            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">When to reach for which</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
         <p class="signals__intro">The two cases above generalise along one axis: <em>is the shape of the work
@@ -1197,7 +1316,7 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">Design</span></span>
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Design</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
           <div class="sub__body">
@@ -1270,7 +1389,7 @@
         <ul class="next">
           <li><span class="next__t">Paired questions.</span> Sampled once per
             <span class="id">(condition, seed)</span> and reused across every arm, never resampled per arm. This
-            is what makes the McNemar test valid and is why the traces in fold <span class="num">3</span> are
+            is what makes the McNemar test valid and is why the traces in fold <span class="num">4</span> are
             genuinely the same question twice.</li>
           <li><span class="next__t">Paired faults.</span> Each tool environment is seeded from
             <span class="id">(question_id, seed)</span>, so an injected <span class="num">503</span> lands on the
@@ -1294,7 +1413,7 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Results</span></span>
+            <span class="sub__label"><span class="sub__num num">7</span><span class="sub__name">Results</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
         <p class="signals__intro"><span class="id">gpt-5.4-nano</span>, <span class="num">300</span> runs
@@ -1303,7 +1422,7 @@
           five conditions. <span class="marker">EM</span> and <span class="marker">F1</span> are HotpotQA's own
           two scores, each read against the same gold answer once both strings have been lowercased and
           stripped of punctuation and articles. EM is exact match, and it is all-or-nothing: for Case A in
-          fold <span class="num">3</span>, <span class="id">7.63×25mm Mauser</span> scores and
+          fold <span class="num">4</span>, <span class="id">7.63×25mm Mauser</span> scores and
           <span class="id">the 7.63 mm Mauser round</span> does not. F1 is the token overlap between the two,
           so a near miss earns part of a point; the pair read together separates an arm that is wrong from one
           that is merely wordy. <span class="marker">tail</span> is tokens p95 ÷ mean — how far the expensive
@@ -1359,7 +1478,7 @@
           split by condition rather than rolled up: every cell is one arm's EM over that condition's
           <span class="num">20</span> questions, so <span class="num">0.500</span> is ten of twenty answered
           exactly and <span class="num">0.050</span> between two arms is one question. What each condition does
-          to the environment is restated under its name; fold <span class="num">5</span> defines them in full
+          to the environment is restated under its name; fold <span class="num">6</span> defines them in full
           and carries the pre-registered hypothesis for each. Two of the five were falsified.</p>
         <table class="sig sig--meas">
           <thead><tr><th scope="col">Condition</th><th scope="col">workflow</th><th scope="col">react</th><th scope="col">hybrid</th><th scope="col">Hypothesis</th></tr></thead>
@@ -1410,13 +1529,27 @@
           </tbody>
         </table>
         <div class="sub__body">
-          <p class="diag"><span class="marker">The biggest lever is not architectural.</span>
-            <span class="num">39%</span> of all wrong answers (<span class="num">55</span> of
-            <span class="num">142</span>) score F1 ≥ <span class="num">0.5</span> — the right entity with a
-            mis-scoped span: <span class="id">TD Bank</span> against <span class="id">TD Bank, N.A.</span>,
-            <span class="id">1,467</span> against <span class="id">1,467 rooms</span>. That is a prompt problem
-            shared by all three arms, and fixing the answer-span instruction would move more than any
-            architecture choice here.</p>
+          <p class="diag"><span class="marker">Two of the five were falsified, and that is the format
+            working.</span> <span class="id">flaky_tools</span> was supposed to favour the loop — retry is free
+            inside a loop and absent from a fixed graph — and it barely did.
+            <span class="id">distractor_heavy</span> was supposed to favour it as well, and the loop came out
+            <em>worse</em>: noticing that a plausible paragraph is the <em>wrong</em> paragraph is a capability
+            this model mostly lacks, so the extra calls bought further chances to be confidently misled rather
+            than a correction. Neither is a disappointment to be explained away. Each condition's hypothesis is
+            written into <span class="id">conditions.py</span> before the sweep runs, and that is the whole
+            reason a falsification is visible here at all, instead of being quietly rewritten into whatever the
+            numbers turned out to support.</p>
+          <p class="diag"><span class="marker">The biggest available win was in neither architecture.</span>
+            <span class="num">39%</span> of all wrong answers — <span class="num">55</span> of
+            <span class="num">142</span> — score a token-overlap F1 of <span class="num">0.5</span> or better
+            while scoring zero on exact match. That pairing has one reading: the arm found the right entity and
+            drew the wrong boundary around it. <span class="id">TD Bank</span> where the gold string is
+            <span class="id">TD Bank, N.A.</span>; <span class="id">1,467</span> where it is
+            <span class="id">1,467 rooms</span>. Retrieval was right, the reasoning was right, and the answer
+            was marked wrong on its edges. All three arms do it at about the same rate, which is exactly what
+            makes it the cheap win: it is not a property of the control flow, so choosing between the three
+            cannot fix it, and one better answer-span instruction in the prompt they share would move the
+            accuracy column further than the architecture question this page spends its length on.</p>
           <p class="diag"><span class="marker">Latency is gateway tail, not architecture.</span> Over
             <span class="num">872</span> live calls, per-call p50 was <span class="num">1.05</span>s and p90
             <span class="num">1.41</span>s, but p99 was <span class="num">48.0</span>s —
@@ -1432,7 +1565,7 @@
         <p class="diag diag--tight">Everything above is a roll-up, and the traces underneath it are the
           interesting part. The harness ships a dependency-free dashboard that replays them: thirteen panels,
           including the cost–accuracy frontier, how runs ended, a head-to-head on identical questions, and a
-          trace explorer that steps through any single run the way fold <span class="num">3</span> does by hand.
+          trace explorer that steps through any single run the way fold <span class="num">4</span> does by hand.
           It fetches <span class="id">results/*.json</span>, which a browser blocks from a
           <span class="id">file://</span> origin, so it has to be served:</p>
         <p class="repo__link"><span class="id">.venv/bin/python serve.py</span> &rarr;
@@ -1446,7 +1579,7 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">7</span><span class="sub__name">The forced case: variable-depth chains</span></span>
+            <span class="sub__label"><span class="sub__num num">8</span><span class="sub__name">The forced case: variable-depth chains</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
         <p class="signals__intro">HotpotQA is <span class="num">2</span>-hop by construction — the exact shape the
@@ -1456,7 +1589,7 @@
           invisible from the question. Entity names are invented so no arm can shortcut through memorised
           knowledge, and <span class="num">4</span> decoy chains make the end paragraphs indistinguishable, so
           blind guessing floors at about <span class="num">20%</span>. Case B in fold
-          <span class="num">3</span> is one of these questions. The two accuracy columns are exact match again,
+          <span class="num">4</span> is one of these questions. The two accuracy columns are exact match again,
           each over the <span class="num">15</span> paired questions of that set; <span class="marker">calls
           (deep)</span> and <span class="marker">tokens (deep)</span> are per-run means on the deep set alone —
           <span class="id">llm_calls_mean</span> and metered tokens — so what the loop's win costs is read
@@ -1538,7 +1671,7 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">8</span><span class="sub__name">Five insights, and what would change the answer</span></span>
+            <span class="sub__label"><span class="sub__num num">9</span><span class="sub__name">Five insights, and what would change the answer</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
           <div class="sub__body">
@@ -1547,11 +1680,12 @@
                 <span class="num">15</span> paired comparisons, not one significant. Had the experiment reported
                 EM alone it would have concluded “no difference” and been useless. The decision lives in cost
                 <em>variance</em>: CV <span class="num">0.31</span> against <span class="num">0.81</span>. One is
-                a point mass you can put in an SLA; the other has a tail the model chooses at run time.</li>
+                a point mass you can put in an SLA, a service-level agreement; the other has a tail the model
+                chooses at run time.</li>
               <li><span class="next__t">Adaptivity is a tax until you can name the task that needs it.</span>
                 On clean <span class="num">2</span>-hop questions the loop spent <span class="num">2.2×</span> the
                 tokens to rediscover a shape that was already written down. Case A in fold
-                <span class="num">3</span> shows the shape of that waste: a repeat search and a lookup that
+                <span class="num">4</span> shows the shape of that waste: a repeat search and a lookup that
                 found nothing.</li>
               <li><span class="next__t">But when the task needs it, nothing substitutes.</span>
                 <span class="num">13</span>–<span class="num">0</span>, p = <span class="num">0.0002</span>. Two
