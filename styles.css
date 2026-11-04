@@ -1193,6 +1193,136 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
   max-width: 54ch;
 }
 
+/* ─── reading list ───
+   The same narrow-column-plus-text grid the posts use, with a plate where
+   the date would be: a book is already an object, so it gets the object's
+   column rather than a bullet. 92px is the posts' date column, so the two
+   lists on this page hang off one inner edge.
+
+   Every plate is drawn here, in the band's night, and the scan is laid over
+   it. That ordering is the point — Open Library has no cover for every book,
+   and a fetch can fail, so what shows underneath has to be a cover and not a
+   hole. `onerror` hides the <img>, which is why the display:none below is
+   needed: the absolute positioning would otherwise outrank the hidden
+   attribute and leave a broken-image mark standing on the plate. */
+.books-section {
+  padding-top: 0;
+  padding-bottom: clamp(3.25rem, 7vh, 4.75rem);
+}
+
+.books { list-style: none; margin: 0; padding: 0; }
+.book {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  column-gap: 1.6rem;
+  margin-bottom: 2.3rem;
+}
+.book:last-child { margin-bottom: 0; }
+
+/* Width is fixed, height is the cover's own. Cropping to a common 2:3 was
+   the first attempt and it cut the author's name off two of the five — a
+   paperback, a trade hardback and a square-ish jacket genuinely are
+   different shapes, so the column sets the width and each scan keeps its
+   proportions.
+
+   The floor is the drawn plate's own 2:3, and it is lifted again the moment
+   a scan is actually showing — without that second rule a jacket shorter
+   than 138px leaves a strip of plate standing under it, reading as a bug
+   rather than as a fallback. :has() is live, so an <img> that fails at
+   runtime drops the floor back into place on its own. */
+.book__cover {
+  position: relative;
+  display: block;
+  width: 92px;
+  min-height: 138px;
+  border-radius: 2px;
+  overflow: hidden;
+  /* An object resting on the sheet: a close contact shadow and a longer,
+     softer one, both in the ink rather than in grey. */
+  box-shadow: 0 1px 2px rgba(24, 34, 46, 0.14),
+              0 7px 16px -8px rgba(24, 34, 46, 0.26);
+}
+/* Positioned, so it paints over the plate: the plate is absolute, and an
+   absolute box outranks in-flow content however late that content is. */
+.book__cover img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.book__cover img[hidden] { display: none; }
+@supports selector(:has(*)) {
+  .book__cover:has(img:not([hidden])) { min-height: 0; }
+}
+/* The edge, painted over both the plate and the scan. A pale cover needs a
+   boundary against the paper; a dark one does not notice this is there. */
+.book__cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px rgba(24, 34, 46, 0.16);
+  pointer-events: none;
+}
+
+.book__plate {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0.5rem 0.55rem;
+  background: var(--band-grad);
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  line-height: 1.22;
+}
+/* The margin's tick, at the size this plate can carry. */
+.book__plate::before {
+  content: "";
+  flex: none;
+  width: 14px;
+  height: 2px;
+  background: var(--ochre-sky);
+  margin-bottom: 0.5rem;
+}
+.book__plate-t {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--star);
+  text-wrap: balance;
+}
+/* Mixed out of the star and the stop it sits on, so it tracks the night if
+   the night is retuned. At 74% it holds about 5:1 on --night-mid, which is
+   the lightest the band's gradient gets and so the worst case. */
+.book__plate-a {
+  margin-top: auto;
+  font-size: 0.66rem;
+  color: color-mix(in srgb, var(--star) 74%, var(--night-mid));
+}
+
+.book__title {
+  display: inline-block;
+  font-size: var(--t-base);
+  line-height: 1.35;
+  text-wrap: pretty;
+}
+.book__sub {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.45;
+  color: var(--graphite);
+  margin: 0.3rem 0 0;
+  max-width: 54ch;
+}
+.book__by {
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.45;
+  color: var(--ink);
+  margin: 0.35rem 0 0;
+}
+.book__yr { color: var(--graphite); margin-left: 0.2em; }
+
 /* ─── techjokes ───
    These are dialogues, so they are set as dialogue: speaker in its own
    column, using the same run-in indigo as Problem / Approach / Result. */
@@ -1383,6 +1513,9 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
 
 
   .post { grid-template-columns: minmax(0, 1fr); }
+  /* The book keeps both columns — the plate is 92px, which a phone has
+     room for, and stacking it would turn a tight list into a gallery. */
+  .book { column-gap: 1.15rem; }
   .joke__line { grid-template-columns: minmax(0, 1fr); }
   .joke__who { padding-top: 0; margin-bottom: 0.1rem; }
   .post__date { padding-top: 0; margin-bottom: 0.2rem; display: block; }
