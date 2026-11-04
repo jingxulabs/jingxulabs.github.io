@@ -887,6 +887,22 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
 .sig--moves .sig__sep, .sig--meas .sig__sep { width: 8rem; }
 .sig--meas .sig__def { font-family: inherit; }
 
+/* The per-condition results table restates each perturbation under its own
+   name. Fold 5 defines all seven conditions, but by the time a reader is
+   looking at the scores that table is two folds up, and a column head
+   reading `flaky_tools` does not say what was done to the tools. Narrow and
+   graphite, so it reads as the row's caption and not as a second row. */
+.sig__gloss {
+  display: block;
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-xs);
+  line-height: 1.34;
+  font-weight: 400;
+  color: var(--graphite);
+  margin-top: 0.26rem;
+  text-wrap: pretty;
+}
+
 .gates { list-style: none; margin: 1.3rem 0 0; padding: 0; }
 .gates li {
   display: grid;

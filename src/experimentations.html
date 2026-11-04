@@ -1306,27 +1306,34 @@
             <span class="num">20</span> per cell. The accuracy column does not discriminate between these
             architectures on this benchmark. The cost columns do, and decisively.</p>
         </div>
-        <p class="signals__intro">Per condition, exact-match. The pre-registered hypothesis for each is in fold
-          <span class="num">5</span>; two of the five were falsified.</p>
+        <p class="signals__intro">The same exact-match score as the <span class="marker">EM</span> column above,
+          split by condition rather than rolled up: every cell is one arm's EM over that condition's
+          <span class="num">20</span> questions, so <span class="num">0.500</span> is ten of twenty answered
+          exactly and <span class="num">0.050</span> between two arms is one question. What each condition does
+          to the environment is restated under its name; fold <span class="num">5</span> defines them in full
+          and carries the pre-registered hypothesis for each. Two of the five were falsified.</p>
         <table class="sig sig--meas">
           <thead><tr><th scope="col">Condition</th><th scope="col">workflow</th><th scope="col">react</th><th scope="col">hybrid</th><th scope="col">Hypothesis</th></tr></thead>
           <tbody>
             <tr>
-              <th scope="row" class="sig__name">clean</th>
+              <th scope="row" class="sig__name">clean
+                <span class="sig__gloss">no perturbation</span></th>
               <td class="sig__sep"><span class="num">0.500</span></td>
               <td class="sig__sep"><span class="num">0.500</span></td>
               <td class="sig__sep"><span class="num">0.550</span></td>
               <td class="sig__def vd vd--held">Held. Tie on accuracy, workflow far cheaper.</td>
             </tr>
             <tr>
-              <th scope="row" class="sig__name">flaky_tools</th>
+              <th scope="row" class="sig__name">flaky_tools
+                <span class="sig__gloss"><span class="num">30%</span> of tool calls return a transient <span class="num">503</span></span></th>
               <td class="sig__sep"><span class="num">0.450</span></td>
               <td class="sig__sep"><span class="num">0.500</span></td>
               <td class="sig__sep"><span class="num">0.550</span></td>
               <td class="sig__def vd vd--mixed">Weak. The gap was meant to open here; p = <span class="num">1.0</span>.</td>
             </tr>
             <tr>
-              <th scope="row" class="sig__name">hop_mismatch</th>
+              <th scope="row" class="sig__name">hop_mismatch
+                <span class="sig__gloss">comparison questions mixed in <span class="num">50</span>/<span class="num">50</span></span></th>
               <td class="sig__sep"><span class="num">0.650</span></td>
               <td class="sig__sep"><span class="num">0.750</span></td>
               <td class="sig__sep"><span class="num">0.800</span></td>
@@ -1334,7 +1341,8 @@
                 arm, the fixed graph included.</td>
             </tr>
             <tr>
-              <th scope="row" class="sig__name">distractor_heavy</th>
+              <th scope="row" class="sig__name">distractor_heavy
+                <span class="sig__gloss">first retrieval forced to a distractor</span></th>
               <td class="sig__sep"><span class="num">0.500</span></td>
               <td class="sig__sep"><span class="num">0.400</span></td>
               <td class="sig__sep"><span class="num">0.500</span></td>
@@ -1342,7 +1350,8 @@
                 delivered less.</td>
             </tr>
             <tr>
-              <th scope="row" class="sig__name">budget_cap</th>
+              <th scope="row" class="sig__name">budget_cap
+                <span class="sig__gloss">hard ceiling of <span class="num">3</span> LLM calls</span></th>
               <td class="sig__sep"><span class="num">0.500</span></td>
               <td class="sig__sep"><span class="num">0.450</span></td>
               <td class="sig__sep"><span class="num">0.300</span></td>
@@ -1398,7 +1407,11 @@
           invisible from the question. Entity names are invented so no arm can shortcut through memorised
           knowledge, and <span class="num">4</span> decoy chains make the end paragraphs indistinguishable, so
           blind guessing floors at about <span class="num">20%</span>. Case B in fold
-          <span class="num">3</span> is one of these questions.</p>
+          <span class="num">3</span> is one of these questions. The two accuracy columns are exact match again,
+          each over the <span class="num">15</span> paired questions of that set; <span class="marker">calls
+          (deep)</span> and <span class="marker">tokens (deep)</span> are per-run means on the deep set alone —
+          <span class="id">llm_calls_mean</span> and metered tokens — so what the loop's win costs is read
+          beside the win.</p>
         <table class="sig sig--meas">
           <thead><tr><th scope="col">Arm</th><th scope="col">chain_shallow (depth 1)</th><th scope="col">chain_deep (depth 3–5)</th><th scope="col">calls (deep)</th><th scope="col">tokens (deep)</th></tr></thead>
           <tbody>
