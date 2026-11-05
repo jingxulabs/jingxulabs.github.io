@@ -1950,7 +1950,7 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">The difference, exactly</span></span>
+            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">The difference, exactly — one cell, worked</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
           <div class="sub__body">
@@ -2065,6 +2065,158 @@ HARD CONSTRAINTS (a breach forces AVOID regardless of other merits):
             production. Twenty of these cells never needed a model at all; a rule engine gets every one of
             them right, for free, in no time. Spend the model on the twelve cells where there is nothing to
             compare.</p>
+        </div>
+        <h4 class="worked__head">Example — the other kind of cell, and three answers to it</h4>
+        <p class="diag diag--tight">Everything above is one cell of the first kind: a constraint is breached,
+          and the policy decided before any arm was called. Here is the second kind, run end to end. It is the
+          only cell of the <span class="num">32</span> where all three arms returned something different —
+          the rule engine said <span class="id">BUY</span>, <span class="id">gpt-5.2</span> said
+          <span class="id">HOLD</span>, <span class="id">kev-4b</span> said <span class="id">AVOID</span>.
+          Same document, same policy, same three options.</p>
+        <div class="doc">COMPANY: NORTHWIND SOFTWARE
+SECTOR: Software
+FUNDAMENTALS AS OF 2026-06-30 (all figures precomputed)
+
+[VALUATION]
+  P/E percentile vs sector ...... 96 (expensive)
+  FCF yield ..................... -0.8%
+  EV/EBITDA ..................... n/a (no EBITDA)
+[GROWTH]
+  Revenue CAGR 3y ............... <b>42.0%</b>
+  EPS growth .................... n/a%
+  Rule of 40 .................... 51.0 (passes)
+[BALANCE_SHEET]
+  Net debt / EBITDA ............. 0.0x
+  Interest coverage ............. n/ax
+  Current ratio ................. 3.4
+[PROFITABILITY]
+  ROIC .......................... -4.0%
+  Operating margin .............. <b>-9.0%</b>
+  Gross margin .................. 78.0%
+[MARKET_CONTEXT]
+  Beta .......................... 1.7
+  Drawdown from high ............ 22.0%
+  Dividend yield ................ 0.0%</div>
+        <p class="diag diag--tight">And the policy, as the question that carries it. The two marked lines are
+          the whole of the disagreement: one clears the only hard constraint by a distance, the other is the
+          kind of weakness this policy says in advance to forgive:</p>
+        <div class="doc">Apply the GROWTH_MOMENTUM investment policy to this company and choose one action.
+Policy thesis: Pay up for acceleration. Forgive missing profits, never forgive
+               decelerating revenue.
+Dimension weights: valuation 0.05, growth 0.50, balance_sheet 0.10,
+                   profitability 0.15, market_context 0.20.
+HARD CONSTRAINTS (a breach forces AVOID regardless of other merits): <b>GROWTH FLOOR 10% CAGR</b>.
+
+  BUY   - satisfies every hard constraint and fits the policy well on its weighted dimensions.
+  HOLD  - no hard constraint is breached, but the weighted evidence is mixed or marginal.
+  AVOID - a hard constraint is breached, or the weighted evidence is clearly poor.</div>
+        <p class="diag diag--tight"><span class="marker">What each arm does with those two blocks.</span>
+          <span class="id">kev-4b</span> prefills the document once and asks the typed choice against it,
+          returning a softmax over the three options from its pointer head at <span class="id">T = 2.41</span>
+          — the distribution in the table below, not a word. <span class="id">gpt-5.2</span> receives the same
+          two blocks as a prompt and writes an action, a confidence and a reason. The rule engine never reads
+          either block: it multiplies the bucketed dimension scores by the policy's weights, which is the sum
+          in the first table.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Dimension</th><th scope="col">Score</th><th scope="col">Weight</th><th scope="col">Contribution</th><th scope="col">What drives it</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">growth</th>
+              <td class="sig__sep"><span class="num">+2</span></td>
+              <td class="sig__sep"><span class="num">0.50</span></td>
+              <td class="sig__sep"><span class="num">+1.00</span></td>
+              <td class="sig__def"><span class="num">42%</span> CAGR against a <span class="num">10%</span> floor; Rule of <span class="num">40</span> passes at <span class="num">51</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">balance sheet</th>
+              <td class="sig__sep"><span class="num">+2</span></td>
+              <td class="sig__sep"><span class="num">0.10</span></td>
+              <td class="sig__sep"><span class="num">+0.20</span></td>
+              <td class="sig__def">No net debt, current ratio <span class="num">3.4</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">market context</th>
+              <td class="sig__sep"><span class="num">0</span></td>
+              <td class="sig__sep"><span class="num">0.20</span></td>
+              <td class="sig__sep"><span class="num">0.00</span></td>
+              <td class="sig__def">Beta <span class="num">1.7</span> against a <span class="num">22%</span> drawdown — they cancel</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">valuation</th>
+              <td class="sig__sep"><span class="num">−2</span></td>
+              <td class="sig__sep"><span class="num">0.05</span></td>
+              <td class="sig__sep"><span class="num">−0.10</span></td>
+              <td class="sig__def">Richest <span class="num">4%</span> of its sector, negative FCF — and this policy weighs valuation least</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">profitability</th>
+              <td class="sig__sep"><span class="num">−1</span></td>
+              <td class="sig__sep"><span class="num">0.15</span></td>
+              <td class="sig__sep"><span class="num">−0.15</span></td>
+              <td class="sig__def">ROIC <span class="num">−4%</span>, operating margin <span class="num">−9%</span></td>
+            </tr>
+            <tr class="sig__row--won">
+              <th scope="row" class="sig__name">weighted total</th>
+              <td class="sig__sep"></td>
+              <td class="sig__sep"></td>
+              <td class="sig__sep"><span class="num">+0.95</span></td>
+              <td class="sig__def">The buy threshold is <span class="num">+0.60</span>; between <span class="num">±0.60</span> is the neutral band</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="signals__intro">That sum is what the rule engine decides on. The two models never see it —
+          they see the document and the policy above, and nothing else. What came back:</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Arm</th><th scope="col">Verdict</th><th scope="col">Confidence</th><th scope="col">Keyed on</th><th scope="col">In its own terms</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">rule engine</th>
+              <td class="sig__sep"><span class="id">BUY</span></td>
+              <td class="sig__sep"><span class="num">0.79</span>
+                <span class="sig__gloss">a formula on the score</span></td>
+              <td class="sig__sep">the weighted total</td>
+              <td class="sig__def">“Weighted policy score <span class="num">+0.95</span> clears the buy threshold.” What would change its mind: a material improvement in profitability.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">gpt-5.2</th>
+              <td class="sig__sep"><span class="id">HOLD</span></td>
+              <td class="sig__sep"><span class="num">0.73</span>
+                <span class="sig__gloss">self-reported</span></td>
+              <td class="sig__sep">growth</td>
+              <td class="sig__def">“Revenue growth is very strong … meeting the hard growth floor, but the stock is priced richly … and profitability/ROIC are still negative, making the weighted case positive but not clean enough for a BUY.”</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">kev-4b</th>
+              <td class="sig__sep"><span class="id">AVOID</span></td>
+              <td class="sig__sep"><span class="num">0.25</span>
+                <span class="sig__gloss">calibrated, T = <span class="num">2.41</span></span></td>
+              <td class="sig__sep">profitability</td>
+              <td class="sig__def">The output is the distribution, not the word: <span class="id">BUY</span> <span class="num">0.25</span> / <span class="id">HOLD</span> <span class="num">0.25</span> / <span class="id">AVOID</span> <span class="num">0.50</span>.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sub__body">
+          <p><span class="marker">No arm is wrong here, and that is the point.</span> On a judgement cell the
+            rule engine is not a referee — <span class="num">+0.95</span> is arithmetic over weights a human
+            chose, and whether a <span class="num">−9%</span> operating margin disqualifies a company growing
+            at <span class="num">42%</span> is precisely the question the policy declines to answer. Three
+            defensible readings of one page of numbers is the normal case on these twelve cells, not a
+            malfunction in any of the three.</p>
+          <p class="diag diag--tight"><span class="marker">Read kev's distribution, not its verdict.</span>
+            <span class="num">0.25</span> / <span class="num">0.25</span> / <span class="num">0.50</span> is a
+            near three-way tie, and that <span class="num">0.25</span> sits against the
+            <span class="num">0.66</span> the same head averages on cells where a constraint is breached. The
+            word <span class="id">AVOID</span> is the least informative part of the output. The number beside
+            it is the useful part, and what it says is <em>this one is a coin flip — send it to a
+            human</em>.</p>
+          <p class="diag"><span class="marker">Now read gpt's <span class="num">0.73</span>.</span> Its
+            reasoning is the best of the three: it names the real tension between growth and profitability,
+            which the rule engine's threshold sentence does not. But <span class="num">0.73</span> is the same
+            <em>kind</em> of number it writes where the policy has already settled the answer — it averages
+            <span class="num">0.93</span> on those, and never writes below <span class="num">0.62</span>
+            anywhere in the set. No threshold separates this contested call from an arithmetic one. That is
+            the section's argument inside a single cell: the frontier model produced the better explanation,
+            and the <span class="num">4</span>B model produced the better <em>signal</em>.</p>
         </div>
         </details>
 
