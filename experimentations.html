@@ -1783,6 +1783,31 @@
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
           <div class="sub__body">
+            <p><span class="marker">In one sentence.</span> Take a company's fundamentals as a document,
+              take an investment policy that was written down before anyone looked at the company, and return
+              one of three actions — <span class="id">BUY</span>, <span class="id">HOLD</span> or
+              <span class="id">AVOID</span>. Then put that identical decision to three different kinds of
+              system, and see what separates them.</p>
+            <p class="diag diag--tight">Three things that sentence hides, each of which changes how the
+              numbers further down should be read:</p>
+            <ul class="gates">
+              <li><span class="gate__name">AVOID is not sell</span><span class="gate__val">This is screening,
+                not position management. Nothing here owns anything — there is no portfolio, no entry price
+                and no <span class="id">SELL</span> action in the harness at all.
+                <span class="id">AVOID</span> means “do not take a position under this policy”, which is
+                exactly why one company can be a refusal and a buy in the same pass.</span></li>
+              <li><span class="gate__name">the unit is a pair</span><span class="gate__val">A verdict belongs
+                to a <em>(company, policy)</em> cell, never to a company. Eight companies against four
+                policies is <span class="num">32</span> decisions, and a system returning one answer for a
+                company across all four policies has failed — however defensible that answer looks on its
+                own. That is what the policy-sensitivity column in fold <span class="num">6</span>
+                measures.</span></li>
+              <li><span class="gate__name">not three models</span><span class="gate__val">Three different
+                kinds of thing, which is the whole reason the comparison is interesting: a scoring model
+                handed the options, a generator asked to write one, and deterministic code that cannot be
+                wrong about arithmetic. The rule engine is in the table to be agreed with, not to
+                compete.</span></li>
+            </ul>
             <p><span class="marker">The problem.</span> A large share of real enterprise work is one shape:
               a policy that someone wrote down, a case in front of you, and an action that has to be defensible
               <em>against that policy</em> rather than merely plausible. Credit decisions, underwriting,
