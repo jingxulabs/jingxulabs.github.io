@@ -51,7 +51,7 @@ PAGES = [
                     'on the same 32 policy decisions.',
         subs=[dict(label='ToolSelection', id='toolselection'),
               dict(label='AgentLoop vs Workflow', id='agentloop'),
-              dict(label='DecisionModels', id='decisionmodels')],
+              dict(label='DecisionModels on investment', id='decisionmodels')],
     ),
     dict(
         slug='appdev', out='appdev.html',
@@ -72,9 +72,10 @@ PAGES = [
         slug='reading', out='reading.html', label='2027 reading list',
         id='reading', hero='band',
         title='2027 reading list — Jing Xu',
-        description='Five books for 2027: Christensen on disruption, Horowitz on '
-                    'culture, Bostrom on superintelligence, Dixon on the next '
-                    'internet and Silver on risk.',
+        description='Six books for 2027: Garc\u00eda M\u00e1rquez on solitude, Christensen '
+                    'on disruption, Horowitz on culture, Bostrom on '
+                    'superintelligence, Dixon on the next internet and Silver '
+                    'on risk.',
         subs=[],
     ),
     dict(
