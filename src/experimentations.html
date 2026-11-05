@@ -1686,10 +1686,10 @@
     <!-- ══ PROJECT 3 : real ══ -->
     <article class="spread project project--major" id="decisionmodels">
       <div class="col">
-        <h2 class="project__title">DecisionModels: A 4B Scorer Against GPT-5.2, and What 32 Cells Can Actually Settle</h2>
+        <h2 class="project__title">DecisionModels: Kev-4B Against GPT-5.2, and What 32 Cells Can Actually Settle</h2>
         <p class="lede-para">Eight companies, four investment policies, the same
-          <span class="num">32</span> decisions put to a local <span class="num">4</span>B decision model, to
-          <span class="id">gpt-5.2</span>, and to a deterministic rule engine. The headline agreement is
+          <span class="num">32</span> decisions put to <span class="id">kev-4b</span> on a laptop, to
+          <span class="id">gpt-5.2</span> through a gateway, and to a deterministic rule engine. The headline agreement is
           <span class="num">81</span>–<span class="num">88%</span> and it is close to meaningless:
           <span class="num">20</span> of the <span class="num">32</span> cells are arithmetic, and a model that
           only ever said <span class="id">AVOID</span> would score <span class="num">62%</span>. Twelve cells
@@ -1720,7 +1720,7 @@
               <span class="id">test_harness.py</span> tests the <em>decision system</em> rather than any
               arm of it — monotonicity, boundary fragility, weight sensitivity, dimension dominance and whether
               the fixtures can detect a bad model at all. It needs no endpoint and no credentials, and it is
-              what fold <span class="num">4</span>'s floor comes from. A separate
+              what fold <span class="num">5</span>'s floor comes from. A separate
               <span class="id">arena.html</span> reads precomputed verdicts and opens over
               <span class="id">file://</span> with no server, because the verdicts are generated ahead of time
               into <span class="id">verdicts.js</span>.</p>
@@ -1729,7 +1729,47 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">2</span><span class="sub__name">The difference, exactly</span></span>
+            <span class="sub__label"><span class="sub__num num">2</span><span class="sub__name">The problem, and why it needs an experiment</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">The problem.</span> A large share of real enterprise work is one shape:
+              a policy that someone wrote down, a case in front of you, and an action that has to be defensible
+              <em>against that policy</em> rather than merely plausible. Credit decisions, underwriting,
+              clinical triage, procurement thresholds, investment screening — the domain changes and the shape
+              does not. Stock screening is the version used here because the policies can be written out in
+              full and the arithmetic can be checked by hand, not because the interesting part is finance.</p>
+            <p><span class="marker">Why the obvious answer is unsatisfying.</span> The instinct is to send it
+              to the largest model available. What that buys is a text generator asked to also be a judge: it
+              returns an action, and if you ask nicely, a confidence number it wrote. That number has no
+              trained relationship to how often the model is right. It cannot be thresholded, which means the
+              only operational question anyone actually has — <em>which of these decisions should a human
+              see?</em> — has no answer. You either review everything or you review nothing.</p>
+            <p class="diag"><span class="marker">What a decision model changes.</span> A scoring model is a
+              different shape: it is handed the options rather than asked to invent them, and it returns a
+              probability from a trained head at a fitted temperature. “Escalate anything below
+              <var>p</var>” becomes a line of code instead of a hope. That is the same System One argument the
+              <a href="#toolselection">ToolSelection</a> section above makes for a different stage of the
+              pipeline, which is why it is worth testing on a problem where the right answer is sometimes
+              objectively checkable.</p>
+            <p><span class="marker">So: two questions, and the second is the real one.</span> First, is a
+              <span class="num">4</span>B model running on a laptop actually behind a frontier model on these
+              decisions? And if it is not meaningfully behind — which is the answer fold
+              <span class="num">6</span> reaches — then what property should decide which one gets deployed?
+              An accuracy column that cannot separate them is not an argument for either.</p>
+            <p class="diag"><span class="marker">And why the comparison had to be designed, not just run.</span>
+              Comparisons of this kind usually report one agreement number. That number silently mixes the
+              cells where a stated constraint already settles the answer with the cells where a model is
+              genuinely deciding, and the first kind flatters everyone in the table. Separating them is not a
+              refinement of this experiment; it is the experiment. The floor in fold
+              <span class="num">5</span> was measured before any model was called, precisely so the headline
+              could be checked against it.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">The difference, exactly</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
           <div class="sub__body">
@@ -1777,7 +1817,7 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">Data</span></span>
+            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">Data</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
         <p class="signals__intro">Eight fictional companies against four policies, frozen at
@@ -1818,7 +1858,7 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">Design</span></span>
+            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">Design</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
           <div class="sub__body">
@@ -1848,7 +1888,7 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">Results</span></span>
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Results</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
         <p class="signals__intro">One pass over all <span class="num">32</span> cells per arm. The first table
@@ -1965,7 +2005,7 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Insights, and what would change the answer</span></span>
+            <span class="sub__label"><span class="sub__num num">7</span><span class="sub__name">Insights, and what would change the answer</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
           <div class="sub__body">
