@@ -57,10 +57,12 @@ PAGES = [
         slug='appdev', out='appdev.html',
         label='APP Development', id='appdev', hero='band',
         title='APP Development — Jing Xu',
-        description='HumanizedAI and Cabinet: steering signals for generated prose, '
-                    'and a council of models answering as one.',
+        description='HumanizedAI, Cabinet and The Game of Life: steering signals for '
+                    'generated prose, a council of models answering as one, and two '
+                    'models running a colony each.',
         subs=[dict(label='HumanizedAI', id='humanizedai'),
-              dict(label='Cabinet', id='cabinet')],
+              dict(label='Cabinet', id='cabinet'),
+              dict(label='The Game Of Life', id='gameoflife')],
     ),
     dict(
         slug='posts', out='posts.html', label='Posts', id='posts', hero='band',

@@ -961,6 +961,53 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
   max-width: 52ch;
 }
 
+/* ── Game-of-Life rule diagrams ──────────────────────────────────────────
+   Six 5x5 boards, one per death or birth rule. Azure is the indigo mark and
+   crimson the ochre one, so the two colonies inherit the page's palette and
+   its dark mode without a second set of colours. */
+.life {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.6rem 1.4rem;
+  margin: 1.6rem 0 1.9rem;
+}
+.life__case { margin: 0; }
+.life__g { display: block; width: 100%; max-width: 128px; height: auto; }
+.life__empty  { fill: none; stroke: color-mix(in srgb, var(--ink) 14%, transparent); stroke-width: 1; }
+.life__own    { fill: color-mix(in srgb, var(--indigo) 78%, transparent); }
+.life__enemy  { fill: color-mix(in srgb, var(--ochre) 74%, transparent); }
+.life__hazard {
+  fill: color-mix(in srgb, var(--ink) 11%, transparent);
+  stroke: color-mix(in srgb, var(--ink) 22%, transparent); stroke-width: 1;
+}
+/* The page ground is --bond; drawn over a filled cell it reads as a cut-out. */
+.life__x     { stroke: var(--bond); stroke-width: 2.2; stroke-linecap: round; }
+.life__born  { fill: none; stroke: var(--indigo); stroke-width: 1.4; stroke-dasharray: 3 2.4; }
+.life__plus  { stroke: var(--indigo); stroke-width: 2; stroke-linecap: round; }
+/* The square the rule is about, so a reader knows where to look before
+   reading the caption. */
+.life__focus {
+  fill: none; stroke: var(--ink); stroke-width: 1.6;
+  stroke-dasharray: 2.6 2.2;
+}
+.life__e {
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: 10px; fill: var(--bond); font-weight: 600;
+}
+.life figcaption { margin-top: 0.6rem; }
+.life__name {
+  display: block;
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s); color: var(--ink); letter-spacing: 0.01em;
+}
+.life__cond, .life__note {
+  display: block;
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s); line-height: 1.45; color: var(--graphite);
+}
+.life__note { margin-top: 0.35rem; }
+.shot video { display: block; width: 100%; height: auto; }
+
 /* Screenshots of a running interface. The frame stays quiet: a hairline and
    the page ground, so the shot reads as evidence rather than as promotion. */
 .shot { margin: 2rem 0 1.6rem; }
@@ -1548,6 +1595,7 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
 
   .projfolds, .project--major > .col { width: auto; max-width: none; }
   .ba { grid-template-columns: minmax(0, 1fr); }
+  .life { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .gates li { grid-template-columns: minmax(0, 1fr); row-gap: 0.15rem; }
   .score { gap: 1.4rem; }
   .score__n { font-size: 2.2rem; }

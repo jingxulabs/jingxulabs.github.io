@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>APP Development — Jing Xu</title>
-<meta name="description" content="HumanizedAI and Cabinet: steering signals for generated prose, and a council of models answering as one.">
+<meta name="description" content="HumanizedAI, Cabinet and The Game of Life: steering signals for generated prose, a council of models answering as one, and two models running a colony each.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,7 @@
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2321376F'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="canonical" href="https://jingxulabs.github.io/appdev.html">
-<link rel="stylesheet" href="styles.css?v=e585b60d">
+<link rel="stylesheet" href="styles.css?v=723a9cff">
 </head>
 <body class="page--band">
 
@@ -25,6 +25,7 @@
   <a href="#appdev" aria-current="page">APP Development</a>
   <a href="#humanizedai" class="nav__sub">HumanizedAI</a>
   <a href="#cabinet" class="nav__sub">Cabinet</a>
+  <a href="#gameoflife" class="nav__sub">The Game Of Life</a>
   <a href="posts.html">Posts</a>
   <a href="reading.html">2027 reading list</a>
   <a href="techjokes.html">Tech jokes</a>
@@ -53,7 +54,7 @@
     <div class="spread sechead">
       <div class="rail">
         <!-- COPY -->
-        <p class="sechead__count"><span class="num">2</span> projects</p>
+        <p class="sechead__count"><span class="num">3</span> projects</p>
         <p class="sechead__gloss">Shipped, measured, weaknesses included.</p>
       </div>
       <div class="col">
@@ -792,6 +793,509 @@
                 authentication and multi-user, a cost model for the default provider, and an export path. The
                 record is the user's most valuable asset and currently has no way out.</li>
             </ul>
+          </div>
+        </details>
+
+      </div>
+    </article>
+
+    <!-- ══ PROJECT 3 : real ══ -->
+    <article class="spread project project--major" id="gameoflife">
+      <div class="col">
+        <h2 class="project__title">The Game of Life, Played by Two Models: KEV-4B Against GPT-5.2</h2>
+        <p class="lede-para">Conway's Game of Life has no player. This one has two. Two colonies share a
+          mirrored board, and each generation a decision model reads a report of its colony's position and
+          gives <em>one</em> order — which the engine turns into thresholds and applies to four hundred cells
+          at once. Azure is <span class="id">kev-4b</span> on a laptop, Crimson is
+          <span class="id">gpt-5.2</span> through a gateway. Same board, same report, same questions, same
+          engine; the only variable is who decides. Over ten matches
+          <span class="id">gpt-5.2</span> won <span class="num">9</span>–<span class="num">1</span>, and the
+          reason is one word each model never said.</p>
+      </div>
+
+      <div class="projfolds">
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">1</span><span class="sub__name">Repository</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p class="repo__link">Local, not yet published. <span class="id">SurvivalOfTheSmartest</span></p>
+            <p class="diag">TypeScript throughout — React <span class="num">18</span>, Vite, Tailwind and
+              Recharts. Three processes run it: the local KEV server, a small Python proxy that puts KEV and the
+              gateway behind one endpoint and one answer shape, and the game. The browser never holds a
+              credential and never learns which vendor answered.</p>
+            <p class="diag"><span class="marker">What runs with no model and no network.</span>
+              <span class="id">npm test</span> — <span class="num">40</span> tests across
+              <span class="num">5</span> files in about <span class="num">9</span> seconds: geometry,
+              simultaneity, reproducibility, fairness and balance. The simulation is deterministic, so the same
+              seed and the same decisions replay exactly. Without that, two strategists cannot be compared at
+              all.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">2</span><span class="sub__name">Project overview and summary</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">Conway's Game of Life, in one paragraph.</span> A grid. Each square is
+              alive or dead. The next frame is decided entirely by how many of a square's eight neighbours are
+              alive: a dead square with exactly <span class="num">3</span> live neighbours comes to life, a
+              live square with <span class="num">2</span> or <span class="num">3</span> survives, anything else
+              dies of loneliness or crowding. That is the whole specification, and it is famous because
+              gliders, oscillators and self-replicating machines all fall out of it unbidden. It is a
+              <em>zero-player</em> game: you set the first frame and watch.</p>
+            <p class="diag"><span class="marker">What this adds, and why.</span> Four things, each of which
+              turns a demonstration into a contest.</p>
+            <ul class="next">
+              <li><span class="next__t">A second colony.</span> Two populations share one board and compete
+                for the same squares. Crowding and loneliness still count <em>your own kind only</em>, so the
+                enemy can neither suffocate you nor keep you company — it can only overwhelm you, which is a
+                rule of its own.</li>
+              <li><span class="next__t">Energy, terrain and movement.</span> Cells hold energy, spend it to
+                move and to breed, starve at zero, forage toward nutrients and die on hazards. Reproduction
+                stops being free, which is what makes it a decision instead of an inevitability.</li>
+              <li><span class="next__t">A player — one per colony.</span> Each generation a decision model
+                issues a single order. The order does not move a cell; it moves the <em>thresholds</em> the
+                rules are evaluated with. Conway's rules are fixed forever. These bend every generation,
+                according to a judgement.</li>
+              <li><span class="next__t">Mutations.</span> <span class="id">hardy</span>,
+                <span class="id">thrifty</span>, <span class="id">fertile</span> and
+                <span class="id">swift</span> each bend exactly one rule for the cell carrying them, so a trait
+                can be watched paying off or not.</li>
+            </ul>
+            <p class="diag">So Conway's Life asks whether complexity can come from nothing. This asks something
+              narrower and more testable: <em>does a model's judgement survive contact with an emergent
+              system</em> — one where the consequence of an order arrives two generations after the order
+              does.</p>
+          </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">3</span><span class="sub__name">The rules, in pictures</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro">Six rules decide every square, and they are shown live beside the board
+          because the doctrine moves their numbers each generation. Blue is your colony, ochre the other, and
+          the marked square is the one the rule is about. These are the defaults, with no order in force.</p>
+        <div class="life">
+          <figure class="life__case">
+            <svg class="life__g" viewBox="0 0 109 109" role="img" aria-label="A blue cell at the centre with no blue cell touching it, marked as dying">
+            <rect class="life__own" x="6" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="46" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="86" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__focus" x="43.5" y="43.5" width="22" height="22" rx="3"/>
+            <path class="life__x" d="M50.0 50.0 L59.0 59.0 M59.0 50.0 L50.0 59.0"/>
+            </svg>
+            <figcaption><span class="life__name">Dies alone</span>
+              <span class="life__cond">Fewer than <span class="num">1</span> neighbour <em>of its own colony</em></span>
+              <span class="life__note">Two blue cells sit in the corners, out of reach. The other colony cannot keep you company.</span></figcaption>
+          </figure>
+          <figure class="life__case">
+            <svg class="life__g" viewBox="0 0 109 109" role="img" aria-label="A blue cell with five blue neighbours, marked as dying">
+            <rect class="life__empty" x="6" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="26" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="46" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="66" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="26" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="46" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="66" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__focus" x="43.5" y="43.5" width="22" height="22" rx="3"/>
+            <path class="life__x" d="M50.0 50.0 L59.0 59.0 M59.0 50.0 L50.0 59.0"/>
+            </svg>
+            <figcaption><span class="life__name">Suffocates</span>
+              <span class="life__cond">More than <span class="num">4</span> neighbours of its own colony</span>
+              <span class="life__note">Five of its own around it. This is what EXPAND does to the middle of a colony two generations later.</span></figcaption>
+          </figure>
+          <figure class="life__case">
+            <svg class="life__g" viewBox="0 0 109 109" role="img" aria-label="A blue cell with four red neighbours and one blue neighbour, marked as dying">
+            <rect class="life__empty" x="6" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__enemy" x="26" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__enemy" x="46" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__enemy" x="66" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="26" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="46" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__enemy" x="66" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__focus" x="43.5" y="43.5" width="22" height="22" rx="3"/>
+            <path class="life__x" d="M50.0 50.0 L59.0 59.0 M59.0 50.0 L50.0 59.0"/>
+            </svg>
+            <figcaption><span class="life__name">Overwhelmed</span>
+              <span class="life__cond"><span class="num">4</span>+ enemy neighbours, and at least <span class="num">3</span> more enemies than friends</span>
+              <span class="life__note">Four red against one blue. The only rule by which one colony kills another's cells directly.</span></figcaption>
+          </figure>
+          <figure class="life__case">
+            <svg class="life__g" viewBox="0 0 109 109" role="img" aria-label="A blue cell at the centre showing zero energy">
+            <rect class="life__empty" x="6" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="46" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="26" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="46" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__focus" x="43.5" y="43.5" width="22" height="22" rx="3"/>
+            <text class="life__e" x="54.5" y="58.0" text-anchor="middle">0</text>
+            </svg>
+            <figcaption><span class="life__name">Starves</span>
+              <span class="life__cond">Energy reaches zero</span>
+              <span class="life__note">Company and space are not enough. Every move and every birth is paid for out of energy.</span></figcaption>
+          </figure>
+          <figure class="life__case">
+            <svg class="life__g" viewBox="0 0 109 109" role="img" aria-label="A blue cell standing on a hatched hazard square, marked as dying">
+            <rect class="life__empty" x="6" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__hazard" x="26" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="46" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__hazard" x="66" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="46" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__focus" x="43.5" y="43.5" width="22" height="22" rx="3"/>
+            <path class="life__x" d="M50.0 50.0 L59.0 59.0 M59.0 50.0 L50.0 59.0"/>
+            </svg>
+            <figcaption><span class="life__name">Hazard</span>
+              <span class="life__cond">On a hazard square with low energy, unless <span class="id">hardy</span></span>
+              <span class="life__note">Terrain kills too, and the <span class="id">hardy</span> mutation is the one way to stand on it.</span></figcaption>
+          </figure>
+          <figure class="life__case">
+            <svg class="life__g" viewBox="0 0 109 109" role="img" aria-label="An empty square touched by exactly three blue cells, marked as a birth">
+            <rect class="life__empty" x="6" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="6" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="26" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="46" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="26" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__own" x="26" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="46" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="66" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="6" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="26" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="46" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="66" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__empty" x="86" y="86" width="17" height="17" rx="2"/>
+            <rect class="life__focus" x="43.5" y="43.5" width="22" height="22" rx="3"/>
+            <rect class="life__born" x="46" y="46" width="17" height="17" rx="2"/>
+            <path class="life__plus" d="M50.0 54.5 L59.0 54.5 M54.5 50.0 L54.5 59.0"/>
+            </svg>
+            <figcaption><span class="life__name">Born</span>
+              <span class="life__cond">An empty square touched by exactly <span class="num">3</span> cells of one colony with energy to spare</span>
+              <span class="life__note">Exactly three, and the parents pay for it. Under <span class="id">EXPAND</span> two will do, which roughly triples the eligible ground.</span></figcaption>
+          </figure>
+        </div>
+        <div class="sub__body">
+          <p><span class="marker">One order, four hundred fates.</span> A doctrine is not a move. The engine
+            turns it into thresholds — birth neighbours, crowding limit, energy reserve, birth cost, the energy
+            a newborn starts with, how hard to contest a square — and then applies those to every cell on the
+            board. That indirection is the whole design: the model never touches a cell, so what is being
+            measured is judgement about a population, not micromanagement of it.</p>
+          <p class="diag"><span class="marker">And the trap the game is built around.</span>
+            <span class="id">EXPAND</span> breeds into every loose square, including two-neighbour ones. It is
+            locally sensible every single time, and it is how colonies die: packing cells together pushes their
+            neighbour counts past the crowding limit, and every birth is paid out of the parents' energy, so a
+            colony can breed itself into poverty. The collapse arrives two generations after the order that
+            caused it, which is exactly the lag a greedy decision-maker cannot see. The cascade panel traces it
+            back — <em>gen 6: 6 died → gen 7: 5 died → gen 9: 46 died</em> — and names the order that started
+            it.</p>
+          <p class="diag"><span class="marker">Balance is a test, not a taste.</span> If one order simply wins,
+            the model is not deciding anything and the comparison measures nothing. So EXPAND's three
+            counterweights — crowding limit, newborn energy, birth cost — are swept by
+            <span class="id">balance.test.ts</span>, which fails unless the strongest order stays at or below
+            <span class="num">75%</span> of matches while fewer than a quarter of boards go extinct. At the
+            setting it picks, EXPAND sits exactly on that ceiling at <span class="num">0.75</span>, ahead of
+            FORAGE <span class="num">0.63</span>, CONSOLIDATE <span class="num">0.56</span>, DEFEND
+            <span class="num">0.31</span> and RETREAT <span class="num">0.16</span>. Before the retune, the
+            strongest order won <span class="num">100%</span> of them.</p>
+        </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">The design: what each model is given, and what it returns</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro">One request per colony per generation. Both sides receive the same report
+          format and the same four questions, so any difference in play is a difference in judgement. The
+          report is the entire input: no model sees the board, the history, or what the other model was
+          asked.</p>
+        <div class="ba ba--spec">
+          <div class="ba__pane ba__pane--out">
+            <p class="ba__label">In — the report</p>
+            <dl class="spec">
+              <dt>Position</dt>
+              <dd>Population, mean energy, births and deaths last generation with their causes, open ground
+                adjacent, nutrients and hazards in reach.</dd>
+              <dt>Pressure</dt>
+              <dd>The same figures for the other colony, and where the two are in contact.</dd>
+              <dt>Finished counts, never conclusions</dt>
+              <dd>A line reads <em>“9 cells have 4+ neighbours and will suffocate next generation”</em>. The
+                arithmetic is the engine's; the inference is the model's. That split is what makes a
+                <span class="num">4</span>B model viable here — it never has to count anything.</dd>
+            </dl>
+          </div>
+          <div class="ba__pane ba__pane--soft">
+            <p class="ba__label">Out — four typed answers</p>
+            <dl class="spec">
+              <dt><span class="id">doctrine</span> <span class="sig__gloss">choice</span></dt>
+              <dd>EXPAND · CONSOLIDATE · DEFEND · FORAGE · RETREAT — with a probability over all five, not just
+                the winner.</dd>
+              <dt><span class="id">aggression</span> <span class="sig__gloss">score</span></dt>
+              <dd>How hard to contest squares the other colony wants.</dd>
+              <dt><span class="id">risk</span> <span class="sig__gloss">score</span></dt>
+              <dd>How much energy to spend now for position later.</dd>
+              <dt><span class="id">abandon_salient</span> <span class="sig__gloss">noul</span></dt>
+              <dd>Give up the exposed group, or reinforce it.</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="sub__body">
+          <p><span class="marker">The asymmetry worth naming.</span> KEV answers all four against a single
+            prefill of the report and returns a calibrated probability from a trained pointer head — so on an
+            ambiguous board it says <span class="id">CONSOLIDATE</span> at <span class="num">0.11</span> and
+            the game shows the <span class="num">0.11</span>. GPT-5.2 receives the same report as a prompt and
+            writes the four answers as JSON, including a confidence it chose. Both are parsed into the same
+            structure, so the engine cannot tell them apart.</p>
+          <p class="diag"><span class="marker">Fairness, enforced rather than intended.</span> The map is
+            mirrored left-to-right in terrain and starting cells; sides swap every match; births resolve
+            simultaneously. That last one was a real bug — births were read from the array as it was written,
+            so low-index cells bred first and compounded, and two colonies given <em>identical</em> orders
+            finished <span class="num">155</span> to <span class="num">77</span>. They now finish
+            <span class="num">120</span> to <span class="num">109</span>, and a test fails if the bias
+            returns.</p>
+          <p class="diag"><span class="marker">And nothing is faked when an endpoint is down.</span> If a model
+            is unreachable the round falls back to a local heuristic, the card reads
+            <span class="id">endpoint down — not this model</span>, the readout turns amber, and the scorecard
+            counts it under <em>fallbacks used</em>. A silent fallback would turn the whole comparison into a
+            measurement of the heuristic.</p>
+        </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">Demo</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p>A real match, recorded by driving the running game in a browser rather than animating a replay —
+              the models are deciding on camera, and their latencies and probabilities are on screen as it
+              happens. Thirty-three seconds, sped up; a live KEV decision takes about
+              <span class="num">2.5</span> seconds, so twenty generations is roughly a minute of wall
+              clock.</p>
+          </div>
+        <figure class="shot">
+          <video controls preload="none" poster="media/kev-vs-gpt-poster.jpg" width="1360" height="1080"
+                 aria-label="A recorded match: two colonies on a 20 by 20 board, with each model's decision, confidence and latency shown beneath the arena as the generations advance.">
+            <source src="media/kev-vs-gpt.mp4" type="video/mp4">
+            <p>Your browser cannot play this video. <a href="media/kev-vs-gpt.mp4">Download the match</a>.</p>
+          </video>
+          <figcaption>What to watch: the two decision cards under the arena. Each shows the order, the
+            probability the model put on it, its confidence and the round-trip in milliseconds — about
+            <span class="num">2,764</span>ms for KEV against <span class="num">1,816</span>ms for GPT-5.2 in
+            this frame. The rules panel on the right is live: the numbers in it move when a doctrine
+            changes.</figcaption>
+        </figure>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Results, and why GPT-5.2 seems to win</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro">Ten matches, twenty generations each, sides swapped every match, both models
+          live for all of it — <span class="num">200</span> decisions per side. At the generation limit the
+          engine declares the larger colony the winner, which turns out to matter more than anything either
+          model did.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Arm</th><th scope="col">Wins</th><th scope="col">Final pop., mean</th><th scope="col">Energy / cell</th><th scope="col">Latency / call</th><th scope="col">Illegal / fallback</th></tr></thead>
+          <tbody>
+            <tr class="sig__row--won">
+              <th scope="row" class="sig__name">gpt-5.2 <span class="sig__gloss">gateway</span></th>
+              <td class="sig__sep"><span class="num">9</span></td>
+              <td class="sig__sep"><span class="num">84.6</span></td>
+              <td class="sig__sep"><span class="num">3.23</span></td>
+              <td class="sig__sep"><span class="num">1.87</span>s</td>
+              <td class="sig__sep"><span class="num">0</span> / <span class="num">0</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">kev-4b <span class="sig__gloss">local, 4B params</span></th>
+              <td class="sig__sep"><span class="num">1</span></td>
+              <td class="sig__sep"><span class="num">64.8</span></td>
+              <td class="sig__sep"><span class="num">3.48</span></td>
+              <td class="sig__sep"><span class="num">2.81</span>s</td>
+              <td class="sig__sep"><span class="num">0</span> / <span class="num">0</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sub__body">
+          <p><span class="marker">It is not the board.</span> Sides swapped each match, and GPT won from both:
+            four times as Crimson, five as Azure. It is not reliability either — neither model produced a
+            single illegal answer or needed a single fallback in <span class="num">400</span> live
+            decisions.</p>
+          <p class="diag"><span class="marker">It is one word.</span> Both models reached for
+            <span class="id">FORAGE</span> almost identically — <span class="num">140</span> times against
+            <span class="num">139</span> out of <span class="num">200</span>. The entire difference is the
+            second choice. KEV played <span class="id">RETREAT</span> <span class="num">58</span> times and
+            <span class="id">CONSOLIDATE</span> <em>never</em>. GPT-5.2 played
+            <span class="id">CONSOLIDATE</span> <span class="num">61</span> times and
+            <span class="id">RETREAT</span> <em>never</em>.</p>
+          <p class="diag"><span class="marker">And that word is expensive on this scoreboard.</span> RETREAT
+            raises the energy a cell keeps back before breeding to <span class="num">5</span> — the highest of
+            any doctrine — and cuts contest weight to <span class="num">0.6</span>, so a retreating colony both
+            breeds less and yields contested ground. CONSOLIDATE holds the reserve at <span class="num">4</span>
+            and keeps breeding on exactly three. Sixty-odd calls of that difference, spread across ten matches,
+            is a third more cells at the bell: <span class="num">84.6</span> against
+            <span class="num">64.8</span>.</p>
+          <p class="diag"><span class="marker">Which is not the same as playing worse.</span> KEV's surviving
+            cells finish with <em>more</em> energy each — <span class="num">3.48</span> against
+            <span class="num">3.23</span>. It is playing not to die, in a game scored by headcount at
+            generation <span class="num">20</span>. Change the win condition to “still alive at generation
+            <span class="num">50</span>” or “holds the nutrient squares” and this table is not obviously the
+            same table. The honest headline is that GPT-5.2 is better at <em>this</em> scoreboard, and that a
+            scoreboard is a choice someone made.</p>
+          <p class="diag"><span class="marker">What would strengthen it.</span> One ten-match run at one board
+            size and one prompt. It also predates a fix to the report builder, which had been handing both
+            models a line reading <span class="id">Deaths 0 (5 overcrowded, 1 starved)</span> — a count that
+            contradicted its own breakdown. The fix is in; the tournament has not been re-run, and that is the
+            next thing to do rather than the next thing to claim.</p>
+        </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">7</span><span class="sub__name">Why this is interesting: evolution, and strategy</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="sub__body">
+            <p><span class="marker">On evolution: fitness is not fertility.</span> The board makes a selection
+              argument visible in about forty seconds. A colony that breeds at every opportunity packs itself
+              past the crowding limit and spends the energy its next generation needed — so the most fertile
+              strategy reliably produces the smallest population two generations later. Energy is the budget
+              constraint that turns reproduction into an economic decision rather than a free action, and the
+              mutations bend exactly one rule each, so a trait can be watched earning its keep. None of that is
+              modelled; it falls out of six local rules, which is Conway's original point put to work.</p>
+            <p class="diag"><span class="marker">On strategy: this is what a policy is.</span> One order
+              applies to four hundred cells, none of which the decider can see individually. That is the shape
+              of every real strategic choice — a hiring freeze, a pricing rule, a triage protocol — and it has
+              the same failure mode: the locally sensible order is the one that kills you, and the bill arrives
+              two moves after the decision, attached to something that looks like a different problem. The
+              cascade panel exists to re-attach it.</p>
+            <p class="diag"><span class="marker">And on evaluating models.</span> A static benchmark asks a
+              model one question and grades the answer. It cannot ask whether a judgement <em>compounds</em>,
+              because nothing in a fixed test answers back. A world does: here the same decision is
+              right on generation <span class="num">3</span> and fatal on generation
+              <span class="num">11</span>, and no amount of per-question accuracy predicts which. That is the
+              case for environments over benchmarks, and it is cheap to make — the engine is a few hundred
+              lines, and the thing being tested is a <span class="num">4</span>B model on a laptop.</p>
+            <p class="diag"><span class="marker">The result that stayed with me.</span> Two models with very
+              different budgets played the same board and separated on a single stance neither of them ever
+              crossed into: one never retreats, the other never consolidates. Not a difference of capability,
+              and not visible in any accuracy column — a difference in temperament, which only showed up
+              because something was keeping score over time.</p>
           </div>
         </details>
 
