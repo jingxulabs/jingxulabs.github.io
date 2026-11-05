@@ -1887,11 +1887,19 @@
         <h2 class="project__title">DecisionModels: Kev-4B Against GPT-5.2, and What 32 Cells Can Actually Settle</h2>
         <p class="lede-para">Eight companies, four investment policies, the same
           <span class="num">32</span> decisions put to <span class="id">kev-4b</span> on a laptop, to
-          <span class="id">gpt-5.2</span> through a gateway, and to a deterministic rule engine. The headline agreement is
-          <span class="num">81</span>–<span class="num">88%</span> and it is close to meaningless:
-          <span class="num">20</span> of the <span class="num">32</span> cells are arithmetic, and a model that
-          only ever said <span class="id">AVOID</span> would score <span class="num">62%</span>. Twelve cells
-          test judgement. What separates the arms is not on the accuracy line.</p>
+          <span class="id">gpt-5.2</span> through a gateway, and to a deterministic rule engine. The
+          <span class="num">81</span>–<span class="num">88%</span> agreement is mostly arithmetic:
+          <span class="num">20</span> cells are settled by a stated constraint, which the rule engine gets
+          <span class="num">20/20</span> for nothing, and always-<span class="id">AVOID</span> alone scores
+          <span class="num">62%</span>. On the <span class="num">12</span> cells that need judgement the arms
+          agree <span class="num">58</span>–<span class="num">67%</span> — too few, and too split, to rank
+          anyone. The separation that does hold: only the <span class="num">4</span>B model's confidence can be
+          thresholded — <span class="num">0.31</span> on judgement cells against <span class="num">0.66</span>
+          on breaches, where <span class="id">gpt-5.2</span> never writes a number below
+          <span class="num">0.62</span> — and only the <span class="num">4</span>B model stops re-deciding
+          when the policy changes, <span class="num">5</span> of <span class="num">8</span> companies against
+          <span class="num">7</span> of <span class="num">8</span>. Rules for the arithmetic, a calibrated
+          model for the escalation gate.</p>
       </div>
 
       <div class="projfolds">
