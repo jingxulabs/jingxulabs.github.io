@@ -819,7 +819,9 @@
         <h2 class="project__title">AgentLoop vs Workflow: What Adaptivity Costs, and the One Task It Buys</h2>
         <p class="lede-para">Same model, same tools, same questions, paired question by question: only the control
           flow differs. Accuracy came back a three-way tie and <span class="num">15</span> of
-          <span class="num">15</span> paired tests failed to reach significance. The fixed graph used
+          <span class="num">15</span> paired tests failed to reach significance — then scoring the same answers
+          for retrieved evidence showed <span class="num">15</span> of the loop's <span class="num">50</span>
+          correct ones were never retrieved at all. The fixed graph used
           <span class="num">2.2×</span> fewer tokens for it. Then one task family separated them
           <span class="num">13</span>–<span class="num">0</span>.</p>
       </div>
@@ -838,8 +840,10 @@
                 from the repository as the page loads — but every one of them is now checkable. They come from
                 <span class="id">results/summary.json</span> and <span class="id">results_chain/summary.json</span>
                 of a single live sweep, both committed, and the traces in fold <span class="num">4</span> are
-                quoted from <span class="id">results/runs.json</span> unedited. Clone it and the numbers on this
-                page are in the clone.</span></p>
+                quoted from <span class="id">results/runs.json</span> unedited. The one exception is the
+                grounded-EM table in fold <span class="num">7</span>, which is derived from
+                <span class="id">runs.json</span> by the rule stated beside it — the harness does not score
+                grounding yet. Clone it and the numbers on this page are in the clone.</span></p>
             <p><span class="marker">What a clone gets, and what it does not.</span> Python, MIT licensed. The
               committed results are deliberate — <span class="id">runs.json</span> and
               <span class="id">summary.json</span> for both sweeps are in the repository so the dashboard in
@@ -1090,97 +1094,169 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">Two traces, same tools, same model</span></span>
+            <span class="sub__label"><span class="sub__num num">4</span><span class="sub__name">Three traces, same tools, same model</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
-        <p class="signals__intro">Both examples below are quoted from the run logs, not reconstructed. Each is one
-          question answered by both arms, with the same seed and the same retriever — the pairing is enforced in
-          the runner, so these are literally the same question put to two control flows.</p>
-        <h4 class="worked__head">Case A — a known 2-hop question. The workflow's case.</h4>
-        <p class="diag diag--tight"><span class="marker">Question.</span> “What pistol cartridge was the original
-          cartridge for the service pistol produced by a German arms manufacturer between
-          <span class="num">1896</span> and <span class="num">1937</span>?”
-          <span class="marker">Gold.</span> <span class="id">7.63×25mm Mauser</span>. Both arms answered
-          correctly. Neither one read the sentence that says so.</p>
-        <p class="diag diag--tight"><span class="marker">Where the answer actually is.</span> HotpotQA names the
-          two paragraphs a reader needs. <span class="id">Mauser C96</span> identifies the gun — “a semi-automatic
-          pistol that was originally produced by German arms manufacturer Mauser from
-          <span class="num">1896</span> to <span class="num">1937</span>” — and says nothing about ammunition. The
-          cartridge is in a <em>second</em> paragraph, the one titled <span class="id">7.63×25mm Mauser</span>:
-          “<ins class="docvar__add">The 7.63×25mm Mauser (.30 Mauser Automatic) round was the original cartridge
-          for the Mauser C96 service pistol.</ins>” That is the bridge — gun first, then its cartridge — and it is
-          the paragraph to watch for in both traces below.</p>
+        <p class="signals__intro">All three examples below are quoted from the run logs, not reconstructed. Each
+          is one question answered by both arms, with the same seed and the same retriever — the pairing is
+          enforced in the runner, so these are literally the same question put to two control flows. Each was
+          also checked for <em>grounding</em>: the gold string had to be present in the paragraph text that arm
+          actually retrieved. A correct answer the model could have recalled says nothing about control flow, so
+          every answer called correct below was read, not remembered.</p>
+        <h4 class="worked__head">Case A — a bridge both arms land. The cheaper arm wins.</h4>
+        <p class="diag diag--tight"><span class="marker">Question.</span> “What American horror film directed by
+          Sidney J. Furie was based off an alleged haunting which occurred in <span class="num">1974</span> at
+          Culver City, California?” <span class="marker">Gold.</span> <span class="id">The Entity</span>. Both
+          arms answered correctly, and both had the answer in front of them in a paragraph they had retrieved.</p>
+        <p class="diag diag--tight"><span class="marker">Where the answer is.</span> Either gold paragraph will
+          do. <span class="id">Doris Bither case</span> describes “an alleged haunting which occurred in 1974 at
+          Culver City, California” and then names the film:
+          “<ins class="docvar__add">The case inspired Frank De Felitta's 1978 book “The Entity” which was made
+          into a 1982 film of the same name</ins>.” The paragraph titled <span class="id">The Entity</span> is
+          the one that confirms the director — “a 1982 American horror film directed by Sidney J. Furie”. One
+          retrieval on the question's own wording reaches both.</p>
         <div class="ba ba--spec">
           <div class="ba__pane ba__pane--out">
-            <p class="ba__label">Workflow — 2 LLM calls, 642 tokens</p>
+            <p class="ba__label">Workflow — 2 LLM calls, 483 tokens, correct</p>
             <dl class="spec">
               <dt>decompose</dt>
-              <dd>Writes both queries at once, before seeing anything.</dd>
+              <dd>Both queries come back as paraphrases of the question. There is no bridge entity to write into
+                hop <span class="num">2</span>, so the model restates hop <span class="num">1</span>.</dd>
               <dt>retrieve hop 1</dt>
-              <dd>→ <span class="id">Mauser C96</span>, <span class="id">Luger pistol</span></dd>
+              <dd>→ <span class="id">Doris Bither case</span>, <span class="id">The Entity</span></dd>
               <dt>retrieve hop 2</dt>
-              <dd>“…original cartridge for the <ins class="docvar__add">Luger pistol (P08)</ins>” →
-                <span class="id">Luger pistol</span>, <span class="id">7.65×21mm Parabellum</span></dd>
+              <dd>→ the same two paragraphs; the duplicate is dropped</dd>
               <dt>what synthesize was given</dt>
-              <dd>Three paragraphs — <span class="id">Mauser C96</span>, <span class="id">Luger pistol</span>,
-                <span class="id">7.65×21mm Parabellum</span>. The gold paragraph is not among them. The string
-                <span class="id">7.63×25mm Mauser</span> does not occur in the context, and neither does the
-                phrase “original cartridge”.</dd>
+              <dd>Both gold paragraphs. The answer string and the sentence naming Sidney J. Furie are both in
+                the context.</dd>
               <dt>synthesize</dt>
-              <dd><span class="id">7.63×25mm Mauser</span> ✓ — from the model's own knowledge of the C96. The
-                node's prompt ends “if the paragraphs do not contain the answer, reply with your single best
-                guess anyway”, and that is the branch it took.</dd>
+              <dd><span class="id">The Entity</span> ✓ — grounded, with the director corroborated</dd>
             </dl>
           </div>
           <div class="ba__pane ba__pane--soft">
-            <p class="ba__label">Agent loop — 4 LLM calls, 1,765 tokens</p>
+            <p class="ba__label">Agent loop — 2 LLM calls, 697 tokens, correct</p>
             <dl class="spec">
               <dt>search</dt>
-              <dd>“German arms manufacturer … 1896 and 1937 original cartridge” →
-                the <span class="id">Mauser C96</span> paragraph — the right gun, no cartridge</dd>
-              <dt>search</dt>
-              <dd>“Mauser C96 original cartridge” → the same paragraph again, but this time the trailer reads
-                <ins class="docvar__add">(Similar results: 7.63×25mm Mauser, …)</ins> — the gold paragraph,
-                ranked first, one <span class="id">search</span> away</dd>
-              <dt>lookup</dt>
-              <dd>“original cartridge” → <em>No mention found</em> — correctly, since it is looking inside
-                <span class="id">Mauser C96</span>, which does not discuss ammunition</dd>
+              <dd>“Sidney J. Furie alleged haunting 1974 Culver City California film” →
+                <span class="id">Doris Bither case</span>, whose snippet ends on
+                <ins class="docvar__add">“…made into a 1982 film of the same name”</ins></dd>
               <dt>finish</dt>
-              <dd><span class="id">7.63×25mm Mauser</span> ✓ — without opening the paragraph it had just been
-                handed the title of</dd>
+              <dd><span class="id">The Entity</span> ✓ — grounded, one search, no second hop taken</dd>
             </dl>
           </div>
         </div>
         <div class="sub__body">
-          <p>Same answer, <span class="num">2.7×</span> the tokens, and neither arm grounded it. Three details in
-            that pair matter more than the ratio.</p>
-          <p class="diag diag--tight"><span class="marker">The workflow was right for the wrong reason.</span>
-            Its hop-<span class="num">2</span> query went after the <em>Luger</em> — the wrong gun — because it
-            had to be written before hop <span class="num">1</span> came back. So the evidence was never
-            retrieved at all, and the correct answer came out of the model's prior, not out of the context. The
-            trace shows a clean <span class="num">4</span>-node run and the scorer records an exact match —
-            EM, the all-or-nothing accuracy measure fold <span class="num">7</span> reports — of
-            <span class="num">1.0</span>; nothing in either surface records that the pipeline missed. That
-            is the failure mode of a fixed graph in one frame — not wrong, and not detectably right.</p>
-          <p class="diag diag--tight"><span class="marker">The loop found the evidence and declined to read
-            it.</span> Its second search put <span class="id">7.63×25mm Mauser</span> at the top of the similar
-            results, which is exactly the pointer the architecture exists to follow. It finished instead. Its own
-            prompt tells it to — “call <span class="id">finish</span> as soon as you can answer; do not keep
-            searching to confirm an answer you already have” — so this is a prompt choice showing up in a trace,
-            not a property of agent loops. It is still the honest reading of this run: the extra calls bought a
-            pointer the loop then spent nothing on.</p>
-          <p class="diag"><span class="marker">What this costs the HotpotQA numbers.</span> On the
-            <span class="id">clean</span> condition, of the answers each arm got right, the gold string was
-            present in retrieved paragraph text for <span class="num">9</span> of
-            <span class="num">10</span> (workflow) but only <span class="num">6</span> of
-            <span class="num">10</span> (loop) and <span class="num">5</span> of <span class="num">11</span>
-            (hybrid) — the rest were answered from a title in a similar-results list, or from nothing retrieved at
-            all. The loop is <em>more</em> exposed here than the workflow, because it chooses when to stop while
-            the workflow always stuffs four paragraphs in. Treat fold <span class="num">7</span>'s HotpotQA
-            accuracies as upper bounds on retrieval-grounded answering, and read the invented-entity chains in
-            fold <span class="num">8</span> as the arm comparison that memorisation cannot reach.</p>
+          <p>Same answer, both grounded, and the fixed pipeline got there on <span class="num">483</span> tokens
+            against the loop's <span class="num">697</span>. Two things in that pair are worth more than the
+            ratio.</p>
+          <p class="diag diag--tight"><span class="marker">The question is only two-hop on paper.</span> Its own
+            wording retrieves the gold paragraph, so there is no second hop for either arm to take — the loop's
+            ability to write a query from what it just read had nothing to act on. The DAG's standing bet, that
+            every question is a <span class="num">2</span>-hop bridge, costs nothing when the bet is irrelevant:
+            it paid for one redundant retrieval and no decision. Most of HotpotQA's distractor split looks like
+            this, which is why the workflow's EM in fold <span class="num">7</span> is competitive at all, and
+            why Case C had to be built from invented entities to find a task that separates the arms.</p>
+          <p class="diag"><span class="marker">The loop was right on less evidence.</span> It stopped after one
+            search, having matched the haunting to a film of the same name, and never read the sentence naming
+            the director. The workflow, which always fills four paragraph slots whether or not it needs them,
+            had that sentence and did not use it. Cheaper <em>and</em> better evidenced — the opposite of the
+            intuitive ordering, and the shape of the <span class="num">2.2×</span> the loop spends on clean
+            <span class="num">2</span>-hop questions in fold <span class="num">7</span>.</p>
         </div>
-        <h4 class="worked__head">Case B — a chain of unknown depth. The loop's case.</h4>
+        <h4 class="worked__head">Case B — a bridge whose second hop depends on the first. The loop's case.</h4>
+        <p class="diag diag--tight"><span class="marker">Question.</span> “Who was the base where the
+          <span class="num">413</span>th Flight Test Group is stationed named after?”
+          <span class="marker">Gold.</span> <span class="id">Brig Gen Augustine Warner Robins</span>. The loop
+          answered it from the sentence that says so. The workflow returned the bridge entity instead, and never
+          retrieved the paragraph that holds the answer.</p>
+        <p class="diag diag--tight"><span class="marker">Where the answer is.</span> Two paragraphs, and the
+          order between them is the whole task. <span class="id">413th Flight Test Group</span> says “It is
+          stationed at Robins Air Force Base, Georgia as a tenant unit.” <span class="id">Robins Air Force
+          Base</span> says “<ins class="docvar__add">The base is named in honor of Brig Gen Augustine Warner
+          Robins</ins>, the Air Force's ‘father of logistics’.” The second query cannot be written until the
+          first has come back, because the base's name is the only way to ask it.</p>
+        <div class="ba ba--spec">
+          <div class="ba__pane ba__pane--out">
+            <p class="ba__label">Workflow — 2 LLM calls, 594 tokens, wrong</p>
+            <dl class="spec">
+              <dt>decompose</dt>
+              <dd>hop <span class="num">1</span> = “413th Flight Test Group stationed at which base” — correct.
+                hop <span class="num">2</span> = “What is the namesake of
+                <ins class="docvar__add">Edwards Air Force Base</ins>” — a base had to be named before hop
+                <span class="num">1</span> could return one, so the model supplied one it already knew.</dd>
+              <dt>retrieve hop 1</dt>
+              <dd>→ <span class="id">413th Flight Test Group</span>, <span class="id">46th Test Group</span></dd>
+              <dt>retrieve hop 2</dt>
+              <dd>→ <span class="id">List of U.S. Air Force Test Pilot School alumni</span>,
+                <span class="id">370th Flight Test Squadron</span> — and the 370th really is assigned to the
+                413th, at Edwards, so the wrong trail reads as on-topic</dd>
+              <dt>what synthesize was given</dt>
+              <dd>Four paragraphs in which the string <span class="id">Augustine</span> does not occur, and no
+                sentence saying what any base is named after.</dd>
+              <dt>synthesize</dt>
+              <dd><span class="id">Robins Air Force Base</span> ✗ — the bridge entity itself, read off hop
+                <span class="num">1</span>. EM <span class="num">0</span>, F1 <span class="num">0.22</span>.</dd>
+            </dl>
+          </div>
+          <div class="ba__pane ba__pane--soft">
+            <p class="ba__label">Agent loop — 3 LLM calls, 1,162 tokens, correct</p>
+            <dl class="spec">
+              <dt>search</dt>
+              <dd>“413th Flight Test Group stationed at base named after who” → “It is stationed at
+                <span class="id">Robins Air Force Base</span>, Georgia as a tenant unit.”</dd>
+              <dt>search</dt>
+              <dd>“Robins Air Force Base named after” — the query that could not have been written one step
+                earlier → “<ins class="docvar__add">The base is named in honor of Brig Gen Augustine Warner
+                Robins</ins>, the Air Force's ‘father of logistics’.”</dd>
+              <dt>finish</dt>
+              <dd><span class="id">Brig Gen Augustine Warner Robins</span> ✓ — grounded; the answer string came
+                out of the paragraph it had just read</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="sub__body">
+          <p>Four tool calls, and the entire argument is in them. Hop <span class="num">2</span>'s query is a
+            function of hop <span class="num">1</span>'s result; the DAG emits both from one
+            <span class="id">decompose</span> call, so that function cannot be computed. What makes it the
+            characteristic failure rather than merely a wrong answer is how it looks from outside: a clean
+            <span class="num">4</span>-node trace, a plausible answer, a <span class="num">594</span>-token bill,
+            and nothing anywhere recording that the evidence was never retrieved.</p>
+          <p class="diag diag--tight"><span class="marker">Notice which arm the model's knowledge hurt.</span>
+            The empty slot in hop <span class="num">2</span> was filled from the model's prior — Edwards is the
+            famous flight-test base — and the retriever returned Edwards paragraphs for it, one of which names
+            the 413th. Recall did not rescue the pipeline; it furnished it with a self-consistent wrong trail.
+            This is also why the comparison cannot be run on answers the model could have produced from memory:
+            prior knowledge does not fail neutrally across the two architectures.</p>
+          <p class="diag"><span class="marker">What the loop paid.</span>
+            <span class="num">594</span> → <span class="num">1,162</span> tokens and
+            <span class="num">2</span> → <span class="num">3</span> LLM calls, for the one edge the DAG does not
+            have. Case A is that same premium spent on a question that did not need it. And the honest bound on
+            this case: a <span class="id">retrieve → extract bridge entity → retrieve</span> pipeline would
+            answer it for one more LLM call and stay fully deterministic — read Case B as what a one-shot
+            decomposition cannot do, not as what no fixed graph can do.</p>
+        </div>
+        <h4 class="worked__head">What EM does not record</h4>
+        <p class="diag diag--tight">Both cases above were chosen from the subset where the winning answer was
+          grounded, because on this benchmark a correct answer and a retrieved one come apart more often than an
+          accuracy column suggests. Of the answers each arm got right on the <span class="id">clean</span>
+          condition, the gold string was actually present in retrieved paragraph text for
+          <span class="num">9</span> of <span class="num">10</span> (workflow),
+          <span class="num">6</span> of <span class="num">10</span> (loop) and <span class="num">9</span> of
+          <span class="num">11</span> (hybrid). Fold <span class="num">7</span> carries the same score over all
+          five conditions. The rest were answered from a paragraph title glimpsed in a
+          <span class="id">(Similar results: …)</span> trailer, or from nothing retrieved at all.</p>
+        <p class="diag">The loop is <em>more</em> exposed than the DAG here, which is the opposite of the
+          intuitive reading: it chooses when to stop — its prompt says “call <span class="id">finish</span> as
+          soon as you can answer; do not keep searching to confirm an answer you already have” — while the DAG
+          always puts four paragraphs in front of <span class="id">synthesize</span>. The worst pair in the set
+          is question <span class="id">5a8756f2</span>, gold <span class="id">7.63×25mm Mauser</span>: the
+          workflow's second query went after the wrong pistol and it answered correctly anyway, out of the
+          model's knowledge of the C96; the loop saw the gold paragraph ranked first in a similar-results
+          trailer and finished without opening it. Both scored EM <span class="num">1.0</span> and neither read
+          the sentence. That pair is why fold <span class="num">7</span>'s HotpotQA accuracies should be read as
+          upper bounds on retrieval-grounded answering, and why the invented-entity chains in fold
+          <span class="num">8</span> — and Case C below — are the arm comparison memorisation cannot reach.</p>
+        <h4 class="worked__head">Case C — a chain of unknown depth. The capability case.</h4>
         <p class="diag diag--tight"><span class="marker">Question.</span> “Starting from the station
           <span class="id">Mirmidel</span> and following each designated successor in turn until you reach the
           terminal station, what is that terminal station's catalogue code?”
@@ -1238,7 +1314,7 @@
             <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">When to reach for which</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
-        <p class="signals__intro">The two cases above generalise along one axis: <em>is the shape of the work
+        <p class="signals__intro">The three cases above generalise along one axis: <em>is the shape of the work
           known before the request arrives?</em> If it is, writing it down is cheaper and more predictable than
           paying a model to rediscover it. If it is not, no amount of prompt engineering substitutes for an edge
           that goes back. The last column separates what this experiment measured from what it only argues.</p>
@@ -1429,9 +1505,9 @@
           <span class="num">3</span> arms), <span class="num">58</span> minutes wall clock. Rolled up across all
           five conditions. <span class="marker">EM</span> and <span class="marker">F1</span> are HotpotQA's own
           two scores, each read against the same gold answer once both strings have been lowercased and
-          stripped of punctuation and articles. EM is exact match, and it is all-or-nothing: for Case A in
-          fold <span class="num">4</span>, <span class="id">7.63×25mm Mauser</span> scores and
-          <span class="id">the 7.63 mm Mauser round</span> does not. F1 is the token overlap between the two,
+          stripped of punctuation and articles. EM is exact match, and it is all-or-nothing: for Case B in
+          fold <span class="num">4</span>, <span class="id">Brig Gen Augustine Warner Robins</span> scores and
+          <span class="id">Augustine Robins</span> does not. F1 is the token overlap between the two,
           so a near miss earns part of a point; the pair read together separates an arm that is wrong from one
           that is merely wordy. <span class="marker">tail</span> is tokens p95 ÷ mean — how far the expensive
           runs sit from the typical one. <span class="marker">CV</span> is the coefficient of variation of
@@ -1480,7 +1556,75 @@
             <em>none</em> of the <span class="num">15</span> paired head-to-head comparisons reached
             significance — every exact-McNemar p ≥ <span class="num">0.25</span> at n =
             <span class="num">20</span> per cell. The accuracy column does not discriminate between these
-            architectures on this benchmark. The cost columns do, and decisively.</p>
+            architectures on this benchmark. The cost columns do, and decisively — and so does the
+            grounding column below, in the direction the intuition gets backwards.</p>
+        </div>
+        <p class="signals__intro"><span class="marker">The same runs, scored for evidence.</span> EM scores the
+          answer string, so a question the model already knew scores exactly like one the arm retrieved — and
+          fold <span class="num">4</span> shows what that hides. <span class="marker">grounded EM</span> is the
+          stricter score: the answer is exact-match correct <em>and</em> the gold string occurs in the paragraph
+          text that arm actually put in front of its own model. It is computed from
+          <span class="id">results/runs.json</span> by that rule rather than read from
+          <span class="id">summary.json</span>, over the <span class="num">98</span> of
+          <span class="num">100</span> paired cells where it can be assessed — two comparison questions have
+          yes/no gold answers, which no paragraph can be said to contain, and they are dropped for every arm so
+          the pairing survives.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Arm</th><th scope="col">EM</th><th scope="col">grounded EM</th><th scope="col">correct</th><th scope="col">of those, unevidenced</th></tr></thead>
+          <tbody>
+            <tr class="sig__row--won">
+              <th scope="row" class="sig__name">workflow</th>
+              <td class="sig__sep"><span class="num">0.510</span></td>
+              <td class="sig__sep"><span class="num">0.480</span></td>
+              <td class="sig__sep"><span class="num">50</span></td>
+              <td class="sig__sep"><span class="num">3</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">react</th>
+              <td class="sig__sep"><span class="num">0.510</span></td>
+              <td class="sig__sep"><span class="num">0.357</span></td>
+              <td class="sig__sep"><span class="num">50</span></td>
+              <td class="sig__sep"><span class="num">15</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">hybrid</th>
+              <td class="sig__sep"><span class="num">0.531</span></td>
+              <td class="sig__sep"><span class="num">0.449</span></td>
+              <td class="sig__sep"><span class="num">52</span></td>
+              <td class="sig__sep"><span class="num">8</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sub__body">
+          <p><span class="marker">How to read it.</span> The EM column differs from the one above only by those
+            two dropped questions; the runs are identical. The tie survives that column and does not survive the
+            next. All three arms answer about the same number of questions correctly, and the loop reaches a
+            quarter fewer of them through its own retrieval — <span class="num">35</span> grounded answers
+            against the workflow's <span class="num">47</span>. Put the other way: <span class="num">15</span>
+            of the loop's <span class="num">50</span> correct answers came from a paragraph title glimpsed in a
+            <span class="id">(Similar results: …)</span> trailer or from the model's prior, against
+            <span class="num">3</span> of the workflow's.</p>
+          <p class="diag diag--tight"><span class="marker">Why the loop loses the column it looks like it
+            should win.</span> It decides when to stop, and its prompt tells it to stop early — “call
+            <span class="id">finish</span> as soon as you can answer; do not keep searching to confirm an answer
+            you already have.” A model that already knows the answer satisfies that instruction after one search
+            that returned nothing useful. The DAG has no early exit: it runs both retrievals every time and puts
+            four paragraphs in front of <span class="id">synthesize</span>, so when it is right it is usually
+            right for the recorded reason. That makes this partly a prompt choice wearing an architecture's
+            clothes — and it is the one number on this page where the two are genuinely hard to separate.</p>
+          <p class="diag"><span class="marker">What this is not.</span> It is not a significant result per
+            condition. On grounded correctness every per-condition exact-McNemar p is ≥
+            <span class="num">0.22</span> — the same verdict the plain-EM tests returned, so the count of
+            non-significant paired tests is now <span class="num">30</span> of <span class="num">30</span>.
+            Pooled over all five conditions the workflow is grounded-correct where the loop is not
+            <span class="num">21</span> times against <span class="num">9</span>, p =
+            <span class="num">0.043</span>, but those <span class="num">100</span> cells reuse only
+            <span class="num">30</span> distinct questions across five perturbations, so they are not
+            independent and that p-value is not a licence. What is worth taking is the direction, which holds in
+            four of the five conditions and ties in the fifth, and the size of the gap between EM and grounded
+            EM — the reason to distrust an accuracy tie on a benchmark built from facts a model may already
+            know. The invented-entity chains in fold <span class="num">8</span> are the arm comparison that
+            needs none of this caveat.</p>
         </div>
         <p class="signals__intro">The same exact-match score as the <span class="marker">EM</span> column above,
           split by condition rather than rolled up: every cell is one arm's EM over that condition's
@@ -1597,7 +1741,7 @@
           depth <var>d</var> needs <var>d</var>+<span class="num">1</span> retrievals and <var>d</var> is
           invisible from the question. Entity names are invented so no arm can shortcut through memorised
           knowledge, and <span class="num">4</span> decoy chains make the end paragraphs indistinguishable, so
-          blind guessing floors at about <span class="num">20%</span>. Case B in fold
+          blind guessing floors at about <span class="num">20%</span>. Case C in fold
           <span class="num">4</span> is one of these questions. The two accuracy columns are exact match again,
           each over the <span class="num">15</span> paired questions of that set; <span class="marker">calls
           (deep)</span> and <span class="marker">tokens (deep)</span> are per-run means on the deep set alone —
@@ -1690,12 +1834,16 @@
                 EM alone it would have concluded “no difference” and been useless. The decision lives in cost
                 <em>variance</em>: CV <span class="num">0.31</span> against <span class="num">0.81</span>. One is
                 a point mass you can put in an SLA, a service-level agreement; the other has a tail the model
-                chooses at run time.</li>
+                chooses at run time. The column was also generous: rescored for retrieved evidence, the loop
+                falls from <span class="num">0.510</span> to <span class="num">0.357</span> while the workflow
+                holds <span class="num">0.480</span>, because <span class="num">15</span> of the loop's
+                <span class="num">50</span> correct answers were never retrieved at all.</li>
               <li><span class="next__t">Adaptivity is a tax until you can name the task that needs it.</span>
                 On clean <span class="num">2</span>-hop questions the loop spent <span class="num">2.2×</span> the
                 tokens to rediscover a shape that was already written down. Case A in fold
-                <span class="num">4</span> shows the shape of that waste: a repeat search and a lookup that
-                found nothing.</li>
+                <span class="num">4</span> shows the shape of that waste: a question the first retrieval
+                already answered, where the loop's extra tokens bought no evidence the workflow did not
+                already have.</li>
               <li><span class="next__t">But when the task needs it, nothing substitutes.</span>
                 <span class="num">13</span>–<span class="num">0</span>, p = <span class="num">0.0002</span>. Two
                 retrievals cannot traverse four links, and no prompt or model upgrade changes that. The useful
