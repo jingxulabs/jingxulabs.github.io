@@ -1114,6 +1114,27 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
    example in Data has no counterpart to sit beside, and its corpus quote
    needs the full measure anyway. */
 .ba__pane--solo { margin-bottom: 2.1rem; }
+
+/* A machine document quoted whole — the state a scoring model is prefilled
+   with. Monospace because the dot leaders are load-bearing: they are what
+   makes it one aligned document rather than five sentences. It scrolls
+   rather than reflows, because a wrapped line would break the column the
+   figures stand in, and a reader checking 2.6 against a ceiling needs that
+   column intact. */
+.doc {
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  white-space: pre;
+  overflow-x: auto;
+  margin: 0 0 1.3rem;
+  padding: 0.95rem 1.1rem;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 4%, var(--bond));
+  border-left: 2px solid color-mix(in srgb, var(--ink) 16%, transparent);
+}
+/* The ochre band marks the two lines a verdict actually turned on. */
+.doc b { font-weight: 500; background: var(--band); padding: 0 0.15em; }
 .spec { margin: 1rem 0 0; }
 .spec dt {
   font-family: "Archivo Narrow", "Arial Narrow", sans-serif;

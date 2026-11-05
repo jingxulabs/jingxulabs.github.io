@@ -1813,6 +1813,78 @@
             </dl>
           </div>
         </div>
+        <h4 class="worked__head">The document, and the question put against it</h4>
+        <p class="diag diag--tight">The state document for one company, quoted whole. This is the prefill, and
+          it is the same text the GPT arm receives — neither is given anything the other is not. Every figure
+          in it was computed in Python before either model was called. The two lines this company's
+          <span class="id">CAPITAL_PRESERVATION</span> verdict turns on are marked.</p>
+        <div class="doc">COMPANY: ATLAS GRID UTILITIES
+SECTOR: Utilities
+FUNDAMENTALS AS OF 2026-06-30 (all figures precomputed)
+
+[VALUATION]
+  P/E percentile vs sector ...... 48 (mid)
+  FCF yield ..................... 4.2%
+  EV/EBITDA ..................... 9.5
+[GROWTH]
+  Revenue CAGR 3y ............... 2.0%
+  EPS growth .................... 3.0%
+  Rule of 40 .................... 9.0 (fails)
+[BALANCE_SHEET]
+  Net debt / EBITDA ............. <b>2.6x</b>
+  Interest coverage ............. 5.4x
+  Current ratio ................. 1.3
+[PROFITABILITY]
+  ROIC .......................... 7.0%
+  Operating margin .............. 18.0%
+  Gross margin .................. 41.0%
+[MARKET_CONTEXT]
+  Beta .......................... 0.4
+  Drawdown from high ............ 6.0%
+  Dividend yield ................ 4.4%</div>
+        <p class="diag diag--tight">And the question put against it, once per policy — four of these share the
+          one prefill above. Wrapped here to fit the column; the document above is not:</p>
+        <div class="doc">Apply the CAPITAL_PRESERVATION investment policy to this company and choose one action.
+Policy thesis: Do not lose money. Drawdown and dividend safety first; upside is
+               whatever is left over.
+Dimension weights: valuation 0.20, growth 0.05, balance_sheet 0.30,
+                   profitability 0.15, market_context 0.30.
+HARD CONSTRAINTS (a breach forces AVOID regardless of other merits):
+  <b>LEVERAGE CEILING 2.5x</b>; BETA CEILING 1.2; POSITIVE FCF REQUIRED.
+
+  BUY   - satisfies every hard constraint and fits the policy well on its weighted dimensions.
+  HOLD  - no hard constraint is breached, but the weighted evidence is mixed or marginal.
+  AVOID - a hard constraint is breached, or the weighted evidence is clearly poor.</div>
+        <div class="sub__body">
+          <p><span class="marker">So the job is not financial reasoning.</span> The ratios, the sector
+            percentiles and the −<span class="num">2</span>…+<span class="num">2</span> bucketing are all
+            Python, and several lines arrive with the judgement already made in words —
+            <span class="id">48 (mid)</span>, <span class="id">9.0 (fails)</span>,
+            <span class="id">n/a (no EBITDA)</span> elsewhere in the set. What is left is matching: one
+            document, one policy with a thesis and five weights, three options with written criteria. Kev
+            scores the three and returns a probability over them. A <span class="num">4</span>B model can do
+            that without knowing what EBITDA is, which is the point — the task was shaped so that it would
+            not have to.</p>
+          <p class="diag"><span class="marker">The one thing it must work out for itself is a comparison, and
+            that is exactly where it failed.</span> Nothing tells either model which constraints are breached.
+            The policy supplies a ceiling as a label, the document supplies a figure, and noticing that
+            <span class="num">2.6</span> exceeds <span class="num">2.5</span> is the model's own work. Twenty
+            of the thirty-two cells turn on precisely that, and Kev got nineteen. On this one it returned
+            <span class="id">HOLD</span> — and everything else in the document is a textbook
+            capital-preservation holding: beta <span class="num">0.4</span>, a <span class="num">6%</span>
+            drawdown, a <span class="num">4.4%</span> dividend, and market context is the joint-heaviest
+            weight in the policy at <span class="num">0.30</span>. The weighted evidence is strongly
+            favourable and one digit is not. It weighed the cell when it should have checked it, and the
+            <span class="num">0.24</span> confidence says it half knew.</p>
+          <p class="diag"><span class="marker">The arena withholds the breach on purpose.</span> It could
+            have handed both arms the answer — the repository's offline verdict generator does exactly that,
+            opening its prompt with <span class="id">PRE-CHECKED HARD CONSTRAINT BREACHES</span> — and the
+            arena deliberately does not, because a constraint a model is told about is not a constraint it
+            has been tested on. The result is the argument for putting the comparison back into code in
+            production. Twenty of these cells never needed a model at all; a rule engine gets every one of
+            them right, for free, in no time. Spend the model on the twelve cells where there is nothing to
+            compare.</p>
+        </div>
         </details>
 
         <details class="sub">
