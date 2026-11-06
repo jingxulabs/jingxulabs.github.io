@@ -808,9 +808,10 @@
           gives <em>one</em> order — which the engine turns into thresholds and applies to four hundred cells
           at once. Azure is <span class="id">kev-4b</span> on a laptop, Crimson is
           <span class="id">gpt-5.2</span> through a gateway. Same board, same report, same questions, same
-          engine; the only variable is who decides. Over ten matches
-          <span class="id">gpt-5.2</span> won <span class="num">9</span>–<span class="num">1</span>, and the
-          reason is one word each model never said.</p>
+          engine; the only variable is who decides. Ten matches went
+          <span class="num">9</span>–<span class="num">1</span> to <span class="id">gpt-5.2</span> — a smoke
+          test, not a verdict — and the interesting part is not the scoreline but its cause: one word each
+          model never said.</p>
       </div>
 
       <div class="projfolds">
@@ -1203,13 +1204,20 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Results, and why GPT-5.2 seems to win</span></span>
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">A ten-match smoke test, and why GPT-5.2 seems to win</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
-        <p class="signals__intro">Ten matches, twenty generations each, sides swapped every match, both models
-          live for all of it — <span class="num">200</span> decisions per side. At the generation limit the
-          engine declares the larger colony the winner, which turns out to matter more than anything either
-          model did.</p>
+        <p class="signals__intro"><span class="marker">Read this as a smoke test.</span> Ten matches of
+          twenty generations, one board size, one prompt, one family of seeds, both models live throughout —
+          <span class="num">200</span> decisions a side. That is enough to prove the harness runs end to end
+          and to show <em>where</em> two strategists diverge. It is not enough to rank them, and nothing below
+          should be read as a measurement of either model. At the generation limit the engine declares the
+          larger colony the winner, which turns out to matter more than anything either model did.</p>
+        <p class="signals__intro">On the scoreline itself: <span class="num">9</span>–<span class="num">1</span>
+          across ten paired matches is an exact two-sided binomial p of <span class="num">0.021</span> against
+          a coin, so chance alone is an awkward explanation for it. The limits here are not sample noise —
+          they are that one board size, one generation limit and one prompt were tried, and that this run
+          predates a fix described at the end of this fold.</p>
         <table class="sig sig--meas">
           <thead><tr><th scope="col">Arm</th><th scope="col">Wins</th><th scope="col">Final pop., mean</th><th scope="col">Energy / cell</th><th scope="col">Latency / call</th><th scope="col">Illegal / fallback</th></tr></thead>
           <tbody>
@@ -1257,11 +1265,14 @@
             <span class="num">50</span>” or “holds the nutrient squares” and this table is not obviously the
             same table. The honest headline is that GPT-5.2 is better at <em>this</em> scoreboard, and that a
             scoreboard is a choice someone made.</p>
-          <p class="diag"><span class="marker">What would strengthen it.</span> One ten-match run at one board
-            size and one prompt. It also predates a fix to the report builder, which had been handing both
-            models a line reading <span class="id">Deaths 0 (5 overcrowded, 1 starved)</span> — a count that
-            contradicted its own breakdown. The fix is in; the tournament has not been re-run, and that is the
-            next thing to do rather than the next thing to claim.</p>
+          <p class="diag"><span class="marker">What would turn the smoke test into a result.</span> Vary
+            the board size and the generation limit, run the same seeds under a second prompt, and push the
+            match count far enough that a stance profile and not a scoreline is the unit of measurement. And
+            re-run it: this tournament predates a fix to the report builder, which had been handing both models
+            a line reading <span class="id">Deaths 0 (5 overcrowded, 1 starved)</span> — a count that
+            contradicted its own breakdown, in the one document either model is given to reason over. The fix
+            is in; the tournament has not been re-run, and that is the next thing to do rather than the next
+            thing to claim.</p>
         </div>
         </details>
 
