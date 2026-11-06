@@ -12,7 +12,7 @@
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2321376F'/%3E%3Cpath d='M3 8 C12 22, 18 25, 29 25' stroke='%23E0A644' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="canonical" href="https://jingxulabs.github.io/appdev.html">
-<link rel="stylesheet" href="styles.css?v=723a9cff">
+<link rel="stylesheet" href="styles.css?v=22446ca2">
 </head>
 <body class="page--band">
 
@@ -1173,6 +1173,74 @@
             <span class="id">endpoint down — not this model</span>, the readout turns amber, and the scorecard
             counts it under <em>fallbacks used</em>. A silent fallback would turn the whole comparison into a
             measurement of the heuristic.</p>
+        </div>
+        <h4 class="worked__head">What KEV's probability is a probability of</h4>
+        <p class="diag diag--tight">The number beside each order is not a word the model wrote down. For a
+          <span class="id">choice</span> question with <var>K</var> options, a pointer head scores each supplied
+          option against the state and the answer is a distribution over exactly those options:</p>
+        <div class="eq">
+          <div class="eq__line">
+            <span>p(a<sub>q</sub> = k | S, q) =</span>
+            <span class="eq__frac">
+              <span class="eq__num">exp(z<sub>k</sub> / T)</span>
+              <span class="eq__den">&Sigma;<sub>j=1..K</sub> exp(z<sub>j</sub> / T)</span>
+            </span>
+            <span class="eq__tag">— a softmax over the options, at the fitted temperature</span>
+          </div>
+          <div class="eq__line">
+            <span>z<sub>k</sub> = (W<sub>k</sub> h<sub>k</sub>) &middot; (W<sub>q</sub> h<sub>d</sub>) /
+              &radic;d<sub>p</sub></span>
+            <span class="eq__tag">— the pointer score: option k read against the decision point</span>
+          </div>
+          <div class="eq__line">
+            <span>confidence =</span>
+            <span class="eq__frac">
+              <span class="eq__num">p<sub>max</sub> &minus; 1/K</span>
+              <span class="eq__den">1 &minus; 1/K</span>
+            </span>
+            <span class="eq__tag">— distance above chance: <span class="num">0</span> at a flat split,
+              <span class="num">1</span> at certainty</span>
+          </div>
+          <dl class="eq__where">
+            <dt>S</dt>
+            <dd>the state — this colony's report for this generation, prefilled once and shared by all four
+              questions</dd>
+            <dt>q</dt>
+            <dd>the question: its instructions, and the <var>K</var> option names with their written
+              criteria</dd>
+            <dt>h<sub>d</sub>, h<sub>k</sub></dt>
+            <dd>the hidden states at the decision point of <var>q</var>'s branch, and at option
+              <var>k</var></dd>
+            <dt>d<sub>p</sub></dt>
+            <dd>the pointer dimension, <span class="num">256</span>; the <span class="num">1</span>/&radic;d<sub>p</sub>
+              scale keeps the dot product in range as the head widens</dd>
+            <dt>T</dt>
+            <dd>one calibration temperature, <span class="num">2.41</span> for this checkpoint, fitted on
+              held-out rows and applied at inference only — training always sees T =
+              <span class="num">1</span>, and dividing by a scalar cannot change which option wins</dd>
+          </dl>
+        </div>
+        <div class="sub__body">
+          <p><span class="marker">Now the part that matters for the game: what it is <em>not</em>
+            conditioned on.</span> The four questions share the prefill <var>S</var> and are isolated from one
+            another — each branch attends to the state and to its own options, never to another question or
+            another answer. So a turn produces four separate conditionals
+            p(a<sub>q</sub> | S, q), not a joint
+            p(doctrine, aggression, risk, abandon | S). The model cannot make its aggression answer depend on
+            the doctrine it just chose, because when it answers it has not chosen one.</p>
+          <p class="diag">That is a real constraint and it is deliberate. It is what lets four questions ride on
+            one prefill — the reason a <span class="num">4</span>B model answers a turn in
+            <span class="num">2.5</span>s instead of four round trips — and it is why composition is the
+            engine's job: the doctrine picks the threshold set, and aggression and risk then modulate it. A
+            model that could condition each answer on the last would be strictly more expressive and strictly
+            slower, and it would also make the four answers impossible to attribute separately when a colony
+            collapses.</p>
+          <p class="diag"><span class="marker">GPT-5.2, by contrast, writes one JSON object.</span> Its four
+            fields <em>are</em> a joint sample — later fields are conditioned on the tokens of the earlier ones
+            — and its confidence is a number it chose to emit rather than a function of anything. The two
+            columns in the scorecard labelled <em>confidence</em> are therefore different quantities with the
+            same name, which is worth remembering before comparing them: the separation between easy and hard
+            boards is comparable, the absolute values are not.</p>
         </div>
         </details>
 

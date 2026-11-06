@@ -1008,6 +1008,48 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
 .life__note { margin-top: 0.35rem; }
 .shot video { display: block; width: 100%; height: auto; }
 
+/* ── Equations ───────────────────────────────────────────────────────────
+   Set in the mono face the page already uses for numbers, so an equation
+   reads as the same kind of object as a figure in a table. The fraction is
+   a two-row inline flex with a rule between, which beats MathML here only
+   because every glyph then comes from one font. */
+.eq {
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: 0.95em;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 1.3rem 0;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+}
+.eq__line { display: flex; align-items: center; gap: 0.5em; flex-wrap: wrap; }
+.eq__line + .eq__line { margin-top: 1.1rem; }
+.eq__frac {
+  display: inline-flex; flex-direction: column; text-align: center;
+  vertical-align: middle;
+}
+.eq__num { padding: 0 0.45em 0.12em; }
+.eq__den {
+  padding: 0.12em 0.45em 0;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 45%, transparent);
+}
+.eq__tag { color: var(--graphite); font-size: 0.92em; }
+.eq__where {
+  margin: 0.9rem 0 0;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.3rem 0.9rem;
+  font-family: "Archivo Narrow", "Arial Narrow", sans-serif;
+  font-size: var(--t-s);
+  line-height: 1.45;
+  color: var(--graphite);
+}
+.eq__where dt {
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  color: var(--ink);
+}
+.eq__where dd { margin: 0; }
+
 /* Screenshots of a running interface. The frame stays quiet: a hairline and
    the page ground, so the shot reads as evidence rather than as promotion. */
 .shot { margin: 2rem 0 1.6rem; }
