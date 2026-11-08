@@ -1760,6 +1760,30 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
   .sig--doc .sig__def { display: none; }
 }
 
+/* The softmax worked example. Three of its columns are arithmetic, so they
+   set in the mono face and align right against the rule; the fourth is prose
+   and stays in the body face. The summation row is the denominator, which is
+   a different kind of row from the five above it — hairline above, no rule
+   below, and no highlight. */
+.worked__soft .sig__sep {
+  width: 7.2rem;
+  font-family: "Spline Sans Mono", ui-monospace, monospace;
+  font-size: 0.88em;
+}
+.worked__soft thead th { font-family: "Archivo Narrow", "Arial Narrow", sans-serif; }
+.worked__soft .sig__name { width: 9.5rem; }
+.worked__soft .sig__def { width: auto; }
+.worked__sum > * {
+  border-top: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+  color: var(--graphite);
+}
+.worked__soft tbody tr.worked__sum { border-bottom: 0; }
+.worked__sum .sig__name { color: var(--graphite); font-weight: 400; }
+/* .eq--sub tucks itself under a display equation with a negative top margin.
+   Following a table it has nothing to tuck under, and the negative margin
+   drives it into the summation row. */
+.worked__soft + .eq--sub { margin-top: 1rem; }
+
 /* The same equation with alpha substituted, set under the general form as a
    quieter restatement rather than a second claim. */
 .eq--sub {
