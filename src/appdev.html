@@ -1317,12 +1317,19 @@
           <span class="num">200</span> decisions a side. That is enough to prove the harness runs end to end
           and to show <em>where</em> two strategists diverge. It is not enough to rank them, and nothing below
           should be read as a measurement of either model. At the generation limit the engine declares the
-          larger colony the winner, which turns out to matter more than anything either model did.</p>
+          larger colony the winner — breaking an exact tie on territory, then on stored energy — and that
+          scoreboard turns out to matter more than anything either model did.</p>
         <p class="signals__intro">On the scoreline itself: <span class="num">9</span>–<span class="num">1</span>
           across ten paired matches is an exact two-sided binomial p of <span class="num">0.021</span> against
           a coin, so chance alone is an awkward explanation for it. The limits here are not sample noise —
           they are that one board size, one generation limit and one prompt were tried, and that this run
-          predates a fix described at the end of this fold.</p>
+          predates two changes described at the end of this fold.</p>
+        <p class="diag"><span class="marker">Read the date on it.</span> These ten matches were played
+          before the win condition was written into the board report and into the doctrine question. Both
+          models now read a block that states how the match is decided and where they currently stand on
+          each of its three measures; neither model could see any of that when this table was produced. No
+          figure here is known to have moved. None of them has been re-measured either, and those are not
+          the same sentence.</p>
         <table class="sig sig--meas">
           <thead><tr><th scope="col">Arm</th><th scope="col">Wins</th><th scope="col">Final pop., mean</th><th scope="col">Energy / cell</th><th scope="col">Latency / call</th><th scope="col">Illegal / fallback</th></tr></thead>
           <tbody>
@@ -1366,18 +1373,23 @@
           <p class="diag"><span class="marker">Which is not the same as playing worse.</span> KEV's surviving
             cells finish with <em>more</em> energy each — <span class="num">3.48</span> against
             <span class="num">3.23</span>. It is playing not to die, in a game scored by headcount at
-            generation <span class="num">20</span>. Change the win condition to “still alive at generation
+            generation <span class="num">20</span> — the later tiebreaks only bite on an exact tie, so
+            headcount is what it is playing against. Change the win condition to “still alive at generation
             <span class="num">50</span>” or “holds the nutrient squares” and this table is not obviously the
             same table. The honest headline is that GPT-5.2 is better at <em>this</em> scoreboard, and that a
             scoreboard is a choice someone made.</p>
           <p class="diag"><span class="marker">What would turn the smoke test into a result.</span> Vary
             the board size and the generation limit, run the same seeds under a second prompt, and push the
             match count far enough that a stance profile and not a scoreline is the unit of measurement. And
-            re-run it: this tournament predates a fix to the report builder, which had been handing both models
-            a line reading <span class="id">Deaths 0 (5 overcrowded, 1 starved)</span> — a count that
-            contradicted its own breakdown, in the one document either model is given to reason over. The fix
-            is in; the tournament has not been re-run, and that is the next thing to do rather than the next
-            thing to claim.</p>
+            re-run it, for two reasons rather than one. The first is a fix to the report builder, which had
+            been handing both models a line reading <span class="id">Deaths 0 (5 overcrowded, 1 starved)</span>
+            — a count that contradicted its own breakdown, in the one document either model is given to
+            reason over. The second is that the win condition has since been written down: the criteria now
+            live in one module the engine settles matches with, the report states them to both models with
+            the live standing on all three measures, and the interface shows them beside the board. That is
+            a different document in front of the decider than the one this table was played under. Both
+            changes are in; the tournament has not been re-run, and that is the next thing to do rather than
+            the next thing to claim.</p>
         </div>
         </details>
 
