@@ -809,9 +809,11 @@
           at once. Azure is <span class="id">kev-4b</span> on a laptop, Crimson is
           <span class="id">gpt-5.2</span> through a gateway. Same board, same report, same questions, same
           engine; the only variable is who decides. Ten matches went
-          <span class="num">9</span>–<span class="num">1</span> to <span class="id">gpt-5.2</span> — a smoke
-          test, not a verdict — and the interesting part is not the scoreline but its cause: one word each
-          model never said.</p>
+          <span class="num">9</span>–<span class="num">1</span> to <span class="id">gpt-5.2</span>; the same
+          ten seeds, re-run after two changes to what the models read, went
+          <span class="num">8</span>–<span class="num">2</span> the other way. Both are smoke tests and
+          neither is a verdict — and the interesting part was never the scoreline but its cause: one word
+          each model never said.</p>
       </div>
 
       <div class="projfolds">
@@ -1360,7 +1362,7 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">A ten-match smoke test, and why GPT-5.2 seems to win</span></span>
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Two ten-match runs that disagree, and the one word behind both</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
         <p class="signals__intro"><span class="marker">Read this as a smoke test.</span> Ten matches of
@@ -1370,22 +1372,21 @@
           should be read as a measurement of either model. At the generation limit the engine declares the
           larger colony the winner — breaking an exact tie on territory, then on stored energy — and that
           scoreboard turns out to matter more than anything either model did.</p>
-        <p class="signals__intro">On the scoreline itself: <span class="num">9</span>–<span class="num">1</span>
-          across ten paired matches is an exact two-sided binomial p of <span class="num">0.021</span> against
-          a coin, so chance alone is an awkward explanation for it. The limits here are not sample noise —
-          they are that one board size, one generation limit and one prompt were tried, and that this run
-          predates two changes described at the end of this fold.</p>
-        <p class="diag"><span class="marker">Read the date on it.</span> These ten matches were played
-          before the win condition was written into the board report and into the doctrine question. Both
-          models now read a block that states how the match is decided and where they currently stand on
-          each of its three measures; neither model could see any of that when this table was produced. No
-          figure here is known to have moved. None of them has been re-measured either, and those are not
-          the same sentence.</p>
+        <p class="signals__intro"><span class="marker">It has now been run twice, and the two runs
+          disagree.</span> The first went <span class="num">9</span>–<span class="num">1</span> to
+          <span class="id">gpt-5.2</span>, an exact two-sided binomial p of <span class="num">0.021</span>
+          against a coin. The same ten seeds, re-run after two changes to the document the models read, went
+          <span class="num">8</span>–<span class="num">2</span> to <span class="id">kev-4b</span> — p of
+          <span class="num">0.109</span>, which clears no bar at all. Both models were live throughout both
+          runs, with no illegal answers and no fallbacks in <span class="num">800</span> decisions. I am
+          leaving both on the page. A smoke test that reverses when you touch the prompt has told you
+          something true about the sample size, and deleting the inconvenient half of it would be the one
+          move that makes the page dishonest.</p>
         <table class="sig sig--meas">
           <thead><tr><th scope="col">Arm</th><th scope="col">Wins</th><th scope="col">Final pop., mean</th><th scope="col">Energy / cell</th><th scope="col">Latency / call</th><th scope="col">Illegal / fallback</th></tr></thead>
           <tbody>
             <tr class="sig__row--won">
-              <th scope="row" class="sig__name">gpt-5.2 <span class="sig__gloss">gateway</span></th>
+              <th scope="row" class="sig__name">gpt-5.2 <span class="sig__gloss">gateway &middot; first run</span></th>
               <td class="sig__sep"><span class="num">9</span></td>
               <td class="sig__sep"><span class="num">84.6</span></td>
               <td class="sig__sep"><span class="num">3.23</span></td>
@@ -1393,15 +1394,36 @@
               <td class="sig__sep"><span class="num">0</span> / <span class="num">0</span></td>
             </tr>
             <tr>
-              <th scope="row" class="sig__name">kev-4b <span class="sig__gloss">local, 4B params</span></th>
+              <th scope="row" class="sig__name">kev-4b <span class="sig__gloss">local, 4B params &middot; first run</span></th>
               <td class="sig__sep"><span class="num">1</span></td>
               <td class="sig__sep"><span class="num">64.8</span></td>
               <td class="sig__sep"><span class="num">3.48</span></td>
               <td class="sig__sep"><span class="num">2.81</span>s</td>
               <td class="sig__sep"><span class="num">0</span> / <span class="num">0</span></td>
             </tr>
+            <tr class="sig__row--won">
+              <th scope="row" class="sig__name">kev-4b <span class="sig__gloss">same seeds &middot; re-run</span></th>
+              <td class="sig__sep"><span class="num">8</span></td>
+              <td class="sig__sep"><span class="num">81.0</span></td>
+              <td class="sig__sep"><span class="num">3.18</span></td>
+              <td class="sig__sep"><span class="num">3.87</span>s</td>
+              <td class="sig__sep"><span class="num">0</span> / <span class="num">0</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">gpt-5.2 <span class="sig__gloss">same seeds &middot; re-run</span></th>
+              <td class="sig__sep"><span class="num">2</span></td>
+              <td class="sig__sep"><span class="num">73.4</span></td>
+              <td class="sig__sep"><span class="num">3.15</span></td>
+              <td class="sig__sep"><span class="num">1.69</span>s</td>
+              <td class="sig__sep"><span class="num">0</span> / <span class="num">0</span></td>
+            </tr>
           </tbody>
         </table>
+        <p class="diag">Both runs: ten paired matches on seeds
+          <span class="num">1000</span>–<span class="num">1009</span>, twenty generations,
+          <span class="num">20</span>&times;<span class="num">20</span>, sides swapped every other match.
+          In the re-run <span class="id">kev-4b</span> won <span class="num">4</span>–<span class="num">1</span>
+          from <em>each</em> side, so the reversal is not the board either.</p>
         <div class="sub__body">
           <p><span class="marker">It is not the board.</span> Sides swapped each match, and GPT won from both:
             four times as Crimson, five as Azure. It is not reliability either — neither model produced a
@@ -1414,6 +1436,16 @@
             <span class="id">CONSOLIDATE</span> <em>never</em>. GPT-5.2 played
             <span class="id">CONSOLIDATE</span> <span class="num">61</span> times and
             <span class="id">RETREAT</span> <em>never</em>.</p>
+          <p class="diag"><span class="marker">And the re-run tested that claim without meaning to.</span>
+            KEV's <span class="id">RETREAT</span> count fell from <span class="num">58</span> of
+            <span class="num">200</span> decisions to <span class="num">11</span>; its
+            <span class="id">FORAGE</span> count rose to <span class="num">188</span>. GPT-5.2 barely moved —
+            <span class="id">FORAGE</span> <span class="num">146</span>,
+            <span class="id">CONSOLIDATE</span> <span class="num">50</span>. The order the first analysis
+            blamed for the <span class="num">9</span>–<span class="num">1</span> went away, and so did the
+            <span class="num">9</span>–<span class="num">1</span>. That is the same causal story read twice
+            in opposite directions, and it is the strongest thing either run supports — considerably stronger
+            than either scoreline.</p>
           <p class="diag"><span class="marker">And that word is expensive on this scoreboard.</span> RETREAT
             raises the energy a cell keeps back before breeding to <span class="num">5</span> — the highest of
             any doctrine — and cuts contest weight to <span class="num">0.6</span>, so a retreating colony both
@@ -1429,18 +1461,30 @@
             <span class="num">50</span>” or “holds the nutrient squares” and this table is not obviously the
             same table. The honest headline is that GPT-5.2 is better at <em>this</em> scoreboard, and that a
             scoreboard is a choice someone made.</p>
-          <p class="diag"><span class="marker">What would turn the smoke test into a result.</span> Vary
-            the board size and the generation limit, run the same seeds under a second prompt, and push the
-            match count far enough that a stance profile and not a scoreline is the unit of measurement. And
-            re-run it, for two reasons rather than one. The first is a fix to the report builder, which had
-            been handing both models a line reading <span class="id">Deaths 0 (5 overcrowded, 1 starved)</span>
-            — a count that contradicted its own breakdown, in the one document either model is given to
-            reason over. The second is that the win condition has since been written down: the criteria now
-            live in one module the engine settles matches with, the report states them to both models with
-            the live standing on all three measures, and the interface shows them beside the board. That is
-            a different document in front of the decider than the one this table was played under. Both
-            changes are in; the tournament has not been re-run, and that is the next thing to do rather than
-            the next thing to claim.</p>
+          <p class="diag"><span class="marker">What changed between the two runs.</span> Two things, which
+            is the problem with attributing the reversal to either. The first is a fix to the report builder,
+            which had been handing both models a line reading
+            <span class="id">Deaths 0 (5 overcrowded, 1 starved)</span> — a count that contradicted its own
+            breakdown, in the one document either model is given to reason over. The second is that the win
+            condition got written down: the criteria now live in one module the engine settles matches with,
+            the report states them to both models along with the live standing on all three measures, and the
+            interface shows them beside the board. Two edits, one sample of ten, confounded by construction.
+            Separating them means re-running the same seeds with the win-condition block taken back out, and
+            that has not been done.</p>
+          <p class="diag"><span class="marker">What would turn the smoke test into a result.</span> Vary the
+            board size and the generation limit, run the same seeds under a second prompt, and push the match
+            count far enough that a stance profile and not a scoreline is the unit of measurement. Ten
+            matches was never going to be it; two ten-match runs pointing opposite ways is just the clearest
+            available proof of that, and it cost two reversals to get.</p>
+          <p class="diag"><span class="marker">One run is not on this page, and that is the point of saying
+            so.</span> A third ten-match run finished <span class="num">5</span>–<span class="num">5</span>
+            and is void: <span class="num">54</span> of GPT-5.2's <span class="num">200</span> decisions were
+            the local heuristic rather than the model, after the gateway failed under sustained load. The
+            script counted the fallbacks and printed the scoreline anyway. It now records why each one
+            happened and states that the run is not a measurement of that model — because a
+            <span class="num">27</span>% fallback rate reported as a scoreline is the exact failure this
+            harness was built to make impossible, and it got within one careless paragraph of happening
+            here.</p>
         </div>
         </details>
 
