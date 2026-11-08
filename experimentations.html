@@ -865,11 +865,12 @@
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
           <div class="sub__body">
-            <p><span class="marker">One edge.</span> Both architectures get the same model, the same two tools
+            <p><span class="marker">One edge.</span> All three arms get the same model, the same two tools
               (<span class="id">search</span> and <span class="id">lookup</span>) and the same prompt vocabulary.
-              The entire difference is one edge in the graph: the loop has an arrow that goes back. Everything
-              people attribute to “agents” — retrying, re-querying, deciding it has enough, running too long —
-              is a consequence of that arrow, and nothing else.</p>
+              Between the first two the entire difference is one edge in the graph: the loop has an arrow that
+              goes back. Everything people attribute to “agents” — retrying, re-querying, deciding it has
+              enough, running too long — is a consequence of that arrow, and nothing else. The third is those
+              two composed: one routing call, and then whichever of the shapes above it named.</p>
           </div>
         <figure class="flow">
           <svg viewBox="0 0 612 408" role="img" aria-label="Three control flows. The workflow is a straight line: decompose, retrieve hop one, retrieve hop two, synthesize, answer. The agent loop is thought, action, observation, finish-check, which either emits an answer or loops back to thought. The hybrid begins with a classify call that routes to one of three plans: single and comparison each retrieve once and answer, while bridge hands off to the agent loop capped at four steps.">
