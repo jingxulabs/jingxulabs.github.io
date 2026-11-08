@@ -1171,94 +1171,93 @@
               <span class="num">1</span>, and dividing by a scalar cannot change which option wins</dd>
           </dl>
         </div>
-        <p class="diag"><span class="marker">The same three lines, on one board.</span> Azure on
-          generation <span class="num">7</span> of seed <span class="num">5</span>:
-          <span class="num">28</span> cells against Crimson's <span class="num">25</span>, mean energy
-          <span class="num">3.0</span> sitting exactly on the starvation line, <span class="num">18</span>
-          unclaimed nutrient squares with <span class="num">8</span> of them adjoining the colony, and not one
-          cell yet facing the enemy. That is <var>S</var>. The question <var>q</var> is
-          <span class="id">doctrine</span>, so <var>K</var> = <span class="num">5</span> and the options are
-          the five orders. The board is the engine's own; the five pointer scores are this example's single
-          assumption, and every number to the right of them is computed from the formulas above.</p>
+        <p class="diag"><span class="marker">The same three lines, on one board, with KEV's real
+          answer.</span> Azure on generation <span class="num">7</span> of seed <span class="num">5</span>:
+          <span class="num">26</span> cells against Crimson's <span class="num">29</span>, mean energy
+          <span class="num">3.0</span> sitting on the starvation line, <span class="num">19</span> unclaimed
+          nutrient squares with <span class="num">13</span> adjoining the colony,
+          <span class="num">2</span> cells facing the enemy, <span class="num">3</span> exposed, and
+          <span class="num">13</span> generations left. That is <var>S</var>; the question
+          <var>q</var> is <span class="id">doctrine</span>, so <var>K</var> = <span class="num">5</span>.
+          Every figure below came back from the checkpoint on that board. The pointer scores are shown as
+          differences from the winning option, because that is all a softmax identifies — adding a constant
+          to every <var>z<sub>k</sub></var> changes nothing.</p>
         <table class="sig sig--meas worked__soft">
-          <thead><tr><th scope="col">Option <var>k</var></th><th scope="col">z<sub>k</sub></th><th scope="col">exp(z<sub>k</sub> / T)</th><th scope="col">p(a<sub>q</sub> = k | S, q)</th><th scope="col">Why the board scores it there</th></tr></thead>
+          <thead><tr><th scope="col">Option <var>k</var></th><th scope="col">z<sub>k</sub> &minus; z<sub>top</sub></th><th scope="col">exp(&Delta;z / T)</th><th scope="col">p(a<sub>q</sub> = k | S, q)</th><th scope="col">Why the board scores it there</th></tr></thead>
           <tbody>
             <tr class="sig__row--won">
               <th scope="row" class="sig__name"><span class="id">FORAGE</span></th>
-              <td class="sig__sep"><span class="num">+2.0</span></td>
-              <td class="sig__sep"><span class="num">2.293</span></td>
-              <td class="sig__sep"><span class="num">0.513</span></td>
-              <td class="sig__def">Eight nutrient squares within reach and every cell on the line.</td>
+              <td class="sig__sep"><span class="num">0.000</span></td>
+              <td class="sig__sep"><span class="num">1.000</span></td>
+              <td class="sig__sep"><span class="num">0.254</span></td>
+              <td class="sig__def">Thirteen nutrient squares in reach, every cell on the line.</td>
             </tr>
             <tr>
               <th scope="row" class="sig__name"><span class="id">EXPAND</span></th>
-              <td class="sig__sep"><span class="num">&minus;0.1</span></td>
-              <td class="sig__sep"><span class="num">0.959</span></td>
-              <td class="sig__sep"><span class="num">0.215</span></td>
-              <td class="sig__def">Ground is open and it is ahead — but children are born thin.</td>
-            </tr>
-            <tr>
-              <th scope="row" class="sig__name"><span class="id">CONSOLIDATE</span></th>
-              <td class="sig__sep"><span class="num">&minus;1.7</span></td>
-              <td class="sig__sep"><span class="num">0.494</span></td>
-              <td class="sig__sep"><span class="num">0.111</span></td>
-              <td class="sig__def">A reserve it cannot afford to hold at mean energy <span class="num">3.0</span>.</td>
+              <td class="sig__sep"><span class="num">&minus;0.162</span></td>
+              <td class="sig__sep"><span class="num">0.935</span></td>
+              <td class="sig__sep"><span class="num">0.237</span></td>
+              <td class="sig__def">Behind by three cells with ground still open.</td>
             </tr>
             <tr>
               <th scope="row" class="sig__name"><span class="id">RETREAT</span></th>
-              <td class="sig__sep"><span class="num">&minus;1.9</span></td>
-              <td class="sig__sep"><span class="num">0.455</span></td>
-              <td class="sig__sep"><span class="num">0.102</span></td>
-              <td class="sig__def">Three cells are exposed on the western edge; the rest are not.</td>
+              <td class="sig__sep"><span class="num">&minus;0.261</span></td>
+              <td class="sig__sep"><span class="num">0.897</span></td>
+              <td class="sig__sep"><span class="num">0.228</span></td>
+              <td class="sig__def">Three cells exposed on a hazard edge.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name"><span class="id">CONSOLIDATE</span></th>
+              <td class="sig__sep"><span class="num">&minus;1.160</span></td>
+              <td class="sig__sep"><span class="num">0.618</span></td>
+              <td class="sig__sep"><span class="num">0.157</span></td>
+              <td class="sig__def">A reserve it cannot afford at mean energy <span class="num">3.0</span>.</td>
             </tr>
             <tr>
               <th scope="row" class="sig__name"><span class="id">DEFEND</span></th>
-              <td class="sig__sep"><span class="num">&minus;3.2</span></td>
-              <td class="sig__sep"><span class="num">0.265</span></td>
-              <td class="sig__sep"><span class="num">0.059</span></td>
-              <td class="sig__def">Nothing to defend — the front line is <span class="num">0</span> cells wide.</td>
+              <td class="sig__sep"><span class="num">&minus;1.725</span></td>
+              <td class="sig__sep"><span class="num">0.489</span></td>
+              <td class="sig__sep"><span class="num">0.124</span></td>
+              <td class="sig__def">A front line only <span class="num">2</span> cells wide.</td>
             </tr>
             <tr class="worked__sum">
               <th scope="row" class="sig__name">&Sigma;<sub>j=1..5</sub></th>
               <td class="sig__sep"></td>
-              <td class="sig__sep"><span class="num">4.466</span></td>
+              <td class="sig__sep"><span class="num">3.939</span></td>
               <td class="sig__sep"><span class="num">1.000</span></td>
               <td class="sig__def">The denominator, and the distribution it normalises.</td>
             </tr>
           </tbody>
         </table>
         <p class="eq eq--sub">
-          p(<span class="id">FORAGE</span> | S, q) = <span class="num">2.293</span>
-          <span class="eq__op">/</span> <span class="num">4.466</span>
-          <span class="eq__op">=</span> <span class="num">0.513</span>
+          p(<span class="id">FORAGE</span> | S, q) = <span class="num">1.000</span>
+          <span class="eq__op">/</span> <span class="num">3.939</span>
+          <span class="eq__op">=</span> <span class="num">0.254</span>
           <span class="eq__op">&nbsp;·&nbsp;</span>
-          confidence = (<span class="num">0.513</span> &minus; <span class="num">0.200</span>)
+          confidence = (<span class="num">0.254</span> &minus; <span class="num">0.200</span>)
           <span class="eq__op">/</span> (<span class="num">1</span> &minus; <span class="num">0.200</span>)
-          <span class="eq__op">=</span> <span class="num">0.39</span>
+          <span class="eq__op">=</span> <span class="num">0.067</span>
         </p>
-        <p class="diag"><span class="marker">So the readout under the arena reads
-          <span class="id">Forage</span>, choice probability <span class="num">51</span>%, confidence
-          <span class="num">39</span>%</span> — and the engine takes it from there, setting
-          <span class="id">FORAGE</span>'s threshold set for the generation: migration up from
-          <span class="num">12</span>% to <span class="num">42</span>%, the pull toward nutrients at full
-          strength. The model never moved a cell. It named an order and gave a number saying how clearly the
-          board named it.</p>
-        <p class="diag"><span class="marker">Two things that last column is easy to misread.</span> It is a
-          distribution over <em>those five options and nothing else</em> — add a sixth order to
-          <span class="id">doctrine</span> and all five figures change, which is why the option list is part
-          of <var>q</var> and not a detail of the prompt. And <span class="num">0.513</span> is not a
-          probability that <span class="id">FORAGE</span> will work: it is the model's reading of how far
-          this board separates <span class="id">FORAGE</span> from the alternatives. A
-          <span class="num">0.513</span> on a board where it was <em>right</em> and a
-          <span class="num">0.513</span> on a board where it was <em>wrong</em> are the same claim, honestly
-          made twice.</p>
-        <p class="diag"><span class="marker">And this is where the temperature earns its row above.</span> The
-          same five scores at T = <span class="num">1</span> give
-          <span class="id">FORAGE</span> <span class="num">0.853</span> and a confidence of
-          <span class="num">0.82</span> — the identical order, chosen for the identical reason, reported as
-          near-certainty. T = <span class="num">2.41</span> is the value that made those numbers mean what
-          they say on held-out boards. Which option wins never depended on it;
-          <em>how sure the game is allowed to look</em> entirely did.</p>
+        <p class="diag"><span class="marker">Which is the finding, not the illustration.</span> KEV chose
+          <span class="id">FORAGE</span> — and it beat <span class="id">EXPAND</span> by
+          <span class="num">0.017</span> and <span class="id">RETREAT</span> by
+          <span class="num">0.026</span>. Chance on five options is <span class="num">0.200</span>; the
+          winner polled <span class="num">0.254</span>. This is not a model that knows what to do and reports
+          it modestly. It is a model telling you, accurately, that it can barely tell these five orders apart
+          on this board. Over <span class="num">15</span> boards sampled the same way the mean winning
+          probability is <span class="num">0.290</span>, the mean gap over second place is
+          <span class="num">0.037</span>, and <span class="num">14</span> of
+          <span class="num">15</span> come back under <span class="num">0.15</span> confidence.</p>
+        <p class="diag"><span class="marker">And that is what the temperature is for.</span> The same scores
+          at T = <span class="num">1</span> give <span class="id">FORAGE</span>
+          <span class="num">0.321</span> and a confidence of <span class="num">0.152</span> — the identical
+          order, chosen for the identical reason, reported as more than twice as sure.
+          T = <span class="num">2.41</span> is the value that made these numbers mean what they say on
+          held-out boards, and what they say here is <em>not much</em>. Which option wins never depended on
+          it; how sure the game is allowed to look entirely did.</p>
+        <p class="diag"><span class="marker">Read fold <span class="num">6</span> with this in hand.</span> A
+          decision settled by <span class="num">0.017</span> is one that any small change to the report can
+          flip — and the tournament results turn out to hinge on exactly that.</p>
         <div class="sub__body">
           <p><span class="marker">Now the part that matters for the game: what it is <em>not</em>
             conditioned on.</span> The four questions share the prefill <var>S</var> and are isolated from one
@@ -1385,16 +1384,95 @@
             <span class="id">CONSOLIDATE</span> <em>never</em>. GPT-5.2 played
             <span class="id">CONSOLIDATE</span> <span class="num">61</span> times and
             <span class="id">RETREAT</span> <em>never</em>.</p>
-          <p class="diag"><span class="marker">And the re-run tested that claim without meaning to.</span>
-            KEV's <span class="id">RETREAT</span> count fell from <span class="num">58</span> of
+          <p class="diag"><span class="marker">And the re-run appeared to confirm it.</span> KEV's
+            <span class="id">RETREAT</span> count fell from <span class="num">58</span> of
             <span class="num">200</span> decisions to <span class="num">11</span>; its
-            <span class="id">FORAGE</span> count rose to <span class="num">188</span>. GPT-5.2 barely moved —
-            <span class="id">FORAGE</span> <span class="num">146</span>,
-            <span class="id">CONSOLIDATE</span> <span class="num">50</span>. The order the first analysis
-            blamed for the <span class="num">9</span>–<span class="num">1</span> went away, and so did the
-            <span class="num">9</span>–<span class="num">1</span>. That is the same causal story read twice
-            in opposite directions, and it is the strongest thing either run supports — considerably stronger
-            than either scoreline.</p>
+            <span class="id">FORAGE</span> count rose to <span class="num">188</span>. GPT-5.2 barely moved.
+            The order the first analysis blamed for the <span class="num">9</span>–<span class="num">1</span>
+            went away, and so did the <span class="num">9</span>–<span class="num">1</span>. It is a tidy
+            story and I believed it for about an hour. <strong>It is wrong</strong>, and the next four
+            paragraphs are how that came apart — which is the most useful thing on this page.</p>
+        </div>
+        <h4 class="worked__head">Why KEV answered differently</h4>
+        <p class="diag diag--tight">KEV is deterministic: the same board and the same report return the same
+          order, the same probability and the same confidence, to four decimal places, on repeated calls. So
+          a different answer in the second run has to mean a different input. There were only two candidate
+          inputs — the report-builder fix and the win-condition block — so both were put back and taken away
+          in all four combinations, and the same <span class="num">15</span> boards were put to the
+          checkpoint under each.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Report variant</th><th scope="col">Chose RETREAT</th><th scope="col">Mean p(RETREAT)</th><th scope="col">Mean aggression</th><th scope="col">Mean risk</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">neither change <span class="sig__gloss">the first run's report</span></th>
+              <td class="sig__sep"><span class="num">2</span>/<span class="num">15</span></td>
+              <td class="sig__sep"><span class="num">0.185</span></td>
+              <td class="sig__sep"><span class="num">1.553</span></td>
+              <td class="sig__sep"><span class="num">1.348</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">deaths line fixed only</th>
+              <td class="sig__sep"><span class="num">2</span>/<span class="num">15</span></td>
+              <td class="sig__sep"><span class="num">0.200</span></td>
+              <td class="sig__sep sig__def">—</td>
+              <td class="sig__sep sig__def">—</td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">win condition only</th>
+              <td class="sig__sep"><span class="num">1</span>/<span class="num">15</span></td>
+              <td class="sig__sep"><span class="num">0.180</span></td>
+              <td class="sig__sep sig__def">—</td>
+              <td class="sig__sep sig__def">—</td>
+            </tr>
+            <tr class="sig__row--won">
+              <th scope="row" class="sig__name">both <span class="sig__gloss">the second run's report</span></th>
+              <td class="sig__sep"><span class="num">1</span>/<span class="num">15</span></td>
+              <td class="sig__sep"><span class="num">0.186</span></td>
+              <td class="sig__sep"><span class="num">1.723</span></td>
+              <td class="sig__sep"><span class="num">1.258</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sub__body">
+          <p><span class="marker">The RETREAT column is flat.</span> One or two of fifteen under every
+            variant, and a mean probability that never leaves the neighbourhood of chance. On matched boards
+            the report change does not make KEV retreat less. The sample was if anything stacked the other
+            way: all <span class="num">15</span> of those boards carry an exposed group, against
+            <span class="num">10</span> to <span class="num">12</span> for boards the two policies actually
+            produce. The stance was never the channel.</p>
+          <p class="diag"><span class="marker">The two score answers are not flat.</span> Aggression rises
+            <span class="num">0.170</span> and risk falls <span class="num">0.089</span>, on the same boards,
+            in the same direction, every time. Aggression is not advice — the engine reads it as
+            <span class="id">contestWeight = 0.7 + 0.3 × aggression</span>, so KEV entered every contested
+            square <span class="num">4.4</span>% stronger for the whole of the second run. A contested square
+            is one both colonies qualify to breed into; winning more of them yields more cells, which yields
+            more frontage, which yields more contested squares. Twenty generations of that is not a small
+            effect, and it does not appear anywhere in a stance tally.</p>
+          <p class="diag"><span class="marker">Replaying one match settles it.</span> Seed
+            <span class="num">1000</span> flipped between the runs. Played again under the first run's
+            report it goes to GPT-5.2, <span class="num">64</span>–<span class="num">79</span>; under the
+            second run's report it goes to KEV, <span class="num">67</span>–<span class="num">55</span>.
+            Both reproduce what the tournaments recorded. The two games diverge at generation
+            <span class="num">1</span> — not on the order, which is <span class="id">FORAGE</span> both
+            times, but on <span class="id">risk</span> and <span class="id">aggression</span>. Across that
+            whole match KEV played <span class="id">RETREAT</span> seven times under the old report and six
+            under the new. Nearly identical, and the result still inverted.</p>
+          <p class="diag"><span class="marker">The ablation was an accident.</span> The first attempt at that
+            replay had a bug: it pinned aggression and risk to <span class="num">1</span> instead of passing
+            the model's answers through. GPT-5.2 won under <em>both</em> reports. Disable the channel and the
+            reversal disappears, which is the control nobody would have thought to run on purpose.</p>
+          <p class="diag"><span class="marker">Why the question moves at all.</span> It asks how hard to
+            contest squares the other colony also wants. The second run's report is the first one that tells
+            KEV it is in a race scored on population, where it stands on three measures, and how many
+            generations are left. Scoring "contest harder" higher in a countdown is an unremarkable
+            response. The surprise is the size of what it bought — and that the visible word, the one the
+            interface prints in <span class="num">21</span>-point type under the arena, was the wrong place
+            to look the entire time. The benchmark was moved by a sub-answer nobody was reading.</p>
+          <p class="diag"><span class="marker">What is still owed.</span> The aggression shift is measured on
+            <span class="num">15</span> boards and reproduced inside one match. The causal link to the
+            tournament is demonstrated on <span class="num">1</span> of the <span class="num">10</span>
+            seeds. The other six that flipped have not been replayed, and until they are this is a mechanism
+            with one worked instance rather than a result.</p>
           <p class="diag"><span class="marker">And that word is expensive on this scoreboard.</span> RETREAT
             raises the energy a cell keeps back before breeding to <span class="num">5</span> — the highest of
             any doctrine — and cuts contest weight to <span class="num">0.6</span>, so a retreating colony both

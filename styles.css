@@ -1783,6 +1783,10 @@ details[open] > .sub__sum .fold__mark::after { opacity: 0; transform: scaleY(0);
    Following a table it has nothing to tuck under, and the negative margin
    drives it into the summation row. */
 .worked__soft + .eq--sub { margin-top: 1rem; }
+/* Prose straight after a measurement table. Harmless until the table's last
+   row is the highlighted one, whose background then runs into the first
+   line of the paragraph. */
+.sig--meas + .sub__body { margin-top: 1.15rem; }
 
 /* The same equation with alpha substituted, set under the general form as a
    quieter restatement rather than a second claim. */
