@@ -872,7 +872,7 @@
               is a consequence of that arrow, and nothing else.</p>
           </div>
         <figure class="flow">
-          <svg viewBox="0 0 612 196" role="img" aria-label="Two control flows. The workflow is a straight line: decompose, retrieve hop one, retrieve hop two, synthesize, answer. The agent loop is thought, action, observation, finish-check, which either emits an answer or loops back to thought.">
+          <svg viewBox="0 0 612 408" role="img" aria-label="Three control flows. The workflow is a straight line: decompose, retrieve hop one, retrieve hop two, synthesize, answer. The agent loop is thought, action, observation, finish-check, which either emits an answer or loops back to thought. The hybrid begins with a classify call that routes to one of three plans: single and comparison each retrieve once and answer, while bridge hands off to the agent loop capped at four steps.">
             <!-- the DAG -->
             <text class="flow__lab flow__lab--soft" x="2" y="14" text-anchor="start">Fixed workflow — exactly 2 LLM calls, always</text>
             <rect class="flow__box" x="2" y="26" width="104" height="40" rx="1"/>
@@ -916,9 +916,59 @@
             <path class="flow__arrow" fill="none" d="M 474 164 V 184 H 54 V 168"/>
             <polygon class="flow__head" points="54,164 51.4,169 56.6,169"/>
             <text class="flow__lab flow__lab--key" x="264" y="180" text-anchor="middle">no — go again</text>
+
+            <!-- the hybrid: one routing call, then whichever shape it names -->
+            <text class="flow__lab flow__lab--soft" x="2" y="222" text-anchor="start">Router + bounded loop — 1 call to choose the plan, then that plan</text>
+            <rect class="flow__box flow__box--key" x="2" y="290" width="104" height="40" rx="1"/>
+            <text class="flow__lab flow__lab--key" x="54" y="315" text-anchor="middle">classify</text>
+            <!-- the distribution bus -->
+            <line class="flow__arrow" x1="106" y1="310" x2="120" y2="310"/>
+            <line class="flow__arrow" x1="120" y1="256" x2="120" y2="364"/>
+
+            <!-- route 1: single -->
+            <line class="flow__arrow" x1="120" y1="256" x2="196" y2="256"/>
+            <polygon class="flow__head" points="200,256 195,253.4 195,258.6"/>
+            <text class="flow__lab flow__lab--soft" x="158" y="249" text-anchor="middle">single</text>
+            <rect class="flow__box" x="206" y="236" width="124" height="40" rx="1"/>
+            <text class="flow__lab" x="268" y="261" text-anchor="middle">retrieve once</text>
+            <line class="flow__arrow" x1="330" y1="256" x2="348" y2="256"/>
+            <polygon class="flow__head" points="348,256 343,253.4 343,258.6"/>
+            <rect class="flow__box" x="356" y="236" width="96" height="40" rx="1"/>
+            <text class="flow__lab" x="404" y="261" text-anchor="middle">answer</text>
+            <line class="flow__arrow" x1="452" y1="256" x2="470" y2="256"/>
+            <polygon class="flow__head" points="470,256 465,253.4 465,258.6"/>
+            <text class="flow__n" x="478" y="260" text-anchor="start">2 LLM calls</text>
+
+            <!-- route 2: comparison -->
+            <line class="flow__arrow" x1="120" y1="310" x2="196" y2="310"/>
+            <polygon class="flow__head" points="200,310 195,307.4 195,312.6"/>
+            <text class="flow__lab flow__lab--soft" x="158" y="303" text-anchor="middle">comparison</text>
+            <rect class="flow__box" x="206" y="290" width="124" height="40" rx="1"/>
+            <text class="flow__lab" x="268" y="315" text-anchor="middle">retrieve both</text>
+            <line class="flow__arrow" x1="330" y1="310" x2="348" y2="310"/>
+            <polygon class="flow__head" points="348,310 343,307.4 343,312.6"/>
+            <rect class="flow__box" x="356" y="290" width="96" height="40" rx="1"/>
+            <text class="flow__lab" x="404" y="315" text-anchor="middle">answer</text>
+            <line class="flow__arrow" x1="452" y1="310" x2="470" y2="310"/>
+            <polygon class="flow__head" points="470,310 465,307.4 465,312.6"/>
+            <text class="flow__n" x="478" y="314" text-anchor="start">2 LLM calls</text>
+
+            <!-- route 3: bridge — the loop above, borrowed and capped -->
+            <line class="flow__arrow" x1="120" y1="364" x2="196" y2="364"/>
+            <polygon class="flow__head" points="200,364 195,361.4 195,366.6"/>
+            <text class="flow__lab flow__lab--soft" x="158" y="357" text-anchor="middle">bridge</text>
+            <rect class="flow__box" x="206" y="344" width="246" height="40" rx="1"/>
+            <text class="flow__lab" x="329" y="369" text-anchor="middle">the agent loop above, capped at 4 steps</text>
+            <line class="flow__arrow" x1="452" y1="364" x2="470" y2="364"/>
+            <polygon class="flow__head" points="470,364 465,361.4 465,366.6"/>
+            <text class="flow__n" x="478" y="368" text-anchor="start">2 to 6 LLM calls</text>
           </svg>
-          <figcaption>Same boxes, same tools, same model. The marked box and the edge under it are the whole of
-            the difference, and the whole of what the measurements below are measuring.</figcaption>
+          <figcaption>Same boxes, same tools, same model. The marked box in the loop and the edge under it are
+            the whole of the difference between the first two, and the whole of what the measurements below are
+            measuring. The third arm buys that edge selectively: <span class="id">classify</span> is an ordinary
+            LLM call that picks which of the shapes above the question gets, so a misroute costs the
+            classification <em>and</em> the wrong plan. An unparseable route falls back to
+            <span class="id">bridge</span> — the most general plan, and the most expensive.</figcaption>
         </figure>
         <h4 class="worked__head">What that one edge changes</h4>
         <div class="ba ba--spec">
