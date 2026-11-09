@@ -808,12 +808,14 @@
           gives <em>one</em> order — which the engine turns into thresholds and applies to four hundred cells
           at once. Azure is <span class="id">kev-4b</span> on a laptop, Crimson is
           <span class="id">gpt-5.2</span> through a gateway. Same board, same report, same questions, same
-          engine; the only variable is who decides. Ten matches went
-          <span class="num">9</span>–<span class="num">1</span> to <span class="id">gpt-5.2</span>; the same
-          ten seeds, re-run after two changes to what the models read, went
-          <span class="num">8</span>–<span class="num">2</span> the other way. Both are smoke tests and
-          neither is a verdict — and the interesting part was never the scoreline but its cause: one word
-          each model never said.</p>
+          engine; the only variable is who decides. Thirty matches finished
+          <span class="num">16</span>–<span class="num">14</span>, which is a coin
+          (<var>p</var> = <span class="num">0.856</span>) — and that is the result, after two ten-match runs
+          had pointed in opposite directions with a tidy explanation attached to each. What survived the
+          larger sample is not a scoreline but a shape: across <span class="num">599</span> decisions each,
+          <span class="id">kev-4b</span> never once consolidated and <span class="id">gpt-5.2</span> never
+          once retreated. Two models can refuse opposite halves of the option space and play to exactly the
+          same strength.</p>
       </div>
 
       <div class="projfolds">
@@ -1335,15 +1337,90 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">Demo</span></span>
+            <span class="sub__label"><span class="sub__num num">5</span><span class="sub__name">The success criteria, and the fact both models are handed them</span></span>
+            <span class="fold__mark" aria-hidden="true"></span>
+          </summary>
+        <p class="signals__intro"><span class="marker">A benchmark is a scoreboard before it is a game.</span>
+          Two strategists can only be compared if they are playing for the same thing, so the win condition is
+          written down in exactly one place — <span class="id">src/sim/victory.ts</span> — and the three
+          things that have to agree about it all read from there: the engine that settles the match, the
+          report both models are briefed from, and the panel beside the board. Change a rule in that file and
+          all three move together. A model optimising a win condition other than the one it is being scored
+          on is the cheapest way to build a benchmark that measures nothing.</p>
+        <ol class="gatedef">
+          <li><span class="marker">Elimination.</span> A colony with no living cells has lost. The survivor
+            wins on the generation it happens, however few cells it has left and however far behind it was
+            the moment before.</li>
+          <li><span class="marker">Mutual extinction.</span> Both colonies empty in the same generation is a
+            draw, and neither model is credited.</li>
+          <li><span class="marker">Population.</span> Both still alive at the generation limit — the larger
+            colony wins. This is the headline measure, and in practice it settles almost every match.</li>
+          <li><span class="marker">Territory.</span> Breaks an exact tie on population: squares a colony
+            occupies or adjoins, which is its capacity to grow next.</li>
+          <li><span class="marker">Stored energy.</span> Breaks a tie on territory: the capacity to survive a
+            bad generation. Level on all three is a draw.</li>
+        </ol>
+        <p class="diag diag--tight">Checked in that order. The first one that is true ends the match, and
+          nothing below it is consulted.</p>
+        <div class="sub__body">
+          <p><span class="marker">Both models are handed this before every decision they make.</span> It is
+            not background either one might have inferred from the shape of the game: it is the opening block
+            of the board report, above the position and above the pressure, carrying the live standing on all
+            three measures and the number of generations left. The same criteria are restated inside the
+            <span class="id">doctrine</span> question itself, so a model that read only the question and not
+            the report still has them. Four hundred decisions a run, every one taken with the scoreboard in
+            view.</p>
+        </div>
+        <p class="diag diag--tight">The block as it reaches <span class="id">azure</span> at generation
+          <span class="num">12</span>:</p>
+        <div class="doc">[HOW THIS MATCH IS WON]  generation 12 of 20, 8 left
+  1. Wipe out CRIMSON and you win immediately, whatever state you are in.
+  2. If you are both still alive after generation 20, the
+     larger population wins. A tie there is broken by territory — squares
+     you hold or adjoin — and then by total stored energy.
+  3. If you both die out in the same generation it is a draw, and neither
+     colony is credited.
+<b>  If it ended now ................. AZURE by 13 cells — you are ahead</b>
+  Population ...................... you 45, CRIMSON 32
+  Territory ....................... you 135 squares, CRIMSON 100
+  Stored energy ................... you 135.0, CRIMSON 96.0</div>
+        <div class="sub__body">
+          <p><span class="marker">And the other colony gets the same document with the names swapped.</span>
+            On that same board <span class="id">crimson</span> reads
+            <span class="id">Population ... you 32, AZURE 45</span> and a closing line of
+            <span class="id">AZURE by 13 cells — you are behind</span>. Identical wording, mirrored figures,
+            no asymmetry in what either side is told. Being ahead and being behind are the same sentence with
+            one word changed.</p>
+          <p class="diag"><span class="marker">It is stated neutrally, which took a revision to get
+            right.</span> The block names no stance and recommends nothing — it does not say
+            <em>grow</em>, because saying so would be a thumb on <span class="id">EXPAND</span> in the same
+            way that an earlier prompt warning that expanding "is how colonies collapse" was a thumb against
+            it. The report carries the standing and the countdown; weighing those is the decision being
+            measured, and handing over the conclusion would measure nothing but obedience.</p>
+          <p class="diag"><span class="marker">The honest caveat is in rule 3.</span> Scoring on headcount
+            rewards growth unconditionally, and no amount of tuning lifts <span class="id">DEFEND</span> or
+            <span class="id">RETREAT</span> out of the basement against it — roughly a third of the option
+            space is structurally unplayable, so the game currently measures <em>which order did it pick</em>
+            more than <em>how well did it reason</em>. Fixing that means scoring on more than cells at the
+            bell, which is a design change rather than a tuning one. A scoreboard is a choice someone made,
+            and this one is mine.</p>
+        </div>
+        </details>
+
+        <details class="sub">
+          <summary class="sub__sum">
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Demo</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
           <div class="sub__body">
             <p>A real match, recorded by driving the running game in a browser rather than animating a replay —
               the models are deciding on camera, and their latencies and probabilities are on screen as it
-              happens. Thirty-three seconds, sped up; a live KEV decision takes about
-              <span class="num">2.5</span> seconds, so twenty generations is roughly a minute of wall
-              clock.</p>
+              happens. Forty-four seconds at <span class="num">2</span>&times;; the twenty generations took
+              <span class="num">85</span> seconds of wall clock, because a live KEV decision takes about
+              <span class="num">4</span> seconds. Re-recorded on 8 November under the same harness as the
+              thirty-match run below — the earlier footage predated both the report fix and the win
+              condition, so the models in it were playing a different game than the one documented
+              here.</p>
           </div>
         <figure class="shot">
           <video controls preload="none" poster="media/kev-vs-gpt-poster.jpg" width="1360" height="1080"
@@ -1352,110 +1429,124 @@
             <p>Your browser cannot play this video. <a href="media/kev-vs-gpt.mp4">Download the match</a>.</p>
           </video>
           <figcaption>What to watch: the two decision cards under the arena. Each shows the order, the
-            probability the model put on it, its confidence and the round-trip in milliseconds — about
-            <span class="num">2,764</span>ms for KEV against <span class="num">1,816</span>ms for GPT-5.2 in
-            this frame. The rules panel on the right is live: the numbers in it move when a doctrine
-            changes.</figcaption>
+            probability the model put on it, its confidence, the aggression score the engine actually
+            consumes, and the round-trip in milliseconds — <span class="num">4,003</span>ms for KEV against
+            <span class="num">1,878</span>ms for GPT-5.2 in the opening frame. Note also that the two
+            models have settled on different orders from the same board, which is the whole finding:
+            <span class="id">FORAGE</span> at <span class="num">30</span>% against
+            <span class="id">CONSOLIDATE</span> at <span class="num">52</span>%. The panel on the right is
+            the win condition from section <span class="num">5</span>, with the live standing on all three
+            measures — the same document both models are reading.</figcaption>
         </figure>
         </details>
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Two ten-match runs that disagree, and the one word behind both</span></span>
+            <span class="sub__label"><span class="sub__num num">7</span><span class="sub__name">Thirty matches: a coin flip, and the one difference that survived it</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
-        <p class="signals__intro"><span class="marker">Read this as a smoke test.</span> Ten matches of
-          twenty generations, one board size, one prompt, one family of seeds, both models live throughout —
-          <span class="num">200</span> decisions a side. That is enough to prove the harness runs end to end
-          and to show <em>where</em> two strategists diverge. It is not enough to rank them, and nothing below
-          should be read as a measurement of either model. At the generation limit the engine declares the
-          larger colony the winner — breaking an exact tie on territory, then on stored energy — and that
-          scoreboard turns out to matter more than anything either model did.</p>
-        <p class="signals__intro"><span class="marker">It has now been run twice, and the two runs
-          disagree.</span> The first went <span class="num">9</span>–<span class="num">1</span> to
-          <span class="id">gpt-5.2</span>, an exact two-sided binomial p of <span class="num">0.021</span>
-          against a coin. The same ten seeds, re-run after two changes to the document the models read, went
-          <span class="num">8</span>–<span class="num">2</span> to <span class="id">kev-4b</span> — p of
-          <span class="num">0.109</span>, which clears no bar at all. Both models were live throughout both
-          runs, with no illegal answers and no fallbacks in <span class="num">800</span> decisions. I am
-          leaving both on the page. A smoke test that reverses when you touch the prompt has told you
-          something true about the sample size, and deleting the inconvenient half of it would be the one
-          move that makes the page dishonest.</p>
+        <p class="signals__intro"><span class="marker">Thirty paired matches, run on 8 November 2026.</span>
+          Seeds <span class="num">1000</span>&ndash;<span class="num">1029</span>, twenty generations, a
+          <span class="num">20</span>&times;<span class="num">20</span> board, sides swapped every other
+          match, both models live from the first decision to the last:
+          <span class="num">1,198</span> decisions, <span class="num">0</span> illegal answers,
+          <span class="num">0</span> fallbacks. Every number below came from the model named.</p>
+        <p class="signals__intro"><span class="marker">It finished 16&ndash;14, which is a coin.</span> The
+          exact two-sided binomial <var>p</var> against a fair coin is <span class="num">0.856</span>. Not
+          <em>suggestive</em>, not <em>a trend</em> — the least interesting scoreline available, and the most
+          useful thing this project has produced. Two earlier ten-match runs had come in at
+          <span class="num">9</span>&ndash;<span class="num">1</span> and then
+          <span class="num">8</span>&ndash;<span class="num">2</span> in opposite directions, and each one
+          had a tidy mechanistic story attached. Thirty matches retired both stories at once. The scorelines
+          are no longer on this page because they were never measurements; what they were evidence
+          <em>of</em> is kept below, because that part replicated.</p>
         <table class="sig sig--meas">
           <thead><tr><th scope="col">Arm</th><th scope="col">Wins</th><th scope="col">Final pop., mean</th><th scope="col">Energy / cell</th><th scope="col">Latency / call</th><th scope="col">Illegal / fallback</th></tr></thead>
           <tbody>
-            <tr class="sig__row--won">
-              <th scope="row" class="sig__name">gpt-5.2 <span class="sig__gloss">gateway &middot; first run</span></th>
-              <td class="sig__sep"><span class="num">9</span></td>
-              <td class="sig__sep"><span class="num">84.6</span></td>
-              <td class="sig__sep"><span class="num">3.23</span></td>
-              <td class="sig__sep"><span class="num">1.87</span>s</td>
-              <td class="sig__sep"><span class="num">0</span> / <span class="num">0</span></td>
-            </tr>
             <tr>
-              <th scope="row" class="sig__name">kev-4b <span class="sig__gloss">local, 4B params &middot; first run</span></th>
-              <td class="sig__sep"><span class="num">1</span></td>
-              <td class="sig__sep"><span class="num">64.8</span></td>
-              <td class="sig__sep"><span class="num">3.48</span></td>
-              <td class="sig__sep"><span class="num">2.81</span>s</td>
-              <td class="sig__sep"><span class="num">0</span> / <span class="num">0</span></td>
-            </tr>
-            <tr class="sig__row--won">
-              <th scope="row" class="sig__name">kev-4b <span class="sig__gloss">same seeds &middot; re-run</span></th>
-              <td class="sig__sep"><span class="num">8</span></td>
-              <td class="sig__sep"><span class="num">81.0</span></td>
+              <th scope="row" class="sig__name">kev-4b <span class="sig__gloss">local, 4B params</span></th>
+              <td class="sig__sep"><span class="num">16</span></td>
+              <td class="sig__sep"><span class="num">76.0</span></td>
               <td class="sig__sep"><span class="num">3.18</span></td>
-              <td class="sig__sep"><span class="num">3.87</span>s</td>
+              <td class="sig__sep"><span class="num">3.85</span>s</td>
               <td class="sig__sep"><span class="num">0</span> / <span class="num">0</span></td>
             </tr>
             <tr>
-              <th scope="row" class="sig__name">gpt-5.2 <span class="sig__gloss">same seeds &middot; re-run</span></th>
-              <td class="sig__sep"><span class="num">2</span></td>
-              <td class="sig__sep"><span class="num">73.4</span></td>
-              <td class="sig__sep"><span class="num">3.15</span></td>
-              <td class="sig__sep"><span class="num">1.69</span>s</td>
+              <th scope="row" class="sig__name">gpt-5.2 <span class="sig__gloss">gateway</span></th>
+              <td class="sig__sep"><span class="num">14</span></td>
+              <td class="sig__sep"><span class="num">74.1</span></td>
+              <td class="sig__sep"><span class="num">3.13</span></td>
+              <td class="sig__sep"><span class="num">1.70</span>s</td>
               <td class="sig__sep"><span class="num">0</span> / <span class="num">0</span></td>
             </tr>
           </tbody>
         </table>
-        <p class="diag">Both runs: ten paired matches on seeds
-          <span class="num">1000</span>–<span class="num">1009</span>, twenty generations,
-          <span class="num">20</span>&times;<span class="num">20</span>, sides swapped every other match.
-          In the re-run <span class="id">kev-4b</span> won <span class="num">4</span>–<span class="num">1</span>
-          from <em>each</em> side, so the reversal is not the board either.</p>
+        <p class="diag">Twenty-nine matches were settled on population at the generation limit and one by
+          elimination — which is why each side logged <span class="num">599</span> decisions rather than
+          <span class="num">600</span>. No draws.</p>
         <div class="sub__body">
-          <p><span class="marker">It is not the board.</span> Sides swapped each match, and GPT won from both:
-            four times as Crimson, five as Azure. It is not reliability either — neither model produced a
-            single illegal answer or needed a single fallback in <span class="num">400</span> live
-            decisions.</p>
-          <p class="diag"><span class="marker">It is one word.</span> Both models reached for
-            <span class="id">FORAGE</span> almost identically — <span class="num">140</span> times against
-            <span class="num">139</span> out of <span class="num">200</span>. The entire difference is the
-            second choice. KEV played <span class="id">RETREAT</span> <span class="num">58</span> times and
-            <span class="id">CONSOLIDATE</span> <em>never</em>. GPT-5.2 played
-            <span class="id">CONSOLIDATE</span> <span class="num">61</span> times and
-            <span class="id">RETREAT</span> <em>never</em>.</p>
-          <p class="diag"><span class="marker">And the re-run appeared to confirm it.</span> KEV's
-            <span class="id">RETREAT</span> count fell from <span class="num">58</span> of
-            <span class="num">200</span> decisions to <span class="num">11</span>; its
-            <span class="id">FORAGE</span> count rose to <span class="num">188</span>. GPT-5.2 barely moved.
-            The order the first analysis blamed for the <span class="num">9</span>–<span class="num">1</span>
-            went away, and so did the <span class="num">9</span>–<span class="num">1</span>. It is a tidy
-            story and I believed it for about an hour. <strong>It is wrong</strong>, and the next four
-            paragraphs are how that came apart — which is the most useful thing on this page.</p>
+          <p><span class="marker">It is not the board, and this time that is boring.</span> Sides swap every
+            other match, and the wins split <span class="num">9</span>&ndash;<span class="num">7</span> for
+            KEV and <span class="num">6</span>&ndash;<span class="num">8</span> for GPT-5.2 across the two
+            starting positions. Neither colony, neither seed family and neither side carries the result,
+            because there is no result to carry.</p>
+          <p class="diag"><span class="marker">What did not wash out is the shape of how they play.</span>
+            Both models were handed the same report and the same five orders
+            <span class="num">599</span> times each. Neither used the full set, and the halves they refused
+            are disjoint.</p>
         </div>
-        <h4 class="worked__head">Why KEV answered differently</h4>
-        <p class="diag diag--tight">KEV is deterministic: the same board and the same report return the same
-          order, the same probability and the same confidence, to four decimal places, on repeated calls. So
-          a different answer in the second run has to mean a different input. There were only two candidate
-          inputs — the report-builder fix and the win-condition block — so both were put back and taken away
-          in all four combinations, and the same <span class="num">15</span> boards were put to the
-          checkpoint under each.</p>
+        <table class="sig sig--meas">
+          <thead><tr><th scope="col">Orders given, of 599</th><th scope="col">FORAGE</th><th scope="col">CONSOLIDATE</th><th scope="col">RETREAT</th><th scope="col">EXPAND</th><th scope="col">DEFEND</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="sig__name">kev-4b</th>
+              <td class="sig__sep"><span class="num">551</span></td>
+              <td class="sig__sep sig__def">0</td>
+              <td class="sig__sep"><span class="num">45</span></td>
+              <td class="sig__sep"><span class="num">2</span></td>
+              <td class="sig__sep"><span class="num">1</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="sig__name">gpt-5.2</th>
+              <td class="sig__sep"><span class="num">422</span></td>
+              <td class="sig__sep"><span class="num">164</span></td>
+              <td class="sig__sep sig__def">0</td>
+              <td class="sig__sep"><span class="num">12</span></td>
+              <td class="sig__sep"><span class="num">1</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sub__body">
+          <p><span class="marker">KEV never consolidated once. GPT-5.2 never retreated once.</span> Not
+            rarely — <span class="num">0</span> of <span class="num">599</span>, both ways, across thirty
+            matches and every board state the engine produced. Their first choice is the same word and they
+            agree on it most of the time; their second choices are different words, and each model treats the
+            other's second choice as unreachable. That is a real and highly stable difference between two
+            strategists, and it buys a win rate of exactly nothing. <strong>Two models can partition the
+            option space differently and play to the same strength</strong> — which is a more interesting
+            claim than either ten-match scoreline was, and the only one of the three that is still
+            standing.</p>
+          <p class="diag"><span class="marker">Latency held across all 60 matches ever run.</span> KEV
+            answers in <span class="num">3.85</span>s locally on an MPS backend; GPT-5.2 in
+            <span class="num">1.70</span>s over the network, gateway hop included. A
+            <span class="num">4</span>B model on a laptop is slower than a frontier model in a datacentre,
+            and the gap is the inference, not the wire.</p>
+        </div>
+        <h4 class="worked__head">What the report's wording does to KEV</h4>
+        <p class="diag diag--tight">This is the part that replicated, and it is why the earlier runs
+          disagreed even though neither scoreline meant anything. KEV is deterministic: the same board and
+          the same report return the same order, the same probability and the same confidence to four decimal
+          places. So when its play changed, the input had changed. Two things had — a fix to the report
+          builder, which had been printing <span class="id">Deaths 0 (5 overcrowded, 1 starved)</span>, a
+          count contradicting its own breakdown; and the win-condition block in section
+          <span class="num">5</span>, which did not exist before. Both were put back and taken away in all
+          four combinations, and the same <span class="num">15</span> boards were put to the model under
+          each.</p>
         <table class="sig sig--meas">
           <thead><tr><th scope="col">Report variant</th><th scope="col">Chose RETREAT</th><th scope="col">Mean p(RETREAT)</th><th scope="col">Mean aggression</th><th scope="col">Mean risk</th></tr></thead>
           <tbody>
             <tr>
-              <th scope="row" class="sig__name">neither change <span class="sig__gloss">the first run's report</span></th>
+              <th scope="row" class="sig__name">neither change <span class="sig__gloss">the original report</span></th>
               <td class="sig__sep"><span class="num">2</span>/<span class="num">15</span></td>
               <td class="sig__sep"><span class="num">0.185</span></td>
               <td class="sig__sep"><span class="num">1.553</span></td>
@@ -1476,7 +1567,7 @@
               <td class="sig__sep sig__def">—</td>
             </tr>
             <tr class="sig__row--won">
-              <th scope="row" class="sig__name">both <span class="sig__gloss">the second run's report</span></th>
+              <th scope="row" class="sig__name">both <span class="sig__gloss">the report in use now</span></th>
               <td class="sig__sep"><span class="num">1</span>/<span class="num">15</span></td>
               <td class="sig__sep"><span class="num">0.186</span></td>
               <td class="sig__sep"><span class="num">1.723</span></td>
@@ -1485,90 +1576,83 @@
           </tbody>
         </table>
         <div class="sub__body">
-          <p><span class="marker">The RETREAT column is flat.</span> One or two of fifteen under every
+          <p><span class="marker">The visible answer is flat.</span> One or two of fifteen under every
             variant, and a mean probability that never leaves the neighbourhood of chance. On matched boards
-            the report change does not make KEV retreat less. The sample was if anything stacked the other
-            way: all <span class="num">15</span> of those boards carry an exposed group, against
-            <span class="num">10</span> to <span class="num">12</span> for boards the two policies actually
-            produce. The stance was never the channel.</p>
+            the report change does not move the <em>order</em> KEV gives, which is the one thing the
+            interface prints in <span class="num">21</span>-point type under the arena. The sample was if
+            anything stacked the other way: all <span class="num">15</span> of those boards carry an exposed
+            group, against <span class="num">10</span> to <span class="num">12</span> for boards the two
+            policies actually produce.</p>
           <p class="diag"><span class="marker">The two score answers are not flat.</span> Aggression rises
             <span class="num">0.170</span> and risk falls <span class="num">0.089</span>, on the same boards,
             in the same direction, every time. Aggression is not advice — the engine reads it as
-            <span class="id">contestWeight = 0.7 + 0.3 × aggression</span>, so KEV entered every contested
-            square <span class="num">4.4</span>% stronger for the whole of the second run. A contested square
+            <span class="id">contestWeight = 0.7 + 0.3 × aggression</span>, so the win-condition block alone
+            makes KEV enter every contested square <span class="num">4.4</span>% harder. A contested square
             is one both colonies qualify to breed into; winning more of them yields more cells, which yields
-            more frontage, which yields more contested squares. Twenty generations of that is not a small
-            effect, and it does not appear anywhere in a stance tally.</p>
-          <p class="diag"><span class="marker">Replaying one match settles it.</span> Seed
-            <span class="num">1000</span> flipped between the runs. Played again under the first run's
-            report it goes to GPT-5.2, <span class="num">64</span>–<span class="num">79</span>; under the
-            second run's report it goes to KEV, <span class="num">67</span>–<span class="num">55</span>.
-            Both reproduce what the tournaments recorded. The two games diverge at generation
-            <span class="num">1</span> — not on the order, which is <span class="id">FORAGE</span> both
-            times, but on <span class="id">risk</span> and <span class="id">aggression</span>. Across that
-            whole match KEV played <span class="id">RETREAT</span> seven times under the old report and six
-            under the new. Nearly identical, and the result still inverted.</p>
-          <p class="diag"><span class="marker">The ablation was an accident.</span> The first attempt at that
-            replay had a bug: it pinned aggression and risk to <span class="num">1</span> instead of passing
-            the model's answers through. GPT-5.2 won under <em>both</em> reports. Disable the channel and the
-            reversal disappears, which is the control nobody would have thought to run on purpose.</p>
-          <p class="diag"><span class="marker">Why the question moves at all.</span> It asks how hard to
-            contest squares the other colony also wants. The second run's report is the first one that tells
-            KEV it is in a race scored on population, where it stands on three measures, and how many
-            generations are left. Scoring "contest harder" higher in a countdown is an unremarkable
-            response. The surprise is the size of what it bought — and that the visible word, the one the
-            interface prints in <span class="num">21</span>-point type under the arena, was the wrong place
-            to look the entire time. The benchmark was moved by a sub-answer nobody was reading.</p>
-          <p class="diag"><span class="marker">What is still owed.</span> The aggression shift is measured on
-            <span class="num">15</span> boards and reproduced inside one match. The causal link to the
-            tournament is demonstrated on <span class="num">1</span> of the <span class="num">10</span>
-            seeds. The other six that flipped have not been replayed, and until they are this is a mechanism
-            with one worked instance rather than a result.</p>
-          <p class="diag"><span class="marker">And that word is expensive on this scoreboard.</span> RETREAT
-            raises the energy a cell keeps back before breeding to <span class="num">5</span> — the highest of
-            any doctrine — and cuts contest weight to <span class="num">0.6</span>, so a retreating colony both
-            breeds less and yields contested ground. CONSOLIDATE holds the reserve at <span class="num">4</span>
-            and keeps breeding on exactly three. Sixty-odd calls of that difference, spread across ten matches,
-            is a third more cells at the bell: <span class="num">84.6</span> against
-            <span class="num">64.8</span>.</p>
-          <p class="diag"><span class="marker">Which is not the same as playing worse.</span> KEV's surviving
-            cells finish with <em>more</em> energy each — <span class="num">3.48</span> against
-            <span class="num">3.23</span>. It is playing not to die, in a game scored by headcount at
-            generation <span class="num">20</span> — the later tiebreaks only bite on an exact tie, so
-            headcount is what it is playing against. Change the win condition to “still alive at generation
-            <span class="num">50</span>” or “holds the nutrient squares” and this table is not obviously the
-            same table. The honest headline is that GPT-5.2 is better at <em>this</em> scoreboard, and that a
-            scoreboard is a choice someone made.</p>
-          <p class="diag"><span class="marker">What changed between the two runs.</span> Two things, which
-            is the problem with attributing the reversal to either. The first is a fix to the report builder,
-            which had been handing both models a line reading
-            <span class="id">Deaths 0 (5 overcrowded, 1 starved)</span> — a count that contradicted its own
-            breakdown, in the one document either model is given to reason over. The second is that the win
-            condition got written down: the criteria now live in one module the engine settles matches with,
-            the report states them to both models along with the live standing on all three measures, and the
-            interface shows them beside the board. Two edits, one sample of ten, confounded by construction.
-            Separating them means re-running the same seeds with the win-condition block taken back out, and
-            that has not been done.</p>
-          <p class="diag"><span class="marker">What would turn the smoke test into a result.</span> Vary the
-            board size and the generation limit, run the same seeds under a second prompt, and push the match
-            count far enough that a stance profile and not a scoreline is the unit of measurement. Ten
-            matches was never going to be it; two ten-match runs pointing opposite ways is just the clearest
-            available proof of that, and it cost two reversals to get.</p>
+            more frontage, which yields more contested squares.</p>
+          <p class="diag"><span class="marker">And it does move individual matches.</span> Seed
+            <span class="num">1000</span> inverts on it. Played under the original report it goes to
+            GPT-5.2, <span class="num">64</span>&ndash;<span class="num">79</span>; under the report in use
+            now it goes to KEV, <span class="num">67</span>&ndash;<span class="num">55</span>. The two games
+            diverge at generation <span class="num">1</span> — not on the order, which is
+            <span class="id">FORAGE</span> both times, but on <span class="id">risk</span> and
+            <span class="id">aggression</span>. Across that whole match KEV played
+            <span class="id">RETREAT</span> seven times under the old report and six under the new: nearly
+            identical stances, inverted outcome.</p>
+          <p class="diag"><span class="marker">The control was an accident.</span> The first attempt at that
+            replay had a bug — it pinned aggression and risk to <span class="num">1</span> instead of passing
+            the model's answers through. GPT-5.2 then won under <em>both</em> reports. Disable the channel
+            and the inversion disappears, which is the control nobody would have thought to run on
+            purpose.</p>
+          <p class="diag"><span class="marker">Both of these are true at once, and holding them together is
+            the point.</span> The aggression channel is real, reproducible on matched boards, and strong
+            enough to flip a specific match. It also produces <em>no win rate</em> over thirty matches. A
+            mechanism that moves individual games without accumulating into an edge is exactly what a
+            ten-match sample cannot distinguish from a decisive advantage, and it is what both earlier runs
+            mistook for one. The channel was never the thing to doubt; the scoreline was.</p>
+          <p class="diag"><span class="marker">The benchmark was moved by a sub-answer nobody was
+            reading.</span> The <span class="id">doctrine</span> question is the one with a label, a colour
+            and a confidence readout. The number that actually reached the engine was
+            <span class="id">aggression</span>, a score question rendered as a small bar. Whatever else this
+            project found, that is the lesson that generalises: the visible output of a decision model is not
+            necessarily the one the downstream system consumes.</p>
+          <p class="diag"><span class="marker">What the earlier runs claimed, and what is left of it.</span>
+            The <span class="num">9</span>&ndash;<span class="num">1</span> was blamed on KEV's
+            <span class="id">RETREAT</span> count; the <span class="num">8</span>&ndash;<span class="num">2</span>
+            on that count collapsing. KEV still plays <span class="id">RETREAT</span>
+            <span class="num">45</span> times in <span class="num">599</span> here, still never
+            consolidates, and still finishes level — <span class="num">76.0</span> cells against
+            <span class="num">74.1</span>, <span class="num">3.18</span> energy per cell against
+            <span class="num">3.13</span>. The stance-cost story survived two runs and died on the third.
+            That is three mechanistic explanations for one scoreline, two of which I believed, and it is the
+            strongest argument on this page for not shipping a benchmark at <var>n</var> =
+            <span class="num">10</span>.</p>
+          <p class="diag"><span class="marker">What would make even this a result.</span> Thirty matches can
+            say <em>no difference large enough to see here</em>; they cannot say <em>no difference</em>. The
+            <span class="num">95</span>% interval on <span class="num">16</span> of
+            <span class="num">30</span> still spans roughly <span class="num">34</span>% to
+            <span class="num">72</span>%, so a genuine <span class="num">60</span>/<span class="num">40</span>
+            edge would sit comfortably inside it. Settling that means varying the board size and the
+            generation limit, running the same seeds under a second prompt, and treating the stance profile
+            rather than the scoreline as the unit of measurement — which, given the table above, is where the
+            signal actually lives.</p>
           <p class="diag"><span class="marker">One run is not on this page, and that is the point of saying
-            so.</span> A third ten-match run finished <span class="num">5</span>–<span class="num">5</span>
+            so.</span> A ten-match run on 7 November finished <span class="num">5</span>&ndash;<span class="num">5</span>
             and is void: <span class="num">54</span> of GPT-5.2's <span class="num">200</span> decisions were
-            the local heuristic rather than the model, after the gateway failed under sustained load. The
-            script counted the fallbacks and printed the scoreline anyway. It now records why each one
-            happened and states that the run is not a measurement of that model — because a
-            <span class="num">27</span>% fallback rate reported as a scoreline is the exact failure this
-            harness was built to make impossible, and it got within one careless paragraph of happening
-            here.</p>
+            the local heuristic rather than the model, after the gateway shed load. The script counted the
+            fallbacks and printed the scoreline anyway. It now records why each one happened and states that
+            the run is not a measurement of that model, and the proxy retries a transient gateway failure
+            instead of letting a heuristic answer be scored as a model's — which is why the run above reports
+            <span class="num">0</span> fallbacks in <span class="num">1,198</span> decisions rather than
+            hoping for them. A <span class="num">27</span>% fallback rate reported as a scoreline is the
+            exact failure this harness was built to make impossible, and it got within one careless paragraph
+            of happening here.</p>
         </div>
         </details>
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">7</span><span class="sub__name">Why this is interesting: evolution, and strategy</span></span>
+            <span class="sub__label"><span class="sub__num num">8</span><span class="sub__name">Why this is interesting: evolution, and strategy</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
           <div class="sub__body">
