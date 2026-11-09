@@ -1358,19 +1358,35 @@
 
         <details class="sub">
           <summary class="sub__sum">
-            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Demo</span></span>
+            <span class="sub__label"><span class="sub__num num">6</span><span class="sub__name">Demo: one generation slowly, then a real match</span></span>
             <span class="fold__mark" aria-hidden="true"></span>
           </summary>
           <div class="sub__body">
-            <p>A real match, recorded by driving the running game in a browser rather than animating a replay —
-              the models are deciding on camera, and their latencies and probabilities are on screen as it
-              happens. Forty-four seconds at <span class="num">2</span>&times;; the twenty generations took
-              <span class="num">85</span> seconds of wall clock, because a live KEV decision takes about
-              <span class="num">4</span> seconds. Re-recorded on 8 November under the same harness as the
-              thirty-match run below — the earlier footage predated both the report fix and the win
-              condition, so the models in it were playing a different game than the one documented
+            <p><span class="marker">Two films, and they are not alternatives.</span> A match video is the
+              evidence — and it is also illegible: four hundred cells change on the same frame and a
+              first-time viewer cannot tell a birth from a death. So the first film below slows
+              <em>one</em> generation down until each rule is visible, and the second is a real match at
+              full speed. Watch them in that order. Both were re-made on 8 November under the same harness
+              as the thirty-match run below; the earlier match footage predated both the report fix and the
+              win condition, so the models in it were playing a different game than the one documented
               here.</p>
           </div>
+        <figure class="shot">
+          <video controls preload="none" poster="media/one-generation-explained-poster.jpg" width="1920" height="1080"
+                 aria-label="One generation of the simulation explained step by step on an eleven by eight board: the two orders, then feeding, deaths, migration, births and mutation, each held still with the rule and the count beside it.">
+            <source src="media/one-generation-explained.mp4" type="video/mp4">
+            <p>Your browser cannot play this video. <a href="media/one-generation-explained.mp4">Download the explainer</a>.</p>
+          </video>
+          <figcaption>One generation, six steps, <span class="num">55</span> seconds. This is the real
+            engine, not an animation: <span class="id">explainer_trace.ts</span> runs one generation with
+            <span class="id">trace: true</span> so the board is kept between every phase, and the film is
+            that trace. The board is hand-arranged to put each rule somewhere a viewer can see it — a
+            crowded centre that suffocates, a cell left on its own, a square three parents can reach, one
+            square both colonies want. <strong>The arrangement is chosen; nothing that happens to it
+            is.</strong> The frame shown is step <span class="num">3</span>, where ten cells die at once and
+            each is labelled with the rule it broke — which is precisely the frame that makes the match
+            video below look like chaos.</figcaption>
+        </figure>
         <figure class="shot">
           <video controls preload="none" poster="media/kev-vs-gpt-poster.jpg" width="1360" height="1080"
                  aria-label="A recorded match: two colonies on a 20 by 20 board, with each model's decision, confidence and latency shown beneath the arena as the generations advance.">
